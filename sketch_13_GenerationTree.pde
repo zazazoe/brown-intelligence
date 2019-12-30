@@ -60,22 +60,17 @@ void mousePressed(){
 }
 
 void printPointArray(){
-  //for(int i=0; i<generationLimit; i++){
-  //    println("Generation " + i);
-  //    for(int j=0; j<points[i].size(); j++){
-  //      print("[" + points[i].get(j).p1.x + "," + points[i].get(j).p1.y + "]");
-  //      print("[" + points[i].get(j).p2.x + "," + points[i].get(j).p2.y + "], ");
-  //    }
-  //    println();
-  //}
   
-
   for(int i=0; i<linesToSave.size(); i++){
     println("//" + i + "//");
-    reverse(linesToSave.get(i));
     
-    for(int j=0;j<linesToSave.get(i).size();j++){
-     print(linesToSave.get(i).get(j) + ",");
+    //pointsReversed = new PVector[linesToSave.get(i).size()];
+    PVector pointsReversed[] = linesToSave.get(i).toArray(new PVector[linesToSave.get(i).size()]);
+    pointsReversed = (PVector[])reverse(pointsReversed);
+    
+    for(int j=0;j<pointsReversed.length;j++){
+      linesToSave.get(i).set(j, pointsReversed[j]);
+      print(linesToSave.get(i).get(j) + ",");
     }
     println(); 
   }
@@ -118,39 +113,12 @@ void findLastSegment(PVector prevP2, int generation, int prevArrayPos){
   }
 }
 
-
-//boolean isLastGeneration(PVector p2, int nextGeneration){
-//  if(nextGeneration >= generationLimit-1)
-//  {
-//    return true;
-//  }
-//  for(int i =0; i<points[nextGeneration].size();i++)
-//  {
-//    if(p2 == points[nextGeneration].get(i).p1){
-//      if(isLastGeneration(points[nextGeneration].get(i).p2,nextGeneration+1)){
-//        linesToSave.add( new ArrayList<Segment>());
-//        ellipse(points[nextGeneration].get(i).p2.x,points[nextGeneration].get(i).p2.y,5,5);
-//        int prevGeneration = nextGeneration-1;
-//        createList(points[nextGeneration].get(i),prevGeneration);
-//        counter++;
-//      }
-//    }
-//  }
-//  return true;
-//}
-
 void createList(PVector p2,int generation){
-  //println("prevGen: "+prevGeneration+" count: "+counter);
   if(generation == -1)
   {   
-    //println("prevGen must be grater than "+prevGeneration);
     linesToSave.get(counter).add(points[0].get(0).p1);
     return;
   }
-  //else if(prevGeneration == 0) {
-  //  //linesToSave.get(counter).add(points[0].get(0).p1);
-  //  return;
-  //}
   linesToSave.get(counter).add(p2);
   
   for(int i=0;i<points[generation].size();i++)
