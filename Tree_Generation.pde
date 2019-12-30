@@ -2,12 +2,13 @@
 int generationLimit;
 ArrayList<Segment>[] points;
 ArrayList<ArrayList<PVector>> linesToSave;
-int counter = 0;
+int counter;
 
 void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
   linesToSave = new ArrayList<ArrayList<PVector>>();
+  counter = 0;
   
   for(int i=0; i<generationLimit; i++){
     points[i] = new ArrayList<Segment>();

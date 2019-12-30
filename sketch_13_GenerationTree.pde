@@ -17,5 +17,6 @@ void draw() {
 
 
 void mousePressed(){
- //<>//
-}
+  background(0);
+  generateTree(100, -90, new PVector(width/2, height), 7);
+} //<>//
