@@ -4,6 +4,9 @@ ArrayList<Segment>[] points;
 ArrayList<ArrayList<PVector>> linesToSave;
 int counter;
 
+Point point;
+EquiCurve curve;
+
 void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
@@ -19,6 +22,8 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   reversePointArray();
   render();
   
+  curve = new EquiCurve(linesToSave.get(0).get(0), linesToSave.get(0).get(0), linesToSave.get(0).get(1), linesToSave.get(0).get(2));
+  point = new Point(0.015, curve, 4.0, 15.0, 5); //speed, curve, minSize, maxSize, acceleration
 }
 
 void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {
@@ -106,7 +111,6 @@ void reversePointArray(){
   for(int i=0; i<linesToSave.size(); i++){
     println("//" + i + "//");
     
-    //pointsReversed = new PVector[linesToSave.get(i).size()];
     PVector pointsReversed[] = linesToSave.get(i).toArray(new PVector[linesToSave.get(i).size()]);
     pointsReversed = (PVector[])reverse(pointsReversed);
     
@@ -119,9 +123,8 @@ void reversePointArray(){
 }
 
 void render(){
-    //beginShape();
-    
     stroke(255,0,255);
+    noFill();
     
     for(int i=0; i<linesToSave.size(); i++) {
       //pushMatrix();

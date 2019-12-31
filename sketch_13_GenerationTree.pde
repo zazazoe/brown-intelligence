@@ -12,11 +12,14 @@ void setup(){
 
 
 void draw() {
-  
+  background(0);
+  render();
+  point.update();
+  point.display();
 }
 
 
 void mousePressed(){
   background(0);
-  generateTree(100, -90, new PVector(width/2, height), 7);
+  generateTree(100, 0, new PVector(0, height/2), 7);
 } //<>//
