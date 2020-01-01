@@ -5,11 +5,10 @@ ArrayList<ArrayList<PVector>> linesToSave;
 int counter;
 
 Point point;
-EquiCurve curve;
 
-AUCurve myCurve;
-float[][] knots;
-//AUCurve(float[][] knots, int numGeomVals, boolean makeClosed);
+ArrayList<float[][]> knots;
+ArrayList<AUCurve> curves;
+ArrayList<Point> particles;
 
 void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit){
   generationLimit = _generationLimit;
@@ -26,23 +25,17 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   reversePointArray();
   render();
   
-  knots = new float[linesToSave.get(0).size()+2][2];
+  knots = new ArrayList<float[][]>();
+  curves = new ArrayList<AUCurve>();
+  particles = new ArrayList<Point>();
   
-  knots[0][0] = linesToSave.get(0).get(0).x;
-  knots[0][1] = linesToSave.get(0).get(0).y;
-  
-  for(int i = 1; i<linesToSave.get(0).size()+1; i++){
-    knots[i][0] = linesToSave.get(0).get(i-1).x;
-    knots[i][1] = linesToSave.get(0).get(i-1).y;
+  for(int i=0; i<linesToSave.size(); i++){
+    knots.add(new float[linesToSave.get(i).size()+2][2]);
+    fillKnots(i);
+    curves.add(new AUCurve(knots.get(i),2,false));
+    particles.add(new Point(0.015, i, 4.0, 8.0, 10)); //<>//
   }
-  
-  knots[linesToSave.get(0).size()+1][0] = linesToSave.get(0).get(linesToSave.get(0).size()-1).x;
-  knots[linesToSave.get(0).size()+1][1] = linesToSave.get(0).get(linesToSave.get(0).size()-1).y;
-  
-  myCurve = new AUCurve(knots, 2, false);
-  
-  curve = new EquiCurve(linesToSave.get(0).get(0), linesToSave.get(0).get(0), linesToSave.get(0).get(1), linesToSave.get(0).get(2)); //<>//
-  point = new Point(0.015, curve, 4.0, 15.0, 10); //speed, curve, minSize, maxSize, acceleration
+
 }
 
 void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {
@@ -61,13 +54,11 @@ void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, i
     
 
     if(_generation<generationLimit) {
-      //segment(map(_generation, 0, generationLimit, 100, 25), random(-120,-60), point, _generation);
       
       int tmp = floor(random(1,4));
-      //int tmp = 2;
-      
+
       for(int i=0; i<tmp; i++){
-         segment(map(_generation, 0, generationLimit, 100, 25), random(-170,-10), point, _generation);
+         segment(map(_generation, 0, generationLimit, 100, 25), random(-150,-30), point, _generation);
       }
     }   
 }
@@ -142,31 +133,45 @@ void reversePointArray(){
 }
 
 void render(){
-    stroke(255,0,255);
-    noFill();
-    
     for(int i=0; i<linesToSave.size(); i++) {
-      //pushMatrix();
-        for(int j=0; j<linesToSave.get(i).size()-1; j++){
-          PVector pt1 = linesToSave.get(i).get(j);
-          PVector pt2 = linesToSave.get(i).get(j+1);
-          PVector ctrlPt1;
-          PVector ctrlPt2;
+      stroke((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
+      noFill();
+      
+      for(int j=0; j<linesToSave.get(i).size()-1; j++){
+        PVector pt1 = linesToSave.get(i).get(j);
+        PVector pt2 = linesToSave.get(i).get(j+1);
+        PVector ctrlPt1;
+        PVector ctrlPt2;
           
-          if(j-1<0){
-            ctrlPt1 = linesToSave.get(i).get(j);
-          } else {
-            ctrlPt1 = linesToSave.get(i).get(j-1);
-          }
-          
-          if(j+2>linesToSave.get(i).size()-1){
-            ctrlPt2 = linesToSave.get(i).get(j+1);
-          } else {
-            ctrlPt2 = linesToSave.get(i).get(j+2);
-          }
-          
-          curve(ctrlPt1.x, ctrlPt1.y, pt1.x, pt1.y, pt2.x, pt2.y, ctrlPt2.x, ctrlPt2.y);
+        if(j-1<0){
+          ctrlPt1 = linesToSave.get(i).get(j);
+        } else {
+          ctrlPt1 = linesToSave.get(i).get(j-1);
         }
-      //popMatrix();
+          
+        if(j+2>linesToSave.get(i).size()-1){
+          ctrlPt2 = linesToSave.get(i).get(j+1);
+        } else {
+          ctrlPt2 = linesToSave.get(i).get(j+2);
+        }
+          
+        curve(ctrlPt1.x, ctrlPt1.y, pt1.x, pt1.y, pt2.x, pt2.y, ctrlPt2.x, ctrlPt2.y);
+      }
     }
+  }
+  
+  void fillKnots(int nr){  
+    //duplicate first point
+    knots.get(nr)[0][0] = linesToSave.get(nr).get(0).x;
+    knots.get(nr)[0][1] = linesToSave.get(nr).get(0).y;
+    
+    //transfer all curve points
+    for(int i = 1; i<linesToSave.get(nr).size()+1; i++){
+      knots.get(nr)[i][0] = linesToSave.get(nr).get(i-1).x;
+      knots.get(nr)[i][1] = linesToSave.get(nr).get(i-1).y;
+    }
+    
+    //duplicate last point
+    knots.get(nr)[linesToSave.get(nr).size()+1][0] = linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x;
+    knots.get(nr)[linesToSave.get(nr).size()+1][1] = linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y;
   }

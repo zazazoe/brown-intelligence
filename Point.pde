@@ -3,24 +3,25 @@ class Point{
   float t;
   float tPos;
   float tStep;
-  EquiCurve curve;
   float minSize;
   float maxSize;
   float size;
   int trail;
+  int idNr;
   
   PVector pos;
   ArrayList<PVector> history;
 
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
-  Point(float sp, EquiCurve c, float minS, float maxS, int tr){   
+  Point(float _tStep, int _idNr, float _minSize, float _maxSize, int _trail){   
     t=0.0;
     tPos = t;
-    curve = c;
-    minSize = minS;
-    maxSize = maxS;
-    tStep = sp;
-    trail = tr;
+    
+    idNr = _idNr;
+    minSize = _minSize;
+    maxSize = _maxSize;
+    tStep = _tStep;
+    trail = _trail;
     
     pos = new PVector(0,0);
     history = new ArrayList<PVector>();
@@ -37,9 +38,8 @@ class Point{
     float tmp = cos(tPos);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);
     
-    //pos = curve.pointAtFraction(t);
-    pos.x = myCurve.getX(t);
-    pos.y = myCurve.getY(t);
+    pos.x = curves.get(idNr).getX(t);
+    pos.y = curves.get(idNr).getY(t);
     
     //calculate size
     size = map(abs(tmp), 1.0, 0.0, minSize, maxSize);  
@@ -52,8 +52,7 @@ class Point{
     }
   }
   
-  void display() {
-    fill(255,0,255);
+  void display(color c) {
     noStroke();
     
     float stepSize = 255/trail;
@@ -61,10 +60,9 @@ class Point{
     
     //DRAW points  
     for(int i=0; i<history.size(); i++){
-      fill(255,0,255,brightness);
+      fill(c,brightness);
       ellipse(history.get(i).x,history.get(i).y,size,size);
       brightness += stepSize;
     }
-    //ellipse(pos.x, pos.y, size, size);
   }
 }
