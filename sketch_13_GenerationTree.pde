@@ -1,8 +1,12 @@
-
+import AULib.*;
 
 void setup(){
   size(500,500);
   background(0);
+  
+  frameRate(60);
+  smooth(8);
+  
   stroke(255);
   noFill();
   

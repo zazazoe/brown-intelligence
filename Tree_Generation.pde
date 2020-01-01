@@ -7,6 +7,10 @@ int counter;
 Point point;
 EquiCurve curve;
 
+AUCurve myCurve;
+float[][] knots;
+//AUCurve(float[][] knots, int numGeomVals, boolean makeClosed);
+
 void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
@@ -22,8 +26,23 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   reversePointArray();
   render();
   
-  curve = new EquiCurve(linesToSave.get(0).get(0), linesToSave.get(0).get(0), linesToSave.get(0).get(1), linesToSave.get(0).get(2));
-  point = new Point(0.015, curve, 4.0, 15.0, 5); //speed, curve, minSize, maxSize, acceleration
+  knots = new float[linesToSave.get(0).size()+2][2];
+  
+  knots[0][0] = linesToSave.get(0).get(0).x;
+  knots[0][1] = linesToSave.get(0).get(0).y;
+  
+  for(int i = 1; i<linesToSave.get(0).size()+1; i++){
+    knots[i][0] = linesToSave.get(0).get(i-1).x;
+    knots[i][1] = linesToSave.get(0).get(i-1).y;
+  }
+  
+  knots[linesToSave.get(0).size()+1][0] = linesToSave.get(0).get(linesToSave.get(0).size()-1).x;
+  knots[linesToSave.get(0).size()+1][1] = linesToSave.get(0).get(linesToSave.get(0).size()-1).y;
+  
+  myCurve = new AUCurve(knots, 2, false);
+  
+  curve = new EquiCurve(linesToSave.get(0).get(0), linesToSave.get(0).get(0), linesToSave.get(0).get(1), linesToSave.get(0).get(2)); //<>//
+  point = new Point(0.015, curve, 4.0, 15.0, 10); //speed, curve, minSize, maxSize, acceleration
 }
 
 void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {

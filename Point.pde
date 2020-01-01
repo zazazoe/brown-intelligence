@@ -37,7 +37,9 @@ class Point{
     float tmp = cos(tPos);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);
     
-    pos = curve.pointAtFraction(t);
+    //pos = curve.pointAtFraction(t);
+    pos.x = myCurve.getX(t);
+    pos.y = myCurve.getY(t);
     
     //calculate size
     size = map(abs(tmp), 1.0, 0.0, minSize, maxSize);  
@@ -51,7 +53,7 @@ class Point{
   }
   
   void display() {
-    fill(255);
+    fill(255,0,255);
     noStroke();
     
     float stepSize = 255/trail;
@@ -59,7 +61,7 @@ class Point{
     
     //DRAW points  
     for(int i=0; i<history.size(); i++){
-      fill(255,brightness);
+      fill(255,0,255,brightness);
       ellipse(history.get(i).x,history.get(i).y,size,size);
       brightness += stepSize;
     }
