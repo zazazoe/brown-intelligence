@@ -1,6 +1,5 @@
 import AULib.*;
 
-float segmentStartLength;
 float treeRot;
 PVector treeStartPoint;
 int numGenerations;
@@ -50,17 +49,20 @@ void setup(){
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
+  
+  setupCP5();
 }
 
 void draw() {
-  background(255,220,220);
+  background(0);
 
   //render(); //render tree lines
   renderCrvPt();
   
   //update points + render
   for(int i=0; i<particles.size(); i++){
-    color c = color((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
+    //color c = color((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
+    color c = cpP.getColorValue();
     particles.get(i).update();
     particles.get(i).display(c);
   }
@@ -72,3 +74,14 @@ void mousePressed(){
   background(0);
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
 } //<>//
+
+void keyPressed(){
+  switch(key){
+    case 'o':
+      cp5.show();
+      break;
+    case 'c':
+      cp5.hide();
+      break;
+  }
+}

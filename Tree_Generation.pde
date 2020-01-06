@@ -186,7 +186,16 @@ void render(){
     }
     
     for(int i=0; i<curvePoints.size(); i++) {
-      stroke((100/(i+1))*curvePoints.size(),0,(200/curvePoints.size())*i, lineOpacity);
+      //stroke((100/(i+1))*curvePoints.size(),0,(200/curvePoints.size())*i, lineOpacity);
+      float f1 = map(i, 0, curvePoints.size(), 0,1);
+      float f2 = map(i, 0, curvePoints.size(), 1,0);
+      
+      float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
+      float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
+      float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
+      float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+      
+      stroke(r,g,b,a); //(1/(i+1))*cpL1.getColorValue() + (1/(curvePoints.size()/(i+1)))*cpL1.getColorValue()
       strokeWeight(lineWeight);
       noFill();
 
