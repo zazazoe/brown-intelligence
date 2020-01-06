@@ -47,10 +47,10 @@ void setup(){
 void draw() {
   background(220);
   
-  mouseFollowerX = mouseFollowerX*0.98 + mouseX*0.02;
+  //mouseFollowerX = mouseFollowerX*0.98 + mouseX*0.02;
         
-  fill(0);
-  ellipse(mouseFollowerX, mouseY, 20,20);
+  //fill(0);
+  //ellipse(mouseFollowerX, mouseY, 20,20);
   
   //render(); //render tree lines
   renderCrvPt();
