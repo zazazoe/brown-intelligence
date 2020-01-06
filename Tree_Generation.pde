@@ -10,7 +10,7 @@ ArrayList<float[][]> knots;
 ArrayList<AUCurve> curves;
 ArrayList<Point> particles;
 
-void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit){
+void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit, float _particleSpeed, float _particleSize, int _particleTrailSize){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
   linesToSave = new ArrayList<ArrayList<PVector>>();
@@ -23,7 +23,6 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   segment(_startLength, _startRotation, _startPoint, 0);
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
-  render();
   
   knots = new ArrayList<float[][]>();
   curves = new ArrayList<AUCurve>();
@@ -33,7 +32,7 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
     knots.add(new float[linesToSave.get(i).size()+2][2]);
     fillKnots(i);
     curves.add(new AUCurve(knots.get(i),2,false));
-    particles.add(new Point(0.015, i, 4.0, 8.0, 10)); //<>//
+    particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>//
   }
 
 }
@@ -55,10 +54,10 @@ void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, i
 
     if(_generation<generationLimit) {
       
-      int tmp = floor(random(1,4));
+      int tmp = floor(random(minBranches, maxBranches));
 
       for(int i=0; i<tmp; i++){
-         segment(map(_generation, 0, generationLimit, 100, 25), random(-150,-30), point, _generation);
+         segment(map(_generation, 0, generationLimit, segmentMaxLength, segmentMinLength), random(segmentMinRot, segmentMaxRot), point, _generation);
       }
     }   
 }
@@ -76,11 +75,7 @@ void findLastSegment(PVector prevP2, int generation, int prevArrayPos){
       count++;
     } else if(points[generation].get(i).p1 == prevP2 && generation == generationLimit-1) {
       //FOUND LAST SEGMENT --> LAST GENERATION
-      stroke(255,0,0);
-      ellipse(points[generation].get(i).p2.x, points[generation].get(i).p2.y, 5, 5);
-      //println("found " + points[generation].get(i).p2);
       linesToSave.add( new ArrayList<PVector>());
-      //int prevGeneration = generation-1;
       createList(points[generation].get(i).p2,generation);
       count++;
       counter++;
@@ -90,10 +85,6 @@ void findLastSegment(PVector prevP2, int generation, int prevArrayPos){
   if(count==0){
     //FOUND LAST SEGMENT --> PREV POINT
       linesToSave.add( new ArrayList<PVector>());
-      stroke(255,0,0);
-      ellipse(prevP2.x, prevP2.y, 5, 5);
-      //println("found " + prevP2);
-      //int prevGeneration = generation-1;
       createList(points[generation].get(prevArrayPos).p2,generation);
       counter++;
   }
@@ -119,22 +110,24 @@ void createList(PVector p2,int generation){
 void reversePointArray(){
   
   for(int i=0; i<linesToSave.size(); i++){
-    println("//" + i + "//");
+    //println("//" + i + "//");
     
     PVector pointsReversed[] = linesToSave.get(i).toArray(new PVector[linesToSave.get(i).size()]);
     pointsReversed = (PVector[])reverse(pointsReversed);
     
     for(int j=0;j<pointsReversed.length;j++){
       linesToSave.get(i).set(j, pointsReversed[j]);
-      print(linesToSave.get(i).get(j) + ",");
+      //print(linesToSave.get(i).get(j) + ",");
     }
-    println(); 
+    //println(); 
   }
 }
 
 void render(){
     for(int i=0; i<linesToSave.size(); i++) {
-      stroke((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
+      //stroke((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
+      stroke(80);
+      strokeWeight(2);
       noFill();
       
       for(int j=0; j<linesToSave.get(i).size()-1; j++){
@@ -142,7 +135,7 @@ void render(){
         PVector pt2 = linesToSave.get(i).get(j+1);
         PVector ctrlPt1;
         PVector ctrlPt2;
-          
+
         if(j-1<0){
           ctrlPt1 = linesToSave.get(i).get(j);
         } else {
@@ -154,10 +147,37 @@ void render(){
         } else {
           ctrlPt2 = linesToSave.get(i).get(j+2);
         }
-          
+        
+        pt1 = adjustPoint(pt1);
+        pt2 = adjustPoint(pt2);
+        ctrlPt1 = adjustPoint(ctrlPt1);
+        ctrlPt2 = adjustPoint(ctrlPt2);
+        
         curve(ctrlPt1.x, ctrlPt1.y, pt1.x, pt1.y, pt2.x, pt2.y, ctrlPt2.x, ctrlPt2.y);
       }
     }
+  }
+  
+  PVector adjustPoint(PVector point){
+    //float dist = point.dist(new PVector(mouseX, mouseY));
+    PVector tmp = new PVector(point.x,point.y);
+    
+    float distX = point.x - mouseX;
+    float distY = point.y - height/2;
+    
+    if(distY <=0 && abs(distX)<50) {
+      tmp.y = point.y + map(abs(distX), 0, 50, -50, 0);
+    } else if(distY >0 && abs(distX)<50) {
+      tmp.y = point.y + map(abs(distX), 0, 50, 50, 0);
+    }
+    
+    //if(dist>0){
+    //  tmp.y = point.y + map(dist, 0, 50, 50, 0);
+    //} else if(dist<=0) {
+    //  tmp.y = point.y + map(dist, 0, -50, -50, 0);
+    //}
+     
+    return tmp;
   }
   
   void fillKnots(int nr){  
