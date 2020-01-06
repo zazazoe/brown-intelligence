@@ -16,6 +16,7 @@ float particleSpeed;
 float particleSize;
 int particleTrailSize;
 
+float mouseFollowerX = 0;
 
 void setup(){
   //size(500,500); 
@@ -45,6 +46,12 @@ void setup(){
 
 void draw() {
   background(220);
+  
+  mouseFollowerX = mouseFollowerX*0.98 + mouseX*0.02;
+        
+  fill(0);
+  ellipse(mouseFollowerX, mouseY, 20,20);
+  
   render(); //render tree lines
   
   //update points + render
@@ -53,6 +60,8 @@ void draw() {
     particles.get(i).update();
     particles.get(i).display(c);
   }
+  
+  
 }
 
 void mousePressed(){

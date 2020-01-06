@@ -10,11 +10,14 @@ ArrayList<float[][]> knots;
 ArrayList<AUCurve> curves;
 ArrayList<Point> particles;
 
+
+
 void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit, float _particleSpeed, float _particleSize, int _particleTrailSize){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
   linesToSave = new ArrayList<ArrayList<PVector>>();
   counter = 0;
+  
   
   for(int i=0; i<generationLimit; i++){
     points[i] = new ArrayList<Segment>();
@@ -129,7 +132,7 @@ void render(){
       stroke(80);
       strokeWeight(2);
       noFill();
-      
+
       for(int j=0; j<linesToSave.get(i).size()-1; j++){
         PVector pt1 = linesToSave.get(i).get(j);
         PVector pt2 = linesToSave.get(i).get(j+1);
@@ -147,12 +150,13 @@ void render(){
         } else {
           ctrlPt2 = linesToSave.get(i).get(j+2);
         }
-        
+
         pt1 = adjustPoint(pt1);
         pt2 = adjustPoint(pt2);
         ctrlPt1 = adjustPoint(ctrlPt1);
         ctrlPt2 = adjustPoint(ctrlPt2);
         
+        noFill();
         curve(ctrlPt1.x, ctrlPt1.y, pt1.x, pt1.y, pt2.x, pt2.y, ctrlPt2.x, ctrlPt2.y);
       }
     }
@@ -162,7 +166,7 @@ void render(){
     //float dist = point.dist(new PVector(mouseX, mouseY));
     PVector tmp = new PVector(point.x,point.y);
     
-    float distX = point.x - mouseX;
+    float distX = point.x - mouseFollowerX;
     float distY = point.y - height/2;
     
     if(distY <=0 && abs(distX)<50) {
