@@ -25,6 +25,7 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   segment(_startLength, _startRotation, _startPoint, 0);
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
+  addPointRandomization();
   
   knots = new ArrayList<float[][]>();
   curves = new ArrayList<AUCurve>();
@@ -130,6 +131,17 @@ void reversePointArray(){
   }
 }
 
+
+void addPointRandomization(){
+  for(int i=0; i<linesToSave.size(); i++){
+    for(int j=1;j<linesToSave.get(i).size();j++){
+      linesToSave.get(i).set(j, new PVector(linesToSave.get(i).get(j).x + random(0,lineRandX), 
+                                            linesToSave.get(i).get(j).y + random(0,lineRandY)));
+    }
+  }
+}
+
+
 void render(){
     for(int i=0; i<linesToSave.size(); i++) {
       //stroke((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
@@ -174,9 +186,8 @@ void render(){
     }
     
     for(int i=0; i<curvePoints.size(); i++) {
-      //stroke((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
-      stroke(80);
-      strokeWeight(2);
+      stroke((100/(i+1))*curvePoints.size(),0,(200/curvePoints.size())*i, lineOpacity);
+      strokeWeight(lineWeight);
       noFill();
 
       for(int j=1; j<curvePoints.get(i).length-2; j++){
@@ -194,7 +205,7 @@ void render(){
     //float dist = point.dist(new PVector(mouseX, mouseY));
     PVector tmp = new PVector(point.x,point.y);
     
-    float distX = point.x - mouseFollowerX;
+    float distX = point.x - mouseX;
     float distY = point.y - height/2;
     
     if(distY <=0 && abs(distX)<50) {
@@ -230,13 +241,17 @@ void render(){
   
   void fillCurvePoints(int nr){ 
     //duplicate first point
-    curvePoints.get(nr)[0] = new CurvePoint(new PVector(linesToSave.get(nr).get(0).x,linesToSave.get(nr).get(0).y));
+    curvePoints.get(nr)[0] = new CurvePoint(new PVector(linesToSave.get(nr).get(0).x,linesToSave.get(nr).get(0).y), false);
     
     //transfer all curve points
     for(int i = 1; i<linesToSave.get(nr).size()+1; i++){
-      curvePoints.get(nr)[i] = new CurvePoint(new PVector(linesToSave.get(nr).get(i-1).x,linesToSave.get(nr).get(i-1).y));
+      if(i==1 || i==linesToSave.get(nr).size()){
+        curvePoints.get(nr)[i] = new CurvePoint(new PVector(linesToSave.get(nr).get(i-1).x,linesToSave.get(nr).get(i-1).y), false);
+      } else {
+        curvePoints.get(nr)[i] = new CurvePoint(new PVector(linesToSave.get(nr).get(i-1).x,linesToSave.get(nr).get(i-1).y), true);
+      }
     }
     
     //duplicate last point
-    curvePoints.get(nr)[linesToSave.get(nr).size()+1] = new CurvePoint(new PVector(linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x,linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y));
+    curvePoints.get(nr)[linesToSave.get(nr).size()+1] = new CurvePoint(new PVector(linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x,linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y), false);
   }

@@ -16,7 +16,10 @@ float particleSpeed;
 float particleSize;
 int particleTrailSize;
 
-float mouseFollowerX = 0;
+int lineRandX;
+int lineRandY;
+int lineWeight;
+int lineOpacity;
 
 void setup(){
   //size(500,500); 
@@ -29,29 +32,29 @@ void setup(){
   treeStartPoint = new PVector(0, height/2);
   numGenerations = 5;
   
-  minBranches = 2;
-  maxBranches = 3;
-  segmentMaxLength = 400;
+  minBranches = 1;
+  maxBranches = 5;
+  segmentMaxLength = 500;
   segmentMinLength = 50;
-  segmentMinRot = -30;
-  segmentMaxRot = 30;
+  segmentMinRot = -60;
+  segmentMaxRot = 60;
   
-  particleSpeed = 0.015;
-  particleSize = 5.0;
+  particleSpeed = 0.01;
+  particleSize = 8.0;
   particleTrailSize = 5;
+  
+  lineRandX = 20;
+  lineRandY = 20;
+  lineWeight = 3;
+  lineOpacity = 100;
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
 }
 
 void draw() {
-  background(220);
-  
-  //mouseFollowerX = mouseFollowerX*0.98 + mouseX*0.02;
-        
-  //fill(0);
-  //ellipse(mouseFollowerX, mouseY, 20,20);
-  
+  background(255,220,220);
+
   //render(); //render tree lines
   renderCrvPt();
   
