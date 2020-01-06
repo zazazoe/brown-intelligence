@@ -10,14 +10,13 @@ ArrayList<float[][]> knots;
 ArrayList<AUCurve> curves;
 ArrayList<Point> particles;
 
-
+ArrayList<CurvePoint[]> curvePoints;
 
 void generateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit, float _particleSpeed, float _particleSize, int _particleTrailSize){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
   linesToSave = new ArrayList<ArrayList<PVector>>();
   counter = 0;
-  
   
   for(int i=0; i<generationLimit; i++){
     points[i] = new ArrayList<Segment>();
@@ -30,10 +29,15 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   knots = new ArrayList<float[][]>();
   curves = new ArrayList<AUCurve>();
   particles = new ArrayList<Point>();
+  curvePoints = new ArrayList<CurvePoint[]>();
   
   for(int i=0; i<linesToSave.size(); i++){
     knots.add(new float[linesToSave.get(i).size()+2][2]);
+    curvePoints.add(new CurvePoint[linesToSave.get(i).size()+2]);
+    
     fillKnots(i);
+    fillCurvePoints(i);
+    
     curves.add(new AUCurve(knots.get(i),2,false));
     particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>//
   }
@@ -162,6 +166,30 @@ void render(){
     }
   }
   
+  void renderCrvPt(){ 
+    for(int i=0; i<curvePoints.size(); i++) {
+      for(int j=0; j<curvePoints.get(i).length; j++){
+        curvePoints.get(i)[j].update();
+      }
+    }
+    
+    for(int i=0; i<curvePoints.size(); i++) {
+      //stroke((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
+      stroke(80);
+      strokeWeight(2);
+      noFill();
+
+      for(int j=1; j<curvePoints.get(i).length-2; j++){
+        PVector ctrlPt1 = curvePoints.get(i)[j-1].pos();
+        PVector pt1 = curvePoints.get(i)[j].pos();
+        PVector pt2 = curvePoints.get(i)[j+1].pos();
+        PVector ctrlPt2 = curvePoints.get(i)[j+2].pos();
+
+        curve(ctrlPt1.x, ctrlPt1.y, pt1.x, pt1.y, pt2.x, pt2.y, ctrlPt2.x, ctrlPt2.y);
+      }
+    }
+  }
+  
   PVector adjustPoint(PVector point){
     //float dist = point.dist(new PVector(mouseX, mouseY));
     PVector tmp = new PVector(point.x,point.y);
@@ -188,7 +216,7 @@ void render(){
     //duplicate first point
     knots.get(nr)[0][0] = linesToSave.get(nr).get(0).x;
     knots.get(nr)[0][1] = linesToSave.get(nr).get(0).y;
-    
+
     //transfer all curve points
     for(int i = 1; i<linesToSave.get(nr).size()+1; i++){
       knots.get(nr)[i][0] = linesToSave.get(nr).get(i-1).x;
@@ -198,4 +226,17 @@ void render(){
     //duplicate last point
     knots.get(nr)[linesToSave.get(nr).size()+1][0] = linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x;
     knots.get(nr)[linesToSave.get(nr).size()+1][1] = linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y;
+  }
+  
+  void fillCurvePoints(int nr){ 
+    //duplicate first point
+    curvePoints.get(nr)[0] = new CurvePoint(new PVector(linesToSave.get(nr).get(0).x,linesToSave.get(nr).get(0).y));
+    
+    //transfer all curve points
+    for(int i = 1; i<linesToSave.get(nr).size()+1; i++){
+      curvePoints.get(nr)[i] = new CurvePoint(new PVector(linesToSave.get(nr).get(i-1).x,linesToSave.get(nr).get(i-1).y));
+    }
+    
+    //duplicate last point
+    curvePoints.get(nr)[linesToSave.get(nr).size()+1] = new CurvePoint(new PVector(linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x,linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y));
   }

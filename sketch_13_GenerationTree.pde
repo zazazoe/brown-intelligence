@@ -52,7 +52,8 @@ void draw() {
   fill(0);
   ellipse(mouseFollowerX, mouseY, 20,20);
   
-  render(); //render tree lines
+  //render(); //render tree lines
+  renderCrvPt();
   
   //update points + render
   for(int i=0; i<particles.size(); i++){
