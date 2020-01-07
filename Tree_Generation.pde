@@ -42,6 +42,12 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
     curves.add(new AUCurve(knots.get(i),2,false));
     particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>//
   }
+  
+  lineOpacities = new Float[linesToSave.size()];
+  
+  for(int i=0; i<lineOpacities.length; i++){
+    lineOpacities[i] = 0.5;
+  }
 }
 
 void reGenerateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit, float _particleSpeed, float _particleSize, int _particleTrailSize){
@@ -184,7 +190,8 @@ void addPointRandomization(){
       float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
       float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
       float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-      float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+      //float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+      float a = 255*lineOpacities[i];
       
       stroke(r,g,b,a); //(1/(i+1))*cpL1.getColorValue() + (1/(curvePoints.size()/(i+1)))*cpL1.getColorValue()
       strokeWeight(lineWeight);

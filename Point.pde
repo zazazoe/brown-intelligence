@@ -19,6 +19,8 @@ class Point{
   float bursttStep;
   PVector burstPos;
   float burstSize;
+  
+  int success;
 
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
   Point(float _tStep, int _idNr, float _minSize, float _maxSize, int _trail){   
@@ -47,6 +49,8 @@ class Point{
     bursttStep = _tStep*5;
     burstPos = new PVector(0,0);
     burstSize = 1.5*_maxSize;
+    
+    success = (int)random(0,2);
   }
   
   void update() {
@@ -54,10 +58,28 @@ class Point{
     
     for(int i=0; i<tPosses.length; i++){
       tPosses[i][0] += tPosses[i][1]; //add tstep to tpos
-      if (tPosses[i][0] > PI || tPosses[i][0] < 0){
-        tPosses[i][1] = tPosses[i][1]*-1;
+      if (tPosses[i][0] > PI){
+        if(success == 1){
+          tPosses[i][1] = tPosses[i][1]*-1;
+          if(lineOpacities[idNr] < 1.0){
+            lineOpacities[idNr] += 0.1;
+          }
+        } else {
+          tPosses[i][0] = 0.0;
+          success = (int)random(0,2);
+          if(lineOpacities[idNr] >0.0){
+            lineOpacities[idNr] -= 0.1;
+          }
+        }
         tPosses[i][0] += tPosses[i][1];
       }
+      if (tPosses[i][0] < 0){
+        tPosses[i][1] = tPosses[i][1]*-1;
+        success = (int)random(0,2);
+        if(idNr == 0) println("success" + success);
+      }
+      
+      tPosses[i][0] += tPosses[i][1];
       
       float tmp = cos(tPosses[i][0]);
       t = map(tmp, 1.0, -1.0, 0.0, 1.0);

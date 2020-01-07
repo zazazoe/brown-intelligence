@@ -25,6 +25,7 @@ int lineRandX;
 int lineRandY;
 int lineWeight;
 int lineOpacity;
+Float[] lineOpacities;
 
 float attractionToOrigin; 
 float repulseFromMouse;
