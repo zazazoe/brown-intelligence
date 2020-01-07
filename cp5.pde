@@ -14,8 +14,7 @@ void setupCP5(){
   
   cp5 = new ControlP5(this);
 
-  cp5.setColorBackground(color(150))
-     ;
+  cp5.setColorBackground(color(150));
   
   cpL1 = cp5.addColorPicker("lines1")
           .setPosition(20, 10)
