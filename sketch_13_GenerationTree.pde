@@ -55,33 +55,32 @@ void setup(){
 
 void draw() {
   background(0);
-
-  //render(); //render tree lines
+  
+  //render tree lines
+  //render(); 
   renderCrvPt();
   
   //update points + render
   for(int i=0; i<particles.size(); i++){
     //color c = color((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
     color c = cpP.getColorValue();
+    
     particles.get(i).update();
     particles.get(i).display(c);
   }
-  
-  
-}
 
-void mousePressed(){
-  background(0);
-  generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
 } //<>//
 
 void keyPressed(){
   switch(key){
-    case 'o':
+    case 'o': //open cp5 control panel
       cp5.show();
       break;
-    case 'c':
+    case 'c': //close cp5 control panel
       cp5.hide();
+      break;
+    case 'r': //regenerate a tree
+      generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
       break;
   }
 }

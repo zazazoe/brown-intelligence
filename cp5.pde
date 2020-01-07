@@ -33,9 +33,13 @@ void setupCP5(){
           
   cp5.addSlider("particleSpeed")
      .setRange(0.001, 0.100)
-     .setValue(0.01)
+     .setValue(0.005)
      .setPosition(20, 220)
      .setSize(100, 10)
      .setColorLabel(0)
      ;
+     
+     
+  //by default do not show   
+  cp5.hide();
 }

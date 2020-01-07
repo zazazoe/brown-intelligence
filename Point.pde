@@ -15,12 +15,12 @@ class Point{
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
   Point(float _tStep, int _idNr, float _minSize, float _maxSize, int _trail){   
     t=0.0;
-    tPos = t;
+    tPos = random(0.0, PI);
     
     idNr = _idNr;
     minSize = _minSize;
     maxSize = _maxSize;
-    tStep = _tStep;
+    tStep = _tStep * random(-1,1);
     trail = _trail;
     
     pos = new PVector(0,0);
