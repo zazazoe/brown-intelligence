@@ -6,39 +6,191 @@ ColorPicker cpL1;
 ColorPicker cpL2;
 ColorPicker cpP;
 
+Toggle t1;
+
+color labelColor = color(255);
+
 void setupCP5(){
   
   cp5 = new ControlP5(this);
+
    
-  cpL1 = cp5.addColorPicker("picker1")
+  cpL1 = cp5.addColorPicker("lines1")
           .setPosition(20, 10)
           .setColorValue(color(215, 215, 148, 128))
-          .setColorLabel(0)
+          .setColorLabel(labelColor)
           .setLabel("lineColor upper limit")
           ;
           
-  cpL2 = cp5.addColorPicker("picker2")
+  cpL2 = cp5.addColorPicker("lines2")
           .setPosition(20, 80)
           .setColorValue(color(63, 220, 241, 104))
-          .setColorLabel(0)
+          .setColorLabel(labelColor)
           .setLabel("lineColor lower limit")
           ;
           
-  cpP = cp5.addColorPicker("picker3")
+  cpP = cp5.addColorPicker("particles")
           .setPosition(20, 150)
           .setColorValue(color(248, 252, 255, 197))
-          .setColorLabel(0)
+          .setColorLabel(labelColor)
           .setLabel("particle color")
           ;
           
-  cp5.addSlider("particleSpeed")
-     .setRange(0.001, 0.100)
-     .setValue(0.005)
+  cp5.addSlider("particleSize")
+     .setRange(1, 15)
+     .setValue(5)
      .setPosition(20, 220)
      .setSize(100, 10)
-     .setColorLabel(0)
+     .setColorLabel(labelColor)
      ;
      
+  cp5.addSlider("particleTrailSize")
+     .setRange(1, 10)
+     .setValue(1)
+     .setPosition(20, 235)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+     
+  cp5.addSlider("particleTrailSize")
+     .setRange(1, 10)
+     .setValue(1)
+     .setPosition(20, 235)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addToggle("renderParticles")
+     .setPosition(20, 250)
+     .setSize(10,10)
+     .setValue(true)
+     .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
+     ;
+  
+  cp5.addToggle("syncParticles")
+     .setPosition(20, 265)
+     .setSize(10,10)
+     .setValue(false)
+     .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
+     ;
+     
+  cp5.addToggle("disperseParticles")
+     .setPosition(20, 280)
+     .setSize(10,10)
+     .setValue(false)
+     .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
+     ;
+  
+  cp5.addSlider("lineWeight")
+     .setRange(1, 10)
+     .setValue(3)
+     .setPosition(20, 310)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("lineRandX")
+     .setRange(1, 30)
+     .setValue(10)
+     .setPosition(20, 325)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("lineRandY")
+     .setRange(1, 30)
+     .setValue(10)
+     .setPosition(20, 340)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("numGenerations")
+     .setRange(1, 10)
+     .setValue(5)
+     .setPosition(20, 355)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("minBranches")
+     .setRange(1, 10)
+     .setValue(1)
+     .setPosition(20, 370)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("maxBranches")
+     .setRange(1, 10)
+     .setValue(5)
+     .setPosition(20, 385)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("segmentMinLength")
+     .setRange(1, 200)
+     .setValue(50)
+     .setPosition(20, 400)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("segmentMaxLength")
+     .setRange(1, 700)
+     .setValue(500)
+     .setPosition(20, 415)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("segmentMinRot")
+     .setRange(0, -180)
+     .setValue(-60)
+     .setPosition(20, 430)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("segmentMaxRot")
+     .setRange(0, 180)
+     .setValue(60)
+     .setPosition(20, 445)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+  cp5.addSlider("attractionToOrigin")
+     .setRange(1, 60)
+     .setValue(15)
+     .setPosition(20, 475)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+  
+   cp5.addSlider("repulseFromMouse")
+     .setRange(1, 60)
+     .setValue(25)
+     .setPosition(20, 490)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+    
+   cp5.addSlider("mouseAffectRadius")
+     .setRange(1, 400)
+     .setValue(200)
+     .setPosition(20, 505)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+   
+   cp5.addToggle("fixEndPoints")
+     .setPosition(20, 520)
+     .setSize(10,10)
+     .setValue(true)
+     .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
+     ;
      
   //by default do not show   
   cp5.hide();

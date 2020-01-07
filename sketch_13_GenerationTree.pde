@@ -14,11 +14,19 @@ int segmentMaxRot;
 float particleSpeed;
 float particleSize;
 int particleTrailSize;
+boolean renderParticles;
+boolean syncParticles;
+boolean disperseParticles;
 
 int lineRandX;
 int lineRandY;
 int lineWeight;
 int lineOpacity;
+
+float attractionToOrigin; 
+float repulseFromMouse;
+float mouseAffectRadius;
+boolean fixEndPoints;
 
 void setup(){
   //size(500,500); 
@@ -38,14 +46,22 @@ void setup(){
   segmentMinRot = -60;
   segmentMaxRot = 60;
   
-  particleSpeed = 0.01;
+  particleSpeed = 0.005;
   particleSize = 8.0;
   particleTrailSize = 1;
+  renderParticles = true;
+  syncParticles = false;
+  disperseParticles = true;
   
   lineRandX = 10;
   lineRandY = 10;
   lineWeight = 3;
   lineOpacity = 100;
+  
+  attractionToOrigin = 15;
+  repulseFromMouse = 25;
+  mouseAffectRadius = 200;
+  fixEndPoints = true;
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
@@ -65,9 +81,21 @@ void draw() {
     color c = cpP.getColorValue();
     
     particles.get(i).update();
-    particles.get(i).display(c);
+    
+    if(syncParticles){
+      particles.get(i).reset(0.0);
+    } 
+    
+    if(disperseParticles){
+      particles.get(i).disperse();
+    }
+    
+    if(renderParticles){
+      particles.get(i).display(c);
+    }
   }
   
+  println(syncParticles);
 } //<>//
 
 void keyPressed(){

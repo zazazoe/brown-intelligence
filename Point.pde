@@ -65,4 +65,14 @@ class Point{
       brightness += stepSize;
     }
   }
+  
+  void reset(float _t){
+    t = _t;
+    tPos = _t;  
+  }
+  
+  void disperse(){
+    tStep = tStep * ((int)random(0,2)* 2 -1);
+    tPos = random(0,PI);
+  }
 }
