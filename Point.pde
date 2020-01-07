@@ -21,6 +21,7 @@ class Point{
   float burstSize;
   
   int success;
+  int side;
 
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
   Point(float _tStep, int _idNr, float _minSize, float _maxSize, int _trail){   
@@ -46,11 +47,11 @@ class Point{
     
     burst = false;
     bursttPos = 0.0;
-    bursttStep = _tStep*5;
+    bursttStep = _tStep*15;
     burstPos = new PVector(0,0);
-    burstSize = 1.5*_maxSize;
+    burstSize = 1.2*_maxSize;
     
-    success = (int)random(0,2);
+    success = (int)random(0,4);
   }
   
   void update() {
@@ -61,22 +62,16 @@ class Point{
       if (tPosses[i][0] > PI){
         if(success == 1){
           tPosses[i][1] = tPosses[i][1]*-1;
-          if(lineOpacities[idNr] < 1.0){
-            lineOpacities[idNr] += 0.1;
-          }
+          lineOpacities[idNr] = 1.0;
         } else {
           tPosses[i][0] = 0.0;
-          success = (int)random(0,2);
-          if(lineOpacities[idNr] >0.0){
-            lineOpacities[idNr] -= 0.1;
-          }
+          success = (int)random(0,4);
         }
         tPosses[i][0] += tPosses[i][1];
       }
       if (tPosses[i][0] < 0){
         tPosses[i][1] = tPosses[i][1]*-1;
-        success = (int)random(0,2);
-        if(idNr == 0) println("success" + success);
+        success = (int)random(0,4);
       }
       
       tPosses[i][0] += tPosses[i][1];
@@ -99,6 +94,10 @@ class Point{
          burst = false;
       }
       
+      if (bursttPos > PI-(0.02*PI) && side == LEFT_SIDE || bursttPos < 0.02*PI && side == RIGHT_SIDE){
+        lineOpacities[idNr] = 1.0;
+      }
+
       float tmp = cos(bursttPos);
       t = map(tmp, 1.0, -1.0, 0.0, 1.0);
       
@@ -173,16 +172,18 @@ class Point{
     }
   }
   
-  void particleBurst(int side){
+  void particleBurst(int _side){
     burst = true;
     
-    if(side == LEFT_SIDE){ //left is 0, right is 1
+    if(_side == LEFT_SIDE){ //left is 0, right is 1
       bursttPos = 0.0;
       bursttStep = tStep*3;
     }
-    if(side == RIGHT_SIDE){
+    if(_side == RIGHT_SIDE){
       bursttPos = PI;
       bursttStep = tStep*-3;
     }
+    
+    side = _side;
   }
 }

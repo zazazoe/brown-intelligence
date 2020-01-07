@@ -46,7 +46,7 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   lineOpacities = new Float[linesToSave.size()];
   
   for(int i=0; i<lineOpacities.length; i++){
-    lineOpacities[i] = 0.5;
+    lineOpacities[i] = 0.25;
   }
 }
 
@@ -191,6 +191,7 @@ void addPointRandomization(){
       float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
       float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
       //float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+      if(lineOpacities[i] > 0.25) lineOpacities[i] -= 0.0075;
       float a = 255*lineOpacities[i];
       
       stroke(r,g,b,a); //(1/(i+1))*cpL1.getColorValue() + (1/(curvePoints.size()/(i+1)))*cpL1.getColorValue()
@@ -228,7 +229,7 @@ void addPointRandomization(){
     
     //transfer all curve points
     for(int i = 1; i<linesToSave.get(nr).size()+1; i++){
-      if(i==1 || i==linesToSave.get(nr).size()){
+      if(i==1){
         curvePoints.get(nr)[i] = new CurvePoint(new PVector(linesToSave.get(nr).get(i-1).x,linesToSave.get(nr).get(i-1).y), false);
       } else {
         curvePoints.get(nr)[i] = new CurvePoint(new PVector(linesToSave.get(nr).get(i-1).x,linesToSave.get(nr).get(i-1).y), true);
@@ -236,7 +237,7 @@ void addPointRandomization(){
     }
     
     //duplicate last point
-    curvePoints.get(nr)[linesToSave.get(nr).size()+1] = new CurvePoint(new PVector(linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x,linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y), false);
+    curvePoints.get(nr)[linesToSave.get(nr).size()+1] = new CurvePoint(new PVector(linesToSave.get(nr).get(linesToSave.get(nr).size()-1).x,linesToSave.get(nr).get(linesToSave.get(nr).size()-1).y), true);
   }
   
   void reFillKnots(int nr){  
