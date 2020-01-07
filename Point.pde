@@ -20,7 +20,7 @@ class Point{
     idNr = _idNr;
     minSize = _minSize;
     maxSize = _maxSize;
-    tStep = _tStep * random(-1,1);
+    tStep = _tStep * ((int)random(0,2)* 2 -1);
     trail = _trail;
     
     pos = new PVector(0,0);

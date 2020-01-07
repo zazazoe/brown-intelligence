@@ -40,10 +40,10 @@ void setup(){
   
   particleSpeed = 0.01;
   particleSize = 8.0;
-  particleTrailSize = 5;
+  particleTrailSize = 1;
   
-  lineRandX = 20;
-  lineRandY = 20;
+  lineRandX = 10;
+  lineRandY = 10;
   lineWeight = 3;
   lineOpacity = 100;
   
@@ -56,9 +56,8 @@ void setup(){
 void draw() {
   background(0);
   
-  //render tree lines
-  //render(); 
   renderCrvPt();
+  updateCurves();
   
   //update points + render
   for(int i=0; i<particles.size(); i++){
@@ -68,7 +67,7 @@ void draw() {
     particles.get(i).update();
     particles.get(i).display(c);
   }
-
+  
 } //<>//
 
 void keyPressed(){
@@ -81,6 +80,10 @@ void keyPressed(){
       break;
     case 'r': //regenerate a tree
       generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
+      break;
+    case 'p':
+      println("nr knots: " + knots.get(0).length);
+      println("nr curvePoints: " + curvePoints.get(0).length);
       break;
   }
 }
