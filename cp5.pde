@@ -52,14 +52,6 @@ void setupCP5(){
      .setSize(100, 10)
      .setColorLabel(labelColor)
      ;
-     
-  cp5.addSlider("particleTrailSize")
-     .setRange(1, 10)
-     .setValue(1)
-     .setPosition(20, 235)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
   
   cp5.addToggle("renderParticles")
      .setPosition(20, 250)
