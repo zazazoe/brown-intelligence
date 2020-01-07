@@ -14,7 +14,9 @@ void setupCP5(){
   
   cp5 = new ControlP5(this);
 
-   
+  cp5.setColorBackground(color(150))
+     ;
+  
   cpL1 = cp5.addColorPicker("lines1")
           .setPosition(20, 10)
           .setColorValue(color(215, 215, 148, 128))
@@ -35,7 +37,7 @@ void setupCP5(){
           .setColorLabel(labelColor)
           .setLabel("particle color")
           ;
-          
+
   cp5.addSlider("particleSize")
      .setRange(1, 15)
      .setValue(5)
