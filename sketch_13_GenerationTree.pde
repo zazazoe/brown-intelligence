@@ -1,5 +1,8 @@
 import AULib.*;
 
+int LEFT_SIDE = 0;
+int RIGHT_SIDE = 1;
+
 float treeRot;
 PVector treeStartPoint;
 int numGenerations;
@@ -122,5 +125,21 @@ void keyPressed(){
       println("nr knots: " + knots.get(0).length);
       println("nr curvePoints: " + curvePoints.get(0).length);
       break;
+    case 'a':
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).particleBurst(LEFT_SIDE);
+      }
+      break;
+    case 's':
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).particleBurst(RIGHT_SIDE);
+      }
+      break;
+    case '1':
+      cp5.saveProperties(("test"));
+      break;
+    case '2':
+      cp5.loadProperties(("test.ser"));
+      break;  
   }
 }

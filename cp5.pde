@@ -13,6 +13,7 @@ color labelColor = color(255);
 void setupCP5(){
   
   cp5 = new ControlP5(this);
+  cp5.getProperties().setFormat(ControlP5.SERIALIZED);
 
   cp5.setColorBackground(color(150));
   

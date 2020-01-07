@@ -14,15 +14,21 @@ class Point{
   Float[][] tPosses;
   PVector[] positions;
 
+  boolean burst;
+  float bursttPos;
+  float bursttStep;
+  PVector burstPos;
+  float burstSize;
+
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
   Point(float _tStep, int _idNr, float _minSize, float _maxSize, int _trail){   
     t=0.0;
-    tPos = random(0.0, PI);
+    tPos = 0.0;
     
     idNr = _idNr;
     minSize = _minSize;
     maxSize = _maxSize;
-    tStep = _tStep * ((int)random(0,2)* 2 -1);
+    tStep = _tStep;
     trail = _trail;
     
     pos = new PVector(0,0);
@@ -35,6 +41,12 @@ class Point{
       tPosses[i][1] = _tStep * ((int)random(0,2)* 2 -1);
       positions[i] = new PVector(0,0);
     }
+    
+    burst = false;
+    bursttPos = 0.0;
+    bursttStep = _tStep*5;
+    burstPos = new PVector(0,0);
+    burstSize = 1.5*_maxSize;
   }
   
   void update() {
@@ -57,6 +69,19 @@ class Point{
       size = maxSize;
       
       positions[i] = new PVector(pos.x,pos.y);
+    }
+    
+    if(burst){
+      bursttPos += bursttStep;
+      if (bursttPos > PI || bursttPos < 0){
+         burst = false;
+      }
+      
+      float tmp = cos(bursttPos);
+      t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+      
+      burstPos.x = curves.get(idNr).getX(t);
+      burstPos.y = curves.get(idNr).getY(t);
     }
     //tPos += tStep;
     //if (tPos > PI || tPos < 0){
@@ -100,6 +125,11 @@ class Point{
       ellipse(positions[i].x,positions[i].y,size,size);
       //brightness += stepSize;
     }
+    
+    if(burst){
+      fill(c);
+      ellipse(burstPos.x, burstPos.y, burstSize, burstSize);
+    }
   }
   
   void reset(float _t){
@@ -116,8 +146,21 @@ class Point{
     tPos = random(0,PI);
     
     for(int i=0; i<tPosses.length; i++){
-      tPosses[i][0] = random(0,PI);
-      tPosses[i][1] = tStep * ((int)random(0,2)* 2 -1);
+      tPosses[i][0] = random(0,PI); //set tPos
+      tPosses[i][1] = tStep * ((int)random(0,2)* 2 -1); //set tStep
+    }
+  }
+  
+  void particleBurst(int side){
+    burst = true;
+    
+    if(side == LEFT_SIDE){ //left is 0, right is 1
+      bursttPos = 0.0;
+      bursttStep = tStep*3;
+    }
+    if(side == RIGHT_SIDE){
+      bursttPos = PI;
+      bursttStep = tStep*-3;
     }
   }
 }
