@@ -231,7 +231,7 @@ void addPointRandomization(){
   
   void updateParticleAmount(int amount) {
     if(particles.size() > amount){
-      for(int i=particles.size()-1; i>=amount-1; i--){
+      for(int i=particles.size()-1; i>=amount; i--){
         particles.remove(i);
       }
     } else if(particles.size() < amount){

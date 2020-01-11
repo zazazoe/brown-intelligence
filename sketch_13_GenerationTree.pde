@@ -147,7 +147,7 @@ void mousePressed(){
     println("enter game mode");
     
     int nr = motorCurves.length;
-    updateParticleAmount(nr);
+    updateParticleAmount(nr);    
   } else if(mode == GAME_MODE){
     mode = IDLE_MODE;
     println("enter idle mode");
