@@ -1,5 +1,6 @@
 import AULib.*;
 
+//variables
 int LEFT_SIDE = 0;
 int RIGHT_SIDE = 1;
 
