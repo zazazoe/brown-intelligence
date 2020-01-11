@@ -10,7 +10,7 @@ class Point{
   int idNr;
   
   PVector pos;
-  ArrayList<PVector> history;
+  //ArrayList<PVector> history;
   Float[][] tPosses;
   PVector[] positions;
 
@@ -35,7 +35,7 @@ class Point{
     trail = _trail;
     
     pos = new PVector(0,0);
-    history = new ArrayList<PVector>();
+    //history = new ArrayList<PVector>();
     tPosses = new Float[trail][2];
     positions = new PVector[trail];
     
@@ -54,7 +54,7 @@ class Point{
     success = (int)random(0,4);
   }
   
-  void update() {
+  void update(String curveType) {
     //calculate position
     
     for(int i=0; i<tPosses.length; i++){
@@ -62,7 +62,7 @@ class Point{
       if (tPosses[i][0] > PI){
         if(success == 1){
           tPosses[i][1] = tPosses[i][1]*-1;
-          lineOpacities[idNr] = 1.0;
+          lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
         } else {
           tPosses[i][0] = 0.0;
           success = (int)random(0,4);
@@ -79,10 +79,12 @@ class Point{
       float tmp = cos(tPosses[i][0]);
       t = map(tmp, 1.0, -1.0, 0.0, 1.0);
       
-      pos.x = curves.get(idNr).getX(t);
-      pos.y = curves.get(idNr).getY(t);
-      
-      //size = map(t, 0.0, 1.0, 3.0, maxSize);
+      if(curveType == "curve"){
+        pos = setCurvePos(curves.get(idNr), t);
+      } else if(curveType == "bezier"){
+        pos = setBezierPos(motorCurves[idNr], t);
+      }
+
       size = maxSize;
       
       positions[i] = new PVector(pos.x,pos.y);
@@ -95,32 +97,19 @@ class Point{
       }
       
       if (bursttPos > PI-(0.02*PI) && side == LEFT_SIDE || bursttPos < 0.02*PI && side == RIGHT_SIDE){
-        lineOpacities[idNr] = 1.0;
+        lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
       }
 
       float tmp = cos(bursttPos);
       t = map(tmp, 1.0, -1.0, 0.0, 1.0);
       
-      burstPos.x = curves.get(idNr).getX(t);
-      burstPos.y = curves.get(idNr).getY(t);
+      if(curveType == "curve"){
+        burstPos = setCurvePos(curves.get(idNr), t);
+      } else if(curveType == "bezier"){
+        burstPos = setBezierPos(motorCurves[idNr], t);
+      }
     }
-    //tPos += tStep;
-    //if (tPos > PI || tPos < 0){
-    //  tStep = tStep*-1;
-    //  tPos += tStep;
-    //}
-    
-    //float tmp = cos(tPos);
-    //t = map(tmp, 1.0, -1.0, 0.0, 1.0);
-    
-    //pos.x = curves.get(idNr).getX(t);
-    //pos.y = curves.get(idNr).getY(t);
-    
-    ////calculate size
-    ////size = map(abs(tmp), 1.0, 0.0, minSize, maxSize);  
-    //size = map(t, 0.0, 1.0, 3.0, particleSize);
-    
-    ////add trail
+
     //history.add(new PVector(pos.x,pos.y));
     
     //if(history.size() > trail) {
@@ -128,18 +117,24 @@ class Point{
     //}
   }
   
+  PVector setCurvePos(AUCurve curve, float t){
+    PVector p = new PVector();   
+    p.x = curve.getX(t);
+    p.y = curve.getY(t);
+    
+    return(p);
+  }
+  
+  PVector setBezierPos(AUBezier bezier, float t){
+    PVector p = new PVector();    
+    p.x = bezier.getX(t);
+    p.y = bezier.getY(t);
+    
+    return(p);
+  }
+  
   void display(color c) {
     noStroke();
-    
-    //float stepSize = 255/trail;
-    //float brightness = stepSize;
-    
-    //DRAW points  
-    //for(int i=0; i<history.size(); i++){
-    //  fill(c,brightness);
-    //  ellipse(history.get(i).x,history.get(i).y,size,size);
-    //  brightness += stepSize;
-    //}
     
     for(int i=0; i<positions.length; i++){
       fill(c);
@@ -174,6 +169,8 @@ class Point{
   
   void particleBurst(int _side){
     burst = true;
+    
+    /*left-side and right-side will become obsolete with dedicated sensor and motor particles...*/
     
     if(_side == LEFT_SIDE){ //left is 0, right is 1
       bursttPos = 0.0;
