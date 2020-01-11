@@ -6,11 +6,9 @@ ColorPicker cpL1;
 ColorPicker cpL2;
 ColorPicker cpP;
 
-Toggle t1;
-
 color labelColor = color(255);
 
-void setupCP5(){
+void initCP5(){
   
   cp5 = new ControlP5(this);
   cp5.getProperties().setFormat(ControlP5.SERIALIZED);
@@ -172,8 +170,8 @@ void setupCP5(){
      ;
     
    cp5.addSlider("mouseAffectRadius")
-     .setRange(1, 400)
-     .setValue(200)
+     .setRange(1, 800)
+     .setValue(400)
      .setPosition(20, 505)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -186,6 +184,23 @@ void setupCP5(){
      .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
      ;
      
+  cp5.addSlider("lineOpacityMin")
+     .setRange(0.0, 1.0)
+     .setValue(0.4)
+     .setPosition(20, 550)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+     
+  cp5.addSlider("lineFadeOutSpeed")
+     .setRange(0.001, 0.10)
+     .setValue(0.005)
+     .setPosition(20, 565)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
+     
+  
   //by default do not show   
   cp5.hide();
 }

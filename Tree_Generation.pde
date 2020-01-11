@@ -46,7 +46,7 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   lineOpacities = new Float[linesToSave.size()];
   
   for(int i=0; i<lineOpacities.length; i++){
-    lineOpacities[i] = 0.25;
+    lineOpacities[i] = lineOpacityMin;
   }
 }
 
@@ -191,7 +191,7 @@ void addPointRandomization(){
       float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
       float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
       //float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
-      if(lineOpacities[i] > 0.25) lineOpacities[i] -= 0.0075;
+      if(lineOpacities[i] > lineOpacityMin) lineOpacities[i] -= lineFadeOutSpeed;
       float a = 255*lineOpacities[i];
       
       stroke(r,g,b,a); //(1/(i+1))*cpL1.getColorValue() + (1/(curvePoints.size()/(i+1)))*cpL1.getColorValue()

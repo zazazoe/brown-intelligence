@@ -3,74 +3,46 @@ import AULib.*;
 int LEFT_SIDE = 0;
 int RIGHT_SIDE = 1;
 
-float treeRot;
-PVector treeStartPoint;
-int numGenerations;
+float treeRot = -1;
+PVector treeStartPoint = new PVector(0, height/2);
+int numGenerations = 5;
 
-int minBranches;
-int maxBranches;
-float segmentMinLength;
-float segmentMaxLength;
-int segmentMinRot;
-int segmentMaxRot;
+int minBranches = 1;
+int maxBranches = 5;
+float segmentMinLength = 50;
+float segmentMaxLength = 500;
+int segmentMinRot = -60;
+int segmentMaxRot = 60;
 
-float particleSpeed;
-float particleSize;
-int particleTrailSize;
-boolean renderParticles;
-boolean syncParticles;
-boolean disperseParticles;
+float particleSpeed = 0.005;
+float particleSize = 8;
+int particleTrailSize = 1;
+boolean renderParticles = true;
+boolean syncParticles = false;
+boolean disperseParticles = true;
 
-int lineRandX;
-int lineRandY;
-int lineWeight;
-int lineOpacity;
+int lineRandX = 10;
+int lineRandY = 10;
+int lineWeight = 3;
+int lineOpacity = 100;
 Float[] lineOpacities;
 
-float attractionToOrigin; 
-float repulseFromMouse;
-float mouseAffectRadius;
-boolean fixEndPoints;
+float attractionToOrigin = 15; 
+float repulseFromMouse = 25;
+float mouseAffectRadius =200;
+boolean fixEndPoints = true;
+
+float lineOpacityMin = 0.4;
+float lineFadeOutSpeed = 0.005;
 
 void setup(){
-  //size(500,500); 
   fullScreen();
   frameRate(60);
-  smooth(8);
-  
-  //init values
-  treeRot = -1;
-  treeStartPoint = new PVector(0, height/2);
-  numGenerations = 5;
-  
-  minBranches = 1;
-  maxBranches = 5;
-  segmentMaxLength = 500;
-  segmentMinLength = 50;
-  segmentMinRot = -60;
-  segmentMaxRot = 60;
-  
-  particleSpeed = 0.005;
-  particleSize = 8.0;
-  particleTrailSize = 1;
-  renderParticles = true;
-  syncParticles = false;
-  disperseParticles = true;
-  
-  lineRandX = 10;
-  lineRandY = 10;
-  lineWeight = 3;
-  lineOpacity = 100;
-  
-  attractionToOrigin = 15;
-  repulseFromMouse = 25;
-  mouseAffectRadius = 200;
-  fixEndPoints = true;
-  
+
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
   
-  setupCP5();
+  initCP5();
 }
 
 void draw() {
@@ -81,8 +53,6 @@ void draw() {
   
   //update points + render
   for(int i=0; i<particles.size(); i++){
-    //color c = color((100/(i+1))*linesToSave.size(),0,(200/linesToSave.size())*i);
-    //color c = cpP.getColorValue();
     float f1 = map(i, 0, particles.size(), 0,1);
     float f2 = map(i, 0, particles.size(), 1,0);
     
@@ -107,8 +77,6 @@ void draw() {
       particles.get(i).display(c);
     }
   }
-  
-  println(syncParticles);
 } //<>//
 
 void keyPressed(){
@@ -137,10 +105,10 @@ void keyPressed(){
       }
       break;
     case '1':
-      cp5.saveProperties(("test"));
+      cp5.saveProperties(("parameters"));
       break;
     case '2':
-      cp5.loadProperties(("test.ser"));
+      cp5.loadProperties(("parameters.ser"));
       break;  
   }
 }
