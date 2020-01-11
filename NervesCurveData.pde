@@ -35,7 +35,7 @@ void renderNerveCurves(){
   background(0);
   
   noFill();
-  stroke(255);  
+  stroke(255,100);  
   drawCurves(motorKnots);
   drawCurves(sensorKnots);
   

@@ -4,8 +4,6 @@ ArrayList<Segment>[] points;
 ArrayList<ArrayList<PVector>> linesToSave;
 int counter;
 
-Point point;
-
 ArrayList<float[][]> knots;
 ArrayList<AUCurve> curves;
 ArrayList<Point> particles;
@@ -48,35 +46,6 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
   for(int i=0; i<lineOpacities.length; i++){
     lineOpacities[i] = lineOpacityMin;
   }
-}
-
-void reGenerateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit, float _particleSpeed, float _particleSize, int _particleTrailSize){
-  generationLimit = _generationLimit;
-  points = new ArrayList[generationLimit];
-  linesToSave = new ArrayList<ArrayList<PVector>>();
-  counter = 0;
-  
-  for(int i=0; i<generationLimit; i++){
-    points[i] = new ArrayList<Segment>();
-  }
-  
-  segment(_startLength, _startRotation, _startPoint, 0);
-  findLastSegment(points[0].get(0).p2, 1, 0);
-  reversePointArray();
-  addPointRandomization();
-  
-  for(int i=0; i<linesToSave.size(); i++){
-    knots.add(new float[linesToSave.get(i).size()+2][2]);
-    curvePoints.add(new CurvePoint[linesToSave.get(i).size()+2]);
-    
-    fillKnots(i);
-    fillCurvePoints(i);
-    
-    curves.add(new AUCurve(knots.get(i),2,false));
-  }
-  
-  //adjust nr of particles, go through particles and create new ones if not enough, and remove if too many
-  //update curves
 }
 
 void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {
@@ -258,3 +227,17 @@ void addPointRandomization(){
       curves.add(new AUCurve(knots.get(i),2,false));
     }
   }
+  
+  
+  void updateParticleAmount(int amount) {
+    if(particles.size() > amount){
+      for(int i=particles.size()-1; i>=amount-1; i--){
+        particles.remove(i);
+      }
+    } else if(particles.size() < amount){
+      for(int i = particles.size()-1; i<amount; i++){
+        particles.add(new Point(particleSpeed, i, particleSize, particleSize, particleTrailSize));
+      }
+    }
+  }
+  

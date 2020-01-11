@@ -97,7 +97,7 @@ void draw() {
     case 1:
       renderNerveCurves();
       
-      for(int i=0; i<motorCurves.length; i++){
+      for(int i=0; i<particles.size(); i++){
         color c = color(255,0,255,255);
        
         particles.get(i).update("bezier");
@@ -145,8 +145,14 @@ void mousePressed(){
   if(mode == IDLE_MODE){
     mode = GAME_MODE;
     println("enter game mode");
+    
+    int nr = motorCurves.length;
+    updateParticleAmount(nr);
   } else if(mode == GAME_MODE){
     mode = IDLE_MODE;
     println("enter idle mode");
+    
+    int nr = curves.size();
+    updateParticleAmount(nr);
   }
 }

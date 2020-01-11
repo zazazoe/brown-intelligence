@@ -62,7 +62,7 @@ class Point{
       if (tPosses[i][0] > PI){
         if(success == 1){
           tPosses[i][1] = tPosses[i][1]*-1;
-          lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
+          //lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
         } else {
           tPosses[i][0] = 0.0;
           success = (int)random(0,4);
@@ -97,7 +97,7 @@ class Point{
       }
       
       if (bursttPos > PI-(0.02*PI) && side == LEFT_SIDE || bursttPos < 0.02*PI && side == RIGHT_SIDE){
-        lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
+        //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
       }
 
       float tmp = cos(bursttPos);
