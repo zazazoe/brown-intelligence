@@ -38,7 +38,7 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
     fillCurvePoints(i);
     
     curves.add(new AUCurve(knots.get(i),2,false));
-    particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>//
+    particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>// //<>//
   }
   
   lineOpacities = new Float[linesToSave.size()];
@@ -231,11 +231,11 @@ void addPointRandomization(){
   
   void updateParticleAmount(int amount) {
     if(particles.size() > amount){
-      for(int i=particles.size()-1; i>=amount; i--){
+      for(int i=particles.size()-1; i>amount-1; i--){
         particles.remove(i);
       }
     } else if(particles.size() < amount){
-      for(int i = particles.size()-1; i<amount; i++){
+      for(int i=particles.size(); i<amount; i++){
         particles.add(new Point(particleSpeed, i, particleSize, particleSize, particleTrailSize));
       }
     }

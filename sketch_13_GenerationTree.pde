@@ -102,7 +102,10 @@ void draw() {
         color c = color(255,0,255,255);
        
         particles.get(i).update("bezier");
-        particles.get(i).display(c);
+        
+        if(renderParticles){
+          particles.get(i).display(c);
+        }
       }
       break;  
   }
@@ -145,15 +148,17 @@ void keyPressed(){
 void mousePressed(){
   if(mode == IDLE_MODE){
     mode = GAME_MODE;
+    int nr = motorCurves.length; //how to include also sensor curves
+    updateParticleAmount(nr);   
+    
     println("enter game mode");
     
-    int nr = motorCurves.length;
-    updateParticleAmount(nr);    
   } else if(mode == GAME_MODE){
     mode = IDLE_MODE;
-    println("enter idle mode");
-    
     int nr = curves.size();
     updateParticleAmount(nr);
+    
+    println("enter idle mode");
+    
   }
 }
