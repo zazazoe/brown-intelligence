@@ -145,11 +145,7 @@ void addPointRandomization(){
 }
 
   void renderCrvPt(){ 
-    for(int i=0; i<curvePoints.size(); i++) {
-      for(int j=0; j<curvePoints.get(i).length; j++){
-        curvePoints.get(i)[j].update();
-      }
-    }
+    updateCurvePoints();
     
     for(int i=0; i<knots.size(); i++) {
       //stroke((100/(i+1))*curvePoints.size(),0,(200/curvePoints.size())*i, lineOpacity);
@@ -237,6 +233,14 @@ void addPointRandomization(){
     } else if(particles.size() < amount){
       for(int i=particles.size(); i<amount; i++){
         particles.add(new Point(particleSpeed, i, particleSize, particleSize, particleTrailSize));
+      }
+    }
+  }
+  
+  void updateCurvePoints(){
+    for(int i=0; i<curvePoints.size(); i++) {
+      for(int j=0; j<curvePoints.get(i).length; j++){
+        curvePoints.get(i)[j].update();
       }
     }
   }

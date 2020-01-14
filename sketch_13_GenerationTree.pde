@@ -34,12 +34,20 @@ Float[] lineOpacities;
 float attractionToOrigin = 15; 
 float repulseFromMouse = 25;
 float mouseAffectRadius =200;
+float mouseAffectRadiusStore =400;
 boolean fixEndPoints = true;
 
 float lineOpacityMin = 0.4;
 float lineFadeOutSpeed = 0.005;
 
 int mode = IDLE_MODE;
+
+float blobx;
+float bloby;
+float blobxPrev;
+float blobyPrev;
+
+int blobCount = 0;
 
 void setup(){
   fullScreen();
@@ -55,6 +63,7 @@ void setup(){
   initNerveCurves();
   
   initCP5();
+  initCV();
 }
 
 void draw() {
@@ -109,6 +118,10 @@ void draw() {
       }
       break;  
   }
+  
+  blobx = 0;
+  bloby = 0;
+  updateCV();
 } //<>//
 
 void keyPressed(){

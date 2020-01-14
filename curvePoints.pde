@@ -14,7 +14,7 @@ class CurvePoint {
   void update(){
     
     if(move || !fixEndPoints){
-      PVector mouse = new PVector(mouseX, mouseY);
+      PVector mouse = new PVector(blobx, bloby);
      
       PVector toOrigin = PVector.sub(origin,current);
       float distOrigin = PVector.dist(origin,current);
