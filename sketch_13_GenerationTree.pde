@@ -40,7 +40,7 @@ boolean fixEndPoints = true;
 float lineOpacityMin = 0.4;
 float lineFadeOutSpeed = 0.005;
 
-int mode = IDLE_MODE;
+int mode;
 
 float blobx;
 float bloby;
@@ -52,24 +52,30 @@ int blobCountPrev = 0;
 
 void setup(){
   fullScreen();
-  frameRate(60);
+  frameRate(30);
+  mode = IDLE_MODE;
   
   //init values
   treeStartPoint = new PVector(0, height/2);;
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
+  println("generated tree");
   
   //pre-load data for nerves system curves
   initNerveCurves();
+  println("loaded nerve data");
   
   initCP5();
+  println("initiated controls");
+  
   initCV();
+  println("sensor started");
 }
 
 void draw() {
   background(0);
-  
+
   switch(mode){
     /*IDLE MODE*/
     case 0: 
@@ -128,7 +134,9 @@ void draw() {
   
   blobx = 0;
   bloby = 0;
-  updateCV();
+  updateCV();  
+
+  text(frameRate, 20, height-20);
 } //<>//
 
 void keyPressed(){

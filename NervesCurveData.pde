@@ -10,7 +10,7 @@ AUBezier[] sensorCurves;
 
 void initNerveCurves(){
   /*MOTOR.*/
-  initCurveSet("legMotor.csv", "legMotorRef.csv");
+  initCurveSet("legMotorP.csv", "legMotorRefP.csv");
   
   motorKnots = new float[nrOfCurves][][];
   motorCurves = new AUBezier[nrOfCurves];
@@ -19,7 +19,7 @@ void initNerveCurves(){
   fillCurves(motorCurves,motorKnots);
   
   /*SENSOR.*/ 
-  initCurveSet("legSensor.csv", "legSensorRef.csv");
+  initCurveSet("legSensorP.csv", "legSensorRefP.csv");
   
   sensorKnots = new float[nrOfCurves][][];
   sensorCurves = new AUBezier[nrOfCurves];

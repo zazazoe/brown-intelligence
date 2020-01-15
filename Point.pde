@@ -212,12 +212,12 @@ class Point{
     
       if(_side == LEFT_SIDE){ //left is 0, right is 1
         bursttPosses.add(new Float[2]);
-        bursttPosses.get(i)[0] = 0.0+(i*0.02);
+        bursttPosses.get(i)[0] = 0.0+(i*random(0.01,0.02)); //+(i*0.02)
         bursttPosses.get(i)[1] = tStep*8;
       }
       if(_side == RIGHT_SIDE){
         bursttPosses.add(new Float[2]);
-        bursttPosses.get(i)[0] = PI-(i*0.02);
+        bursttPosses.get(i)[0] = PI-(i*random(0.01,0.02)); //(i*0.02)
         bursttPosses.get(i)[1] = tStep*-8;
       }
       
