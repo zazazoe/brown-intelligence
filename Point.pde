@@ -14,6 +14,9 @@ class Point{
   Float[][] tPosses;
   PVector[] positions;
 
+  ArrayList<Float[]> bursttPosses;
+  ArrayList<PVector> burstPositions;
+  
   boolean burst;
   float bursttPos;
   float bursttStep;
@@ -36,7 +39,7 @@ class Point{
     
     pos = new PVector(0,0);
     //history = new ArrayList<PVector>();
-    tPosses = new Float[trail][2];
+    tPosses = new Float[trail][2]; //0 is tPos, 1 is tStep
     positions = new PVector[trail];
     
     for(int i=0; i<trail; i++){
@@ -49,7 +52,10 @@ class Point{
     bursttPos = 0.0;
     bursttStep = _tStep*15;
     burstPos = new PVector(0,0);
-    burstSize = 1.2*_maxSize;
+    burstSize = 1.5*_maxSize;
+    
+    bursttPosses = new ArrayList<Float[]>();
+    burstPositions = new ArrayList<PVector>();
     
     success = (int)random(0,4);
   }
@@ -62,7 +68,7 @@ class Point{
       if (tPosses[i][0] > PI){
         if(success == 1){
           tPosses[i][1] = tPosses[i][1]*-1;
-          //lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
+          lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
         } else {
           tPosses[i][0] = 0.0;
           success = (int)random(0,4);
@@ -89,24 +95,31 @@ class Point{
       
       positions[i] = new PVector(pos.x,pos.y);
     }
-    
-    if(burst){
-      bursttPos += bursttStep;
-      if (bursttPos > PI || bursttPos < 0){
-         burst = false;
-      }
-      
-      if (bursttPos > PI-(0.02*PI) && side == LEFT_SIDE || bursttPos < 0.02*PI && side == RIGHT_SIDE){
-        //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
-      }
 
-      float tmp = cos(bursttPos);
-      t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+    if(burstPositions.size() > 0){
+      for(int i=0; i<burstPositions.size(); i++){
+        bursttPosses.get(i)[0] += bursttPosses.get(i)[1];
+        
+        if (bursttPosses.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || bursttPosses.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
+          lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
+        }
+  
+        float tmp = cos(bursttPosses.get(i)[0]);
+        t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+        
+        if(curveType == "curve"){
+          burstPositions.set(i, setCurvePos(curves.get(idNr), t));
+        } else if(curveType == "bezier"){
+          burstPositions.set(i, setBezierPos(motorCurves[idNr], t));
+        }
+      }
       
-      if(curveType == "curve"){
-        burstPos = setCurvePos(curves.get(idNr), t);
-      } else if(curveType == "bezier"){
-        burstPos = setBezierPos(motorCurves[idNr], t);
+      for(int i=burstPositions.size()-1; i>=0; i--){
+        if (bursttPosses.get(i)[0] > PI || bursttPosses.get(i)[0] < 0){
+           bursttPosses.remove(i);
+           burstPositions.remove(i);
+           break;
+        }
       }
     }
 
@@ -142,9 +155,30 @@ class Point{
       //brightness += stepSize;
     }
     
-    if(burst){
+    if(burstPositions.size() > 0){
       fill(c);
-      ellipse(burstPos.x, burstPos.y, burstSize, burstSize);
+
+      for(int i=0; i<burstPositions.size(); i++){
+        ellipse(burstPositions.get(i).x, burstPositions.get(i).y, burstSize, burstSize);
+      }
+    }
+  }
+  
+  void display(color c, int _size, int _burstSize) {
+    noStroke();
+    
+    for(int i=0; i<positions.length; i++){
+      fill(c);
+      ellipse(positions[i].x,positions[i].y,_size,_size);
+      //brightness += stepSize;
+    }
+    
+    if(burstPositions.size() > 0){
+      fill(c);
+
+      for(int i=0; i<burstPositions.size(); i++){
+        ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
+      }
     }
   }
   
@@ -167,20 +201,22 @@ class Point{
     }
   }
   
-  void particleBurst(int _side){
-    burst = true;
+  void particleBurst(int _side){  
     
-    /*left-side and right-side will become obsolete with dedicated sensor and motor particles...*/
+    int i = bursttPosses.size();
     
-    if(_side == LEFT_SIDE){ //left is 0, right is 1
-      bursttPos = 0.0;
-      bursttStep = tStep*3;
-    }
-    if(_side == RIGHT_SIDE){
-      bursttPos = PI;
-      bursttStep = tStep*-3;
-    }
-    
-    side = _side;
+      if(_side == LEFT_SIDE){ //left is 0, right is 1
+        bursttPosses.add(new Float[2]);
+        bursttPosses.get(i)[0] = 0.0+(i*0.02);
+        bursttPosses.get(i)[1] = tStep*8;
+      }
+      if(_side == RIGHT_SIDE){
+        bursttPosses.add(new Float[2]);
+        bursttPosses.get(i)[0] = PI-(i*0.02);
+        bursttPosses.get(i)[1] = tStep*-8;
+      }
+      
+      burstPositions.add(new PVector(0,0));
+      side = _side;
   }
 }

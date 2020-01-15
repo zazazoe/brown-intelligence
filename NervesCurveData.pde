@@ -12,7 +12,7 @@ float t = 0;
 
 void initNerveCurves(){
   /*MOTOR.*/
-  initCurveSet("legMotorV2.csv", "legMotorRefV2.csv");
+  initCurveSet("legMotor.csv", "legMotorRef.csv");
   
   motorKnots = new float[nrOfCurves][][];
   motorCurves = new AUBezier[nrOfCurves];
@@ -21,7 +21,7 @@ void initNerveCurves(){
   fillCurves(motorCurves,motorKnots);
   
   /*SENSOR.*/ 
-  initCurveSet("legSensorV2.csv", "legSensorRefV2.csv");
+  initCurveSet("legSensor.csv", "legSensorRef.csv");
   
   sensorKnots = new float[nrOfCurves][][];
   sensorCurves = new AUBezier[nrOfCurves];
@@ -35,11 +35,12 @@ void renderNerveCurves(){
   background(0);
   
   noFill();
-  stroke(255,50,220,lineOpacityMin*255);  
-  drawCurves(motorKnots);
+  strokeWeight(1);
   stroke(50,200,255,lineOpacityMin*255); 
   drawCurves(sensorKnots);
-
+  stroke(255,50,220,lineOpacityMin*255);  
+  drawCurves(motorKnots);
+  
   t+=0.005;
   if(t>1.0) t=0.0;
 }

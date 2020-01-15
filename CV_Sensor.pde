@@ -38,6 +38,7 @@ void updateCV(){
 }
 
 void displayContoursBoundingBoxes() {  
+  blobCountPrev=blobCount;
   blobCount=0;
   
   for (int i=0; i<contours.size(); i++) {
@@ -63,11 +64,24 @@ void displayContoursBoundingBoxes() {
     //noStroke();
     //fill(255, 255, 0);
     //ellipse(blobx, bloby, 10,10);
+    
+    //send pulse on first blob appears on left or right
+    if(blobCountPrev == 0 && blobCount == 0){
+      if(blobx <= width/2){
+        for(int j=0; j<particles.size(); j++){
+          particles.get(j).particleBurst(LEFT_SIDE);
+        }
+      } else if(blobx > width/2) {
+        for(int j=0; j<particles.size(); j++){
+          particles.get(j).particleBurst(RIGHT_SIDE);
+        }
+      }
+    }
         
     updateCurvePoints();
     blobCount++;  
   }
   
-  println(blobCount);
+  //println(blobCount);
 
 }

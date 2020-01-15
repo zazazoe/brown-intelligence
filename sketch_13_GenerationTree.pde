@@ -48,6 +48,7 @@ float blobxPrev;
 float blobyPrev;
 
 int blobCount = 0;
+int blobCountPrev = 0;
 
 void setup(){
   fullScreen();
@@ -113,7 +114,7 @@ void draw() {
         particles.get(i).update("bezier");
         
         if(renderParticles){
-          particles.get(i).display(c);
+          particles.get(i).display(c, 2, 3);
         }
       }
       break;  
