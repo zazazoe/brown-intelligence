@@ -8,8 +8,6 @@ AUBezier[] motorCurves;
 float[][][] sensorKnots;
 AUBezier[] sensorCurves;
 
-float t = 0;
-
 void initNerveCurves(){
   /*MOTOR.*/
   initCurveSet("legMotor.csv", "legMotorRef.csv");
@@ -35,14 +33,11 @@ void renderNerveCurves(){
   background(0);
   
   noFill();
-  strokeWeight(1);
+  strokeWeight(1.5);
   stroke(50,200,255,lineOpacityMin*255); 
   drawCurves(sensorKnots);
   stroke(255,50,220,lineOpacityMin*255);  
   drawCurves(motorKnots);
-  
-  t+=0.005;
-  if(t>1.0) t=0.0;
 }
 
 void initCurveSet(String CurveData, String CurveRef){
@@ -86,11 +81,5 @@ void drawCurves(float knots[][][]){
                    knots[i][j+2][0], knots[i][j+2][1]);
     }
     endShape();
-  }
-}
-
-void drawParticles(AUBezier[] curves){
-  for(int i=0; i<curves.length; i++){
-    ellipse(curves[i].getX(t), curves[i].getY(t), 10,10);
   }
 }

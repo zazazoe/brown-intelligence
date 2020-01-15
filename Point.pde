@@ -68,7 +68,7 @@ class Point{
       if (tPosses[i][0] > PI){
         if(success == 1){
           tPosses[i][1] = tPosses[i][1]*-1;
-          lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
+          //lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
         } else {
           tPosses[i][0] = 0.0;
           success = (int)random(0,4);
@@ -88,7 +88,11 @@ class Point{
       if(curveType == "curve"){
         pos = setCurvePos(curves.get(idNr), t);
       } else if(curveType == "bezier"){
-        pos = setBezierPos(motorCurves[idNr], t);
+        if(idNr>motorCurves.length-1){
+          pos = setBezierPos(sensorCurves[idNr-motorCurves.length], t);
+        } else {
+          pos = setBezierPos(motorCurves[idNr], t);
+        }
       }
 
       size = maxSize;
@@ -101,7 +105,7 @@ class Point{
         bursttPosses.get(i)[0] += bursttPosses.get(i)[1];
         
         if (bursttPosses.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || bursttPosses.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
-          lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
+          //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
         }
   
         float tmp = cos(bursttPosses.get(i)[0]);
@@ -110,7 +114,11 @@ class Point{
         if(curveType == "curve"){
           burstPositions.set(i, setCurvePos(curves.get(idNr), t));
         } else if(curveType == "bezier"){
-          burstPositions.set(i, setBezierPos(motorCurves[idNr], t));
+          if(idNr>motorCurves.length-1){
+            burstPositions.set(i, setBezierPos(sensorCurves[idNr-motorCurves.length], t));
+          } else {
+            burstPositions.set(i, setBezierPos(motorCurves[idNr], t));
+          }
         }
       }
       
@@ -183,9 +191,6 @@ class Point{
   }
   
   void reset(float _t){
-    //t = _t;
-    //tPos = _t; 
-    
     for(int i=0; i<tPosses.length; i++){
       tPosses[i][0] = _t;
     }

@@ -109,12 +109,18 @@ void draw() {
       renderNerveCurves();
       
       for(int i=0; i<particles.size(); i++){
-        color c = color(255,0,255,255);
-       
         particles.get(i).update("bezier");
-        
-        if(renderParticles){
+      }
+      
+      if(renderParticles){
+        color c = color(255,50,220);
+        for(int i=0; i<motorCurves.length; i++){
           particles.get(i).display(c, 2, 3);
+        }
+        
+        c = color(50,200,255);
+        for(int i = motorCurves.length; i<(motorCurves.length + sensorCurves.length - 1); i++){
+          if(i < particles.size()) particles.get(i).display(c, 2, 3); 
         }
       }
       break;  
@@ -141,13 +147,25 @@ void keyPressed(){
       println("nr curvePoints: " + curvePoints.get(0).length);
       break;
     case 'a':
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).particleBurst(LEFT_SIDE);
+      if(mode == IDLE_MODE){
+        for(int i=0; i<particles.size(); i++){
+          particles.get(i).particleBurst(LEFT_SIDE);
+        }
+      } else if(mode == GAME_MODE){
+        for(int i=0; i<motorCurves.length; i++){
+          particles.get(i).particleBurst(LEFT_SIDE);
+        }
       }
       break;
     case 's':
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).particleBurst(RIGHT_SIDE);
+      if(mode == IDLE_MODE){
+        for(int i=0; i<particles.size(); i++){
+          particles.get(i).particleBurst(RIGHT_SIDE);
+        }
+      } else if(mode == GAME_MODE){
+        for(int i = motorCurves.length; i<(motorCurves.length + sensorCurves.length - 1); i++){
+          particles.get(i).particleBurst(LEFT_SIDE);
+        }
       }
       break;
     case '1':
@@ -162,8 +180,8 @@ void keyPressed(){
 void mousePressed(){
   if(mode == IDLE_MODE){
     mode = GAME_MODE;
-    int nr = motorCurves.length; //how to include also sensor curves
-    updateParticleAmount(nr);   
+    int nr = motorCurves.length + sensorCurves.length; //how to include also sensor curves
+    updateParticleAmount(nr);  
     
     println("enter game mode");
     
