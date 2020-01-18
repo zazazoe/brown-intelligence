@@ -8,36 +8,34 @@ RealSenseCamera camera = new RealSenseCamera(this);
 
 OpenCV opencv;
 ArrayList<Contour> contours;
+boolean displayContours = false;
 
 int threshold = 65;
 int blobSizeThreshold = 100;
 int blurSize = 5;
 
+
 void initCV(){
-  camera.start(480, 270, 60, true, false);
- 
+  camera.start(480, 270, 30, true, false);
   opencv = new OpenCV(this, 480, 270);
   contours = new ArrayList<Contour>(); 
 }
 
 void updateCV(){
-  camera.readFrames();
+  if(frameCount%2==0) camera.readFrames();
   camera.createDepthImage(0, 2100);
   
   opencv.loadImage(camera.getDepthImage());
-  //src = opencv.getSnapshot();
-  
   opencv.threshold(threshold);
   opencv.dilate();
   opencv.erode();
   opencv.blur(blurSize);
   
   contours = opencv.findContours(true, true);  
-  
-  displayContoursBoundingBoxes();
+  calculateContourBoundingBoxes();
 }
 
-void displayContoursBoundingBoxes() {  
+void calculateContourBoundingBoxes() {  
   blobCountPrev=blobCount;
   blobCount=0;
   
@@ -57,13 +55,7 @@ void displayContoursBoundingBoxes() {
     blobx = rx+(rwidth/2);
     bloby = ry+(rheight/2);
     
-    stroke(255, 0, 0);
-    fill(255, 0, 0, 150);
-    strokeWeight(2);
-    rect(rx, ry, rwidth, rheight);
-    //noStroke();
-    //fill(255, 255, 0);
-    //ellipse(blobx, bloby, 10,10);
+    if(displayContours) displayCountours(rx, ry, rwidth, rheight);
     
     //send pulse on first blob appears on left or right
     if(blobCountPrev == 0 && blobCount == 0){
@@ -81,7 +73,14 @@ void displayContoursBoundingBoxes() {
     updateCurvePoints();
     blobCount++;  
   }
-  
-  //println(blobCount);
+}
 
+void displayCountours(float rx,float ry,float rwidth,float rheight){
+  stroke(255, 0, 0);
+  fill(255, 0, 0, 150);
+  strokeWeight(2);
+  rect(rx, ry, rwidth, rheight);
+  noStroke();
+  fill(255, 255, 0);
+  ellipse(blobx, bloby, 10,10);
 }

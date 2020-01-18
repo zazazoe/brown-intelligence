@@ -13,6 +13,8 @@ AUBezier[]  armMotorCurves;
 float[][][] armSensorKnots;
 AUBezier[]  armSensorCurves;
 
+PImage nervousSystem;
+
 int[]   curveIndex;
 color[] colorIndex;
 int     curveSets = 5; //update based on nr of curveSets
@@ -32,6 +34,8 @@ int gameParticleBurstSize = 3;
 void initNerveCurves(){
   curveIndex = new int[curveSets];
   colorIndex = new color[curveSets];
+  nervousSystem = loadImage("NervousSystem.png");
+  nervousSystem.resize(width, height);
   
   /*INACTIVE NERVES.*/
   initCurveSet("inactiveV3.csv", "inactiveRefV3.csv");
@@ -103,32 +107,32 @@ void initNerveCurves(){
 
 
 void renderNerveCurves(){
-  background(0);
-  
   noFill();
   strokeWeight(1.5);
   
   stroke(colorIndex[inactive]);  
-  drawCurves(inactiveKnots);
+  //drawCurves(inactiveKnots);
   
-  stroke(colorIndex[legMotor]);  
-  drawCurves(legMotorKnots);
+  //stroke(colorIndex[legMotor]);  
+  //drawCurves(legMotorKnots);
   
   stroke(colorIndex[legSensor]); 
-  drawCurves(legSensorKnots);
+  //drawCurves(legSensorKnots);
   
-  stroke(colorIndex[armMotor]); 
-  drawCurves(armMotorKnots);
+  //stroke(colorIndex[armMotor]); 
+  //drawCurves(armMotorKnots);
   
   stroke(colorIndex[armSensor]); 
-  drawCurves(armSensorKnots);
+  //drawCurves(armSensorKnots);
+  
+  
 }
 
-void renderParticlesOnCurves(){
+void renderParticlesOnNerveCurves(){
   renderParticles(inactive, inactiveCurves);
-  renderParticles(legMotor, legMotorCurves);  
+  //renderParticles(legMotor, legMotorCurves);  
   renderParticles(legSensor, legSensorCurves);
-  renderParticles(armMotor, armMotorCurves);
+  //renderParticles(armMotor, armMotorCurves);
   renderParticles(armSensor, armSensorCurves);
 }
 
