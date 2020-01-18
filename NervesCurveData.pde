@@ -27,8 +27,9 @@ int armMotor  = 3;
 int armSensor = 4;
 //etc.
 
-int gameParticleSize = 2;
-int gameParticleBurstSize = 3;
+int   gameParticleSize = 2;
+int   gameParticleBurstSize = 3;
+color gameParticleBurstColor;
 
 
 void initNerveCurves(){
@@ -94,11 +95,13 @@ void initNerveCurves(){
   curveIndex[armSensor] = armSensorCurves.length;
  
   /*DEFINE COLORS FOR EACH SET.*/
-  colorIndex[inactive]  = color(151,238,191,lineOpacityMin*255);
-  colorIndex[legMotor]  = color(151,238,191,lineOpacityMin*255);
+  colorIndex[inactive]  = color(153,51,255,lineOpacityMin*255);
+  colorIndex[legMotor]  = color(151,238,19,lineOpacityMin*255);
   colorIndex[legSensor] = color(153,51,255,lineOpacityMin*255);
-  colorIndex[armMotor]  = color(151,238,191,lineOpacityMin*255);
-  colorIndex[armSensor] = color(153,51,191,lineOpacityMin*255);
+  colorIndex[armMotor]  = color(151,238,19,lineOpacityMin*255);
+  colorIndex[armSensor] = color(153,51,255,lineOpacityMin*255);
+  
+  gameParticleBurstColor = color(225,225,225);
   
   for(int i=0; i<curveIndex.length; i++){
     nrOfNerveCurves += curveIndex[i];
@@ -110,22 +113,22 @@ void renderNerveCurves(){
   noFill();
   strokeWeight(1.5);
   
-  stroke(colorIndex[inactive]);  
+  image(nervousSystem,0,0);
+  
+  //stroke(colorIndex[inactive]);  
   //drawCurves(inactiveKnots);
   
   //stroke(colorIndex[legMotor]);  
   //drawCurves(legMotorKnots);
   
-  stroke(colorIndex[legSensor]); 
+  //stroke(colorIndex[legSensor]); 
   //drawCurves(legSensorKnots);
   
   //stroke(colorIndex[armMotor]); 
   //drawCurves(armMotorKnots);
   
-  stroke(colorIndex[armSensor]); 
+  //stroke(colorIndex[armSensor]); 
   //drawCurves(armSensorKnots);
-  
-  
 }
 
 void renderParticlesOnNerveCurves(){
@@ -148,7 +151,8 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
       particles.get(j).update(curveSet[j-i]);
       particles.get(j).display(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex])),
                                gameParticleSize,
-                               gameParticleBurstSize);
+                               gameParticleBurstSize,
+                               gameParticleBurstColor);
     } 
   }
 }

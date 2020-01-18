@@ -206,7 +206,7 @@ class Point{
     }
   }
   
-  void display(color c, int _size, int _burstSize) {
+  void display(color c, int _size, int _burstSize, color _burstColor) {
     noStroke();
     
     for(int i=0; i<positions.length; i++){
@@ -216,7 +216,7 @@ class Point{
     }
     
     if(burstPositions.size() > 0){
-      fill(c);
+      fill(_burstColor);
 
       for(int i=0; i<burstPositions.size(); i++){
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
@@ -247,12 +247,12 @@ class Point{
       if(_side == LEFT_SIDE){ //left is 0, right is 1
         bursttPosses.add(new Float[2]);
         bursttPosses.get(i)[0] = 0.0+(i*random(0.01,0.02)); //+(i*0.02)
-        bursttPosses.get(i)[1] = tStep*8;
+        bursttPosses.get(i)[1] = tStep*4;
       }
       if(_side == RIGHT_SIDE){
         bursttPosses.add(new Float[2]);
         bursttPosses.get(i)[0] = PI-(i*random(0.01,0.02)); //(i*0.02)
-        bursttPosses.get(i)[1] = tStep*-8;
+        bursttPosses.get(i)[1] = tStep*-4;
       }
       
       burstPositions.add(new PVector(0,0));

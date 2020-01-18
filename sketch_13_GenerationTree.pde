@@ -102,7 +102,6 @@ void draw() {
       
     case 1:  /*GAME MODE*/  
       renderNerveCurves();
-      image(nervousSystem,0,0);
       
       if(renderParticles){
         renderParticlesOnNerveCurves();
@@ -115,7 +114,7 @@ void draw() {
   updateCV();  
 
   fill(255);
-  text(frameRate, 20, height-20);
+  //text(frameRate, 20, height-20);
 } //<>//
 
 
