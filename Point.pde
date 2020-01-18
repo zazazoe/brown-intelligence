@@ -60,7 +60,7 @@ class Point{
     success = (int)random(0,4);
   }
   
-  void update(String curveType) {
+  void update(AUBezier curve) {
     //calculate position
     
     for(int i=0; i<tPosses.length; i++){
@@ -85,15 +85,63 @@ class Point{
       float tmp = cos(tPosses[i][0]);
       t = map(tmp, 1.0, -1.0, 0.0, 1.0);
       
-      if(curveType == "curve"){
-        pos = setCurvePos(curves.get(idNr), t);
-      } else if(curveType == "bezier"){
-        if(idNr>motorCurves.length-1){
-          pos = setBezierPos(sensorCurves[idNr-motorCurves.length], t);
-        } else {
-          pos = setBezierPos(motorCurves[idNr], t);
+      pos = setBezierPos(curve, t);
+
+      size = maxSize;
+      
+      positions[i] = new PVector(pos.x,pos.y);
+    }
+
+    if(burstPositions.size() > 0){
+      for(int i=0; i<burstPositions.size(); i++){
+        bursttPosses.get(i)[0] += bursttPosses.get(i)[1];
+        
+        if (bursttPosses.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || bursttPosses.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
+          //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
+        }
+  
+        float tmp = cos(bursttPosses.get(i)[0]);
+        t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+
+        burstPositions.set(i, setBezierPos(curve, t));
+      }
+      
+      for(int i=burstPositions.size()-1; i>=0; i--){
+        if (bursttPosses.get(i)[0] > PI || bursttPosses.get(i)[0] < 0){
+           bursttPosses.remove(i);
+           burstPositions.remove(i);
+           break;
         }
       }
+    }
+  }
+  
+  void update(AUCurve curve) {
+    //calculate position
+    
+    for(int i=0; i<tPosses.length; i++){
+      tPosses[i][0] += tPosses[i][1]; //add tstep to tpos
+      if (tPosses[i][0] > PI){
+        if(success == 1){
+          tPosses[i][1] = tPosses[i][1]*-1;
+          //lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
+        } else {
+          tPosses[i][0] = 0.0;
+          success = (int)random(0,4);
+        }
+        tPosses[i][0] += tPosses[i][1];
+      }
+      if (tPosses[i][0] < 0){
+        tPosses[i][1] = tPosses[i][1]*-1;
+        success = (int)random(0,4);
+      }
+      
+      tPosses[i][0] += tPosses[i][1];
+      
+      float tmp = cos(tPosses[i][0]);
+      t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+      
+      pos = setCurvePos(curve, t);
 
       size = maxSize;
       
@@ -111,15 +159,7 @@ class Point{
         float tmp = cos(bursttPosses.get(i)[0]);
         t = map(tmp, 1.0, -1.0, 0.0, 1.0);
         
-        if(curveType == "curve"){
-          burstPositions.set(i, setCurvePos(curves.get(idNr), t));
-        } else if(curveType == "bezier"){
-          if(idNr>motorCurves.length-1){
-            burstPositions.set(i, setBezierPos(sensorCurves[idNr-motorCurves.length], t));
-          } else {
-            burstPositions.set(i, setBezierPos(motorCurves[idNr], t));
-          }
-        }
+        burstPositions.set(i, setCurvePos(curves.get(idNr), t));
       }
       
       for(int i=burstPositions.size()-1; i>=0; i--){
@@ -130,12 +170,6 @@ class Point{
         }
       }
     }
-
-    //history.add(new PVector(pos.x,pos.y));
-    
-    //if(history.size() > trail) {
-    //  history.remove(0);
-    //}
   }
   
   PVector setCurvePos(AUCurve curve, float t){

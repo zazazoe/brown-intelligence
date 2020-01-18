@@ -38,7 +38,7 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
     fillCurvePoints(i);
     
     curves.add(new AUCurve(knots.get(i),2,false));
-    particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>// //<>//
+    particles.add(new Point(_particleSpeed, i, _particleSize, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail //<>//
   }
   
   lineOpacities = new Float[linesToSave.size()];

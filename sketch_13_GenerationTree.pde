@@ -52,7 +52,7 @@ int blobCountPrev = 0;
 
 void setup(){
   fullScreen();
-  frameRate(30);
+  frameRate(60);
   mode = IDLE_MODE;
   
   //init values
@@ -94,16 +94,8 @@ void draw() {
         
         color c = color(r,g,b,255);
         
-        particles.get(i).update("curve");
-        
-        if(syncParticles){
-          particles.get(i).reset(0.0);
-        } 
-        
-        if(disperseParticles){
-          particles.get(i).disperse();
-        }
-        
+        particles.get(i).update(curves.get(i));
+
         if(renderParticles){
           particles.get(i).display(c);
         }
@@ -113,21 +105,9 @@ void draw() {
     /*GAME MODE*/  
     case 1:
       renderNerveCurves();
-      
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).update("bezier");
-      }
-      
+
       if(renderParticles){
-        color c = color(255,50,220);
-        for(int i=0; i<motorCurves.length; i++){
-          particles.get(i).display(c, 2, 3);
-        }
-        
-        c = color(50,200,255);
-        for(int i = motorCurves.length; i<(motorCurves.length + sensorCurves.length - 1); i++){
-          if(i < particles.size()) particles.get(i).display(c, 2, 3); 
-        }
+        renderParticlesOnCurves();
       }
       break;  
   }
@@ -136,7 +116,8 @@ void draw() {
   bloby = 0;
   updateCV();  
 
-  text(frameRate, 20, height-20);
+  //fill(255);
+  //text(frameRate, 20, height-20);
 } //<>//
 
 void keyPressed(){
@@ -150,17 +131,9 @@ void keyPressed(){
     case 'r': //regenerate a tree
       generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
       break;
-    case 'p':
-      println("nr knots: " + knots.get(0).length);
-      println("nr curvePoints: " + curvePoints.get(0).length);
-      break;
     case 'a':
       if(mode == IDLE_MODE){
         for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(LEFT_SIDE);
-        }
-      } else if(mode == GAME_MODE){
-        for(int i=0; i<motorCurves.length; i++){
           particles.get(i).particleBurst(LEFT_SIDE);
         }
       }
@@ -170,10 +143,26 @@ void keyPressed(){
         for(int i=0; i<particles.size(); i++){
           particles.get(i).particleBurst(RIGHT_SIDE);
         }
-      } else if(mode == GAME_MODE){
-        for(int i = motorCurves.length; i<(motorCurves.length + sensorCurves.length - 1); i++){
-          particles.get(i).particleBurst(LEFT_SIDE);
-        }
+      }
+      break;
+    case 'f':
+      if(mode == GAME_MODE){
+        sendNerveBurst(legMotor);
+      }
+      break;
+    case 'g':
+      if(mode == GAME_MODE){
+        sendNerveBurst(legSensor);
+      }
+      break;
+    case 'h':
+      if(mode == GAME_MODE){
+        sendNerveBurst(armMotor);
+      }
+      break;
+    case 'j':
+      if(mode == GAME_MODE){
+        sendNerveBurst(armSensor);
       }
       break;
     case '1':
@@ -188,16 +177,12 @@ void keyPressed(){
 void mousePressed(){
   if(mode == IDLE_MODE){
     mode = GAME_MODE;
-    int nr = motorCurves.length + sensorCurves.length; //how to include also sensor curves
-    updateParticleAmount(nr);  
-    
+    updateParticleAmount(nrOfNerveCurves);      
     println("enter game mode");
     
   } else if(mode == GAME_MODE){
     mode = IDLE_MODE;
-    int nr = curves.size();
-    updateParticleAmount(nr);
-    
+    updateParticleAmount(curves.size());    
     println("enter idle mode");
     
   }
