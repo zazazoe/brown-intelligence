@@ -4,27 +4,22 @@ int   nrOfCurves;
 
 float[][][] inactiveKnots;
 AUBezier[]  inactiveCurves;
-float[][][] legMotorKnots;
-AUBezier[]  legMotorCurves;
-float[][][] legSensorKnots;
-AUBezier[]  legSensorCurves;
-float[][][] armMotorKnots;
-AUBezier[]  armMotorCurves;
-float[][][] armSensorKnots;
-AUBezier[]  armSensorCurves;
+
+float[][][] legKnots;
+AUBezier[]  legCurves;
+float[][][] armKnots;
+AUBezier[]  armCurves;
 
 PImage nervousSystem;
 
 int[]   curveIndex;
 color[] colorIndex;
-int     curveSets = 5; //update based on nr of curveSets
+int     curveSets = 3; //update based on nr of curveSets
 int     nrOfNerveCurves=0;
 
 int inactive  = 0;
-int legMotor  = 1;
-int legSensor = 2;
-int armMotor  = 3;
-int armSensor = 4;
+int leg       = 1;
+int arm       = 2;
 //etc.
 
 int   gameParticleSize = 2;
@@ -49,64 +44,39 @@ void initNerveCurves(){
   
   curveIndex[inactive] = inactiveCurves.length;
   
-  
-  /*LEG MOTOR.*/
-  initCurveSet("legMotorV3.csv", "legMotorRefV3.csv");
-  
-  legMotorKnots = new float[nrOfCurves][][];
-  legMotorCurves = new AUBezier[nrOfCurves];
-  
-  fillKnots(legMotorKnots);
-  fillCurves(legMotorCurves,legMotorKnots);
-  
-  curveIndex[legMotor] = legMotorCurves.length;
-  
-  /*LEG SENSOR.*/ 
+  /*LEG.*/ 
   initCurveSet("legSensorV3.csv", "legSensorRefV3.csv");
   
-  legSensorKnots = new float[nrOfCurves][][];
-  legSensorCurves = new AUBezier[nrOfCurves];
+  legKnots = new float[nrOfCurves][][];
+  legCurves = new AUBezier[nrOfCurves];
   
-  fillKnots(legSensorKnots);
-  fillCurves(legSensorCurves,legSensorKnots);
+  fillKnots(legKnots);
+  fillCurves(legCurves,legKnots);
   
-  curveIndex[legSensor] = legSensorCurves.length;
+  curveIndex[leg] = legCurves.length;
   
-  /*ARM MOTOR.*/
-  initCurveSet("armMotorV3.csv", "armMotorRefV3.csv");
-  
-  armMotorKnots = new float[nrOfCurves][][];
-  armMotorCurves = new AUBezier[nrOfCurves];
-  
-  fillKnots(armMotorKnots);
-  fillCurves(armMotorCurves,armMotorKnots);
-  
-  curveIndex[armMotor] = armMotorCurves.length;
-  
-  /*ARM SENSOR.*/ 
+  /*ARM.*/ 
   initCurveSet("armSensorV3.csv", "armSensorRefV3.csv");
   
-  armSensorKnots = new float[nrOfCurves][][];
-  armSensorCurves = new AUBezier[nrOfCurves];
+  armKnots = new float[nrOfCurves][][];
+  armCurves = new AUBezier[nrOfCurves];
   
-  fillKnots(armSensorKnots);
-  fillCurves(armSensorCurves,armSensorKnots);
+  fillKnots(armKnots);
+  fillCurves(armCurves,armKnots);
   
-  curveIndex[armSensor] = armSensorCurves.length;
+  curveIndex[arm] = armCurves.length;
  
   /*DEFINE COLORS FOR EACH SET.*/
-  colorIndex[inactive]  = color(153,51,255,lineOpacityMin*255);
-  colorIndex[legMotor]  = color(151,238,19,lineOpacityMin*255);
-  colorIndex[legSensor] = color(153,51,255,lineOpacityMin*255);
-  colorIndex[armMotor]  = color(151,238,19,lineOpacityMin*255);
-  colorIndex[armSensor] = color(153,51,255,lineOpacityMin*255);
+  colorIndex[inactive] = color(153,51,255,lineOpacityMin*255);
+  colorIndex[leg]      = color(153,51,255,lineOpacityMin*255);
+  colorIndex[arm]      = color(153,51,255,lineOpacityMin*255);
   
   gameParticleBurstColor = color(225,225,225);
   
   for(int i=0; i<curveIndex.length; i++){
     nrOfNerveCurves += curveIndex[i];
   }
-} //<>// //<>//
+} //<>//
 
 
 void renderNerveCurves(){
@@ -118,25 +88,17 @@ void renderNerveCurves(){
   //stroke(colorIndex[inactive]);  
   //drawCurves(inactiveKnots);
   
-  //stroke(colorIndex[legMotor]);  
-  //drawCurves(legMotorKnots);
-  
-  //stroke(colorIndex[legSensor]); 
-  //drawCurves(legSensorKnots);
-  
-  //stroke(colorIndex[armMotor]); 
-  //drawCurves(armMotorKnots);
-  
-  //stroke(colorIndex[armSensor]); 
-  //drawCurves(armSensorKnots);
+  //stroke(colorIndex[leg]); 
+  //drawCurves(legKnots);
+
+  //stroke(colorIndex[arm]); 
+  //drawCurves(armKnots);
 }
 
 void renderParticlesOnNerveCurves(){
   renderParticles(inactive, inactiveCurves);
-  //renderParticles(legMotor, legMotorCurves);  
-  renderParticles(legSensor, legSensorCurves);
-  //renderParticles(armMotor, armMotorCurves);
-  renderParticles(armSensor, armSensorCurves);
+  renderParticles(leg, legCurves);
+  renderParticles(arm, armCurves);
 }
 
 void renderParticles(int _curveIndex, AUBezier[] curveSet){
@@ -157,7 +119,7 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
   }
 }
 
-void sendNerveBurst(int _curveIndex){
+void sendNerveBurst(int _curveIndex, int _side){
   int i=0;
   
   for(int j=0; j<_curveIndex; j++){
@@ -166,7 +128,7 @@ void sendNerveBurst(int _curveIndex){
   
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
-      particles.get(j).particleBurst(LEFT_SIDE);
+      particles.get(j).particleBurst(_side);
     } 
   }
 }

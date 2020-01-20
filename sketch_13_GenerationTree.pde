@@ -151,19 +151,19 @@ void keyPressed(){
       break;
     case 'f':
       if(mode == GAME_MODE)
-        sendNerveBurst(legMotor);
+        sendNerveBurst(leg, RIGHT_SIDE);
       break;
     case 'g':
       if(mode == GAME_MODE)
-        sendNerveBurst(legSensor);
+        sendNerveBurst(leg, LEFT_SIDE);
       break;
     case 'h':
       if(mode == GAME_MODE)
-        sendNerveBurst(armMotor);
+        sendNerveBurst(arm, RIGHT_SIDE);
       break;
     case 'j':
       if(mode == GAME_MODE)
-        sendNerveBurst(armSensor);
+        sendNerveBurst(arm, LEFT_SIDE);
       break;
     case '1':
       cp5.saveProperties(("parameters"));

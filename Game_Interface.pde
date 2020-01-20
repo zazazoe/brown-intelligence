@@ -30,16 +30,16 @@ void checkButtons(){
   if(button>0){
     switch(button){
       case 1:
-        sendNerveBurst(armMotor);
+        sendNerveBurst(arm, RIGHT_SIDE);
         break;
       case 2:
-        sendNerveBurst(armSensor);
+        sendNerveBurst(arm, LEFT_SIDE);
         break;
       case 3:
-        sendNerveBurst(legMotor);
+        sendNerveBurst(leg, RIGHT_SIDE);
         break;
       case 4:
-        sendNerveBurst(legSensor);
+        sendNerveBurst(leg, LEFT_SIDE);
         break;
       case 100: //exit
         mode = IDLE_MODE;
