@@ -106,7 +106,7 @@ void initNerveCurves(){
   for(int i=0; i<curveIndex.length; i++){
     nrOfNerveCurves += curveIndex[i];
   }
-} //<>//
+} //<>// //<>//
 
 
 void renderNerveCurves(){
@@ -146,7 +146,7 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
     i+=curveIndex[j];
   }
   
-  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>//
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>// //<>//
     if(j < particles.size()){
       particles.get(j).update(curveSet[j-i]);
       particles.get(j).display(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex])),

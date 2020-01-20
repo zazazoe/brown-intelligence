@@ -105,6 +105,12 @@ void draw() {
       
       if(renderParticles){
         renderParticlesOnNerveCurves();
+                 }
+      
+      drawButtons();
+      
+      if(mousePressed){
+        checkButtons();
       }
       break;  
   }
@@ -173,11 +179,6 @@ void mousePressed(){
     mode = GAME_MODE;
     updateParticleAmount(nrOfNerveCurves);      
     println("enter game mode");
-    
-  } else if(mode == GAME_MODE){
-    mode = IDLE_MODE;
-    updateParticleAmount(curves.size());    
-    println("enter idle mode");
     
   }
 }
