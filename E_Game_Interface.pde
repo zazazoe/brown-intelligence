@@ -31,15 +31,19 @@ void checkButtons(){
     switch(button){
       case 1:
         sendNerveBurst(arm, RIGHT_SIDE);
+        println("arm nerves");
         break;
       case 2:
         sendNerveBurst(arm, LEFT_SIDE);
+        println("arm brain");
         break;
       case 3:
         sendNerveBurst(leg, RIGHT_SIDE);
+        println("leg nerves");
         break;
       case 4:
         sendNerveBurst(leg, LEFT_SIDE);
+        println("leg brain");
         break;
       case 100: //exit
         mode = IDLE_MODE;

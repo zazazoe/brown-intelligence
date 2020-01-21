@@ -20,6 +20,14 @@ void transitionCurves(){
   }
 }
 
+void transitionPoints(){
+  TransitionParticlesToNerveCurves();
+}
+
+////////////////////
+/*CURVE TRANSITION*/
+////////////////////
+
 void replaceExistingCurve(){
   knots.set(curveTransitionIndex, new float[linesToSave.get(curveTransitionIndex).size()+2][2]);
   curvePoints.set(curveTransitionIndex, new CurvePoint[linesToSave.get(curveTransitionIndex).size()+2]);

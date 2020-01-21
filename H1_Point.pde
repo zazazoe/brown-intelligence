@@ -24,6 +24,11 @@ class Point{
   
   int success;
   int side;
+  
+  boolean transition;
+  
+  PVector lastPoint;
+  PVector newStartPoint;
 
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
   Point(float _tStep, int _idNr, float _minSize, float _maxSize, int _trail){   
@@ -49,14 +54,15 @@ class Point{
     
     burst = false;
     bursttPos = 0.0;
-    bursttStep = _tStep*15;
+    bursttStep = _tStep*15;  //NOTE TO SELF: make this proper variable
     burstPos = new PVector(0,0);
-    burstSize = 1.5*_maxSize;
+    burstSize = 1.5*_maxSize;  //NOTE TO SELF: make this proper variable
     
     burstPosStep = new ArrayList<Float[]>();
     burstPositions = new ArrayList<PVector>();
     
-    success = (int)random(0,4);
+    success = (int)random(0,4);  //NOTE TO SELF: make this proper variable, + implement below
+    transition = false;
   }
   
   void update(AUBezier curve) {
@@ -86,12 +92,31 @@ class Point{
     if(burstPositions.size() > 0){
       for(int i=0; i<burstPositions.size(); i++){
         updateBurstParticles(i);
-        burstPositions.set(i, setCurvePos(curves.get(idNr), t));
+        burstPositions.set(i, setCurvePos(curve, t));
       }
       removeFinishedBurstParticles();
     }
   }
-
+  
+  void transition(AUBezier curve){  
+    if(transition){
+      newStartPoint = setBezierPos(curve, 0.0);
+      
+      for(int i=0; i<positions.length; i++){
+        positions[i].x = 0.95*positions[i].x + 0.05*newStartPoint.x;
+        positions[i].y = 0.95*positions[i].y + 0.05*newStartPoint.y;
+        
+        float d = positions[i].dist(newStartPoint);
+        if(d<2){
+          transition = false;
+          println("reached");
+        } else {
+          println("not reached");
+        }
+      }
+    }
+  }
+  
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
     if (tPosStep[i][0] > PI){
@@ -216,4 +241,13 @@ class Point{
       burstPositions.add(new PVector(0,0));
       side = _side;
   }
+  
+  void setTransition(boolean _transition){
+    transition = _transition;
+  }
+  
+  boolean getTransition(){
+    return transition;
+  }
+
 }
