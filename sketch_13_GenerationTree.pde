@@ -110,7 +110,7 @@ void draw() {
         }
       }
       
-      if(frameCount%5==0){ //every 10 frames
+      if(frameCount%30==0){ //every 10 frames
         transitionCurves();
       }
       break;
