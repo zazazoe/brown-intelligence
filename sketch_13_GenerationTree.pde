@@ -47,6 +47,10 @@ float   blobyPrev;
 int     blobCount = 0;
 int     blobCountPrev = 0;
 
+int     curveCounter;
+int     newTreeLength;
+int     oldTreeLength;
+boolean done = false;
 
 void setup(){
   fullScreen();
@@ -55,10 +59,17 @@ void setup(){
   //init values
   treeStartPoint = new PVector(0, height/2);;
   mode = IDLE_MODE;
+  curveCounter = 0;
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
-  println("generated tree");
+  reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
+  
+  newTreeLength = linesToSave.size();
+  oldTreeLength = curves.size();
+  
+  println("generated old tree: " + oldTreeLength);
+  println("generated new tree: " + newTreeLength);
   
   //pre-load data for nerves system curves
   initNerveCurves();
@@ -98,6 +109,10 @@ void draw() {
           particles.get(i).display(c);
         }
       }
+      
+      if(frameCount%5==0){ //every 10 frames
+        transitionCurves();
+      }
       break;
       
     case 1:  /*GAME MODE*/  
@@ -109,7 +124,7 @@ void draw() {
       
       drawButtons();
       
-      if(mousePressed){
+      if(mousePressed && frameCount%4 == 0){
         checkButtons();
       }
       break;  
@@ -133,7 +148,8 @@ void keyPressed(){
       cp5.hide();
       break;
     case 'r': //regenerate a tree
-      generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
+      //generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
+      reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
       break;
     case 'a':
       if(mode == IDLE_MODE){

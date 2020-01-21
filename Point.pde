@@ -63,6 +63,7 @@ class Point{
   void update(AUBezier curve) {
     //calculate position
     
+    //update idle particles
     for(int i=0; i<tPosses.length; i++){
       tPosses[i][0] += tPosses[i][1]; //add tstep to tpos
       if (tPosses[i][0] > PI){
@@ -91,7 +92,8 @@ class Point{
       
       positions[i] = new PVector(pos.x,pos.y);
     }
-
+    
+    //update burst particles
     if(burstPositions.size() > 0){
       for(int i=0; i<burstPositions.size(); i++){
         bursttPosses.get(i)[0] += bursttPosses.get(i)[1];
@@ -246,13 +248,13 @@ class Point{
     
       if(_side == LEFT_SIDE){ //left is 0, right is 1
         bursttPosses.add(new Float[2]);
-        bursttPosses.get(i)[0] = 0.0+(i*random(0.01,0.02)); //+(i*0.02)
-        bursttPosses.get(i)[1] = tStep*4;
+        bursttPosses.get(i)[0] = 0.0; //+(i*0.02) //+(i*random(0.01,0.02))
+        bursttPosses.get(i)[1] = tStep*random(3.5,4.5);
       }
       if(_side == RIGHT_SIDE){
         bursttPosses.add(new Float[2]);
-        bursttPosses.get(i)[0] = PI-(i*random(0.01,0.02)); //(i*0.02)
-        bursttPosses.get(i)[1] = tStep*-4;
+        bursttPosses.get(i)[0] = PI; //(i*0.02) //-(i*random(0.01,0.02))
+        bursttPosses.get(i)[1] = tStep*-random(3.5,4.5);
       }
       
       burstPositions.add(new PVector(0,0));
