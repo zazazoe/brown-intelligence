@@ -67,7 +67,6 @@ void reGenerateTree(float _startLength, float _startRotation, PVector _startPoin
 
 void renderCurves(){ 
   for(int i=0; i<knots.size(); i++) {
-    //stroke((100/(i+1))*curvePoints.size(),0,(200/curvePoints.size())*i, lineOpacity);
     float f1 = map(i, 0, knots.size(), 0,1);
     float f2 = map(i, 0, knots.size(), 1,0);
     
@@ -78,7 +77,7 @@ void renderCurves(){
     //if(lineOpacities[i] > lineOpacityMin) lineOpacities[i] -= lineFadeOutSpeed;
     float a = 255*lineOpacityMin; //*lineOpacities[i]
     
-    stroke(r,g,b,a); //(1/(i+1))*cpL1.getColorValue() + (1/(curvePoints.size()/(i+1)))*cpL1.getColorValue()
+    stroke(r,g,b,a);
     strokeWeight(lineWeight);
     noFill();
 

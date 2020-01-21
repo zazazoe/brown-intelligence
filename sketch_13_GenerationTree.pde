@@ -47,7 +47,7 @@ float   blobyPrev;
 int     blobCount = 0;
 int     blobCountPrev = 0;
 
-int     curveCounter;
+int     curveTransitionIndex;
 int     newTreeLength;
 int     oldTreeLength;
 boolean done = false;
@@ -56,30 +56,26 @@ void setup(){
   fullScreen();
   frameRate(60);
   
-  //init values
-  treeStartPoint = new PVector(0, height/2);;
+  //init parameters
+  treeStartPoint = new PVector(0, height/2);
   mode = IDLE_MODE;
-  curveCounter = 0;
+  curveTransitionIndex = 0;
+  initCP5();
+  println("initiated controls");
+  initCV();
+  println("sensor started");
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
   reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
-  
   newTreeLength = linesToSave.size();
   oldTreeLength = curves.size();
-  
   println("generated old tree: " + oldTreeLength);
   println("generated new tree: " + newTreeLength);
   
   //pre-load data for nerves system curves
   initNerveCurves();
   println("loaded nerve data");
-  
-  initCP5();
-  println("initiated controls");
-  
-  initCV();
-  println("sensor started");
 }
 
 
@@ -87,53 +83,51 @@ void draw() {
   background(0);
 
   switch(mode){
-    case 0: /*IDLE MODE*/ 
-      //update curves and render
-      updateCurves();
-      updateCurvePoints();
-      renderCurves();
+  case 0: /*IDLE MODE*/ 
+    //update curves and render
+    updateCurves();
+    updateCurvePoints();
+    renderCurves();
+    
+    //update points + render
+    for(int i=0; i<particles.size(); i++){
+      float f1 = map(i, 0, particles.size(), 0,1);
+      float f2 = map(i, 0, particles.size(), 1,0);
       
-      //update points + render
-      for(int i=0; i<particles.size(); i++){
-        float f1 = map(i, 0, particles.size(), 0,1);
-        float f2 = map(i, 0, particles.size(), 1,0);
-        
-        float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
-        float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
-        float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-        float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
-        
-        color c = color(r,g,b,255);
-        
-        particles.get(i).update(curves.get(i));
+      float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
+      float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
+      float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
+      float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+      
+      color c = color(r,g,b,255);
+      
+      particles.get(i).update(curves.get(i));
 
-        if(renderParticles){
-          particles.get(i).display(c);
-        }
-      }
-      
-      //animate curves
-      if(frameCount%30==0){ //every 10 frames
-        transitionCurves();
-      }
-      break;
-      
-    case 1:  /*GAME MODE*/  
-      renderNerveCurves();
-      
       if(renderParticles){
-        renderParticlesOnNerveCurves();
-                 }
-      
-      drawButtons();
-      
-      if(mousePressed && frameCount%4 == 0){
-        checkButtons();
+        particles.get(i).display(c);
       }
-      break;  
+    }
+    
+    //animate curves
+    if(frameCount%5==0){ //every 5 frames //REPLACE WITH SOMETHING MILLIS BASED
+      transitionCurves();
+    }
+    break;
+    
+  case 1:  /*GAME MODE*/  
+    renderNerveCurves();
+    if(renderParticles){
+      renderParticlesOnNerveCurves();
+    }
+    
+    drawButtons();
+    if(mousePressed && frameCount%4 == 0){
+      checkButtons();
+    }
+    break;  
   }
   
-  blobx = 0;
+  blobx = 0; //CHECK THIS OUT AND CLEAN UP
   bloby = 0;
   updateCV();  
 
@@ -141,6 +135,12 @@ void draw() {
   //text(frameRate, 20, height-20);
 } //<>//
 
+
+
+
+//////////////////////////////////////////////////
+/*DEBUG CONTROLS AND TEMPORARY INPUT REPLACEMENT*/
+//////////////////////////////////////////////////
 
 void keyPressed(){
   switch(key){
@@ -197,7 +197,6 @@ void mousePressed(){
   if(mode == IDLE_MODE){
     mode = GAME_MODE;
     updateParticleAmount(nrOfNerveCurves);      
-    println("enter game mode");
-    
+    println("enter game mode");  
   }
 }
