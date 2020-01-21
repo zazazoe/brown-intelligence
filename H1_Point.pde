@@ -6,22 +6,21 @@ class Point{
   float minSize;
   float maxSize;
   float size;
-  int trail;
-  int idNr;
+  int   trail;
+  int   idNr;
   
-  PVector pos;
-  //ArrayList<PVector> history;
-  Float[][] tPosses;
+  PVector   pos;
+  Float[][] tPosStep; 
   PVector[] positions;
 
-  ArrayList<Float[]> bursttPosses;
+  ArrayList<Float[]> burstPosStep;
   ArrayList<PVector> burstPositions;
   
   boolean burst;
-  float bursttPos;
-  float bursttStep;
+  float   bursttPos;
+  float   bursttStep;
   PVector burstPos;
-  float burstSize;
+  float   burstSize;
   
   int success;
   int side;
@@ -34,17 +33,17 @@ class Point{
     idNr = _idNr;
     minSize = _minSize;
     maxSize = _maxSize;
+    size = maxSize;
     tStep = _tStep;
     trail = _trail;
     
     pos = new PVector(0,0);
-    //history = new ArrayList<PVector>();
-    tPosses = new Float[trail][2]; //0 is tPos, 1 is tStep
+    tPosStep = new Float[trail][2]; //0 is tPos, 1 is tStep
     positions = new PVector[trail];
     
     for(int i=0; i<trail; i++){
-      tPosses[i][0] = random(0.0, PI);
-      tPosses[i][1] = _tStep * ((int)random(0,2)* 2 -1);
+      tPosStep[i][0] = random(0.0, PI);
+      tPosStep[i][1] = _tStep * ((int)random(0,2)* 2 -1);
       positions[i] = new PVector(0,0);
     }
     
@@ -54,122 +53,79 @@ class Point{
     burstPos = new PVector(0,0);
     burstSize = 1.5*_maxSize;
     
-    bursttPosses = new ArrayList<Float[]>();
+    burstPosStep = new ArrayList<Float[]>();
     burstPositions = new ArrayList<PVector>();
     
     success = (int)random(0,4);
   }
   
   void update(AUBezier curve) {
-    //calculate position
-    
-    //update idle particles
-    for(int i=0; i<tPosses.length; i++){
-      tPosses[i][0] += tPosses[i][1]; //add tstep to tpos
-      if (tPosses[i][0] > PI){
-        if(success == 1){
-          tPosses[i][1] = tPosses[i][1]*-1;
-          //lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
-        } else {
-          tPosses[i][0] = 0.0;
-          success = (int)random(0,4);
-        }
-        tPosses[i][0] += tPosses[i][1];
-      }
-      if (tPosses[i][0] < 0){
-        tPosses[i][1] = tPosses[i][1]*-1;
-        success = (int)random(0,4);
-      }
-      
-      tPosses[i][0] += tPosses[i][1];
-      
-      float tmp = cos(tPosses[i][0]);
-      t = map(tmp, 1.0, -1.0, 0.0, 1.0);
-      
+    for(int i=0; i<tPosStep.length; i++){
+      updateIdleParticles(i);
       pos = setBezierPos(curve, t);
-
-      size = maxSize;
-      
       positions[i] = new PVector(pos.x,pos.y);
     }
     
     //update burst particles
     if(burstPositions.size() > 0){
       for(int i=0; i<burstPositions.size(); i++){
-        bursttPosses.get(i)[0] += bursttPosses.get(i)[1];
-        
-        if (bursttPosses.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || bursttPosses.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
-          //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
-        }
-  
-        float tmp = cos(bursttPosses.get(i)[0]);
-        t = map(tmp, 1.0, -1.0, 0.0, 1.0);
-
+        updateBurstParticles(i);
         burstPositions.set(i, setBezierPos(curve, t));
       }
-      
-      for(int i=burstPositions.size()-1; i>=0; i--){
-        if (bursttPosses.get(i)[0] > PI || bursttPosses.get(i)[0] < 0){
-           bursttPosses.remove(i);
-           burstPositions.remove(i);
-           break;
-        }
-      }
+      removeFinishedBurstParticles();
     }
   }
   
   void update(AUCurve curve) {
-    //calculate position
-    
-    for(int i=0; i<tPosses.length; i++){
-      tPosses[i][0] += tPosses[i][1]; //add tstep to tpos
-      if (tPosses[i][0] > PI){
-        if(success == 1){
-          tPosses[i][1] = tPosses[i][1]*-1;
-          //lineOpacities[idNr] = 1.0;  /*line opacities should be replaced with more generic function*/
-        } else {
-          tPosses[i][0] = 0.0;
-          success = (int)random(0,4);
-        }
-        tPosses[i][0] += tPosses[i][1];
-      }
-      if (tPosses[i][0] < 0){
-        tPosses[i][1] = tPosses[i][1]*-1;
-        success = (int)random(0,4);
-      }
-      
-      tPosses[i][0] += tPosses[i][1];
-      
-      float tmp = cos(tPosses[i][0]);
-      t = map(tmp, 1.0, -1.0, 0.0, 1.0);
-      
+    for(int i=0; i<tPosStep.length; i++){
+      updateIdleParticles(i);
       pos = setCurvePos(curve, t);
-
-      size = maxSize;
-      
       positions[i] = new PVector(pos.x,pos.y);
     }
 
     if(burstPositions.size() > 0){
       for(int i=0; i<burstPositions.size(); i++){
-        bursttPosses.get(i)[0] += bursttPosses.get(i)[1];
-        
-        if (bursttPosses.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || bursttPosses.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
-          //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
-        }
-  
-        float tmp = cos(bursttPosses.get(i)[0]);
-        t = map(tmp, 1.0, -1.0, 0.0, 1.0);
-        
+        updateBurstParticles(i);
         burstPositions.set(i, setCurvePos(curves.get(idNr), t));
       }
-      
-      for(int i=burstPositions.size()-1; i>=0; i--){
-        if (bursttPosses.get(i)[0] > PI || bursttPosses.get(i)[0] < 0){
-           bursttPosses.remove(i);
-           burstPositions.remove(i);
-           break;
-        }
+      removeFinishedBurstParticles();
+    }
+  }
+
+  void updateIdleParticles(int i){
+    tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
+    if (tPosStep[i][0] > PI){
+      if(success == 1){
+        //lineOpacities[idNr] = 1.0;  //NOTE TO SELF: line opacities should be replaced with more generic function
+      }
+      success = (int)random(0,4);
+      tPosStep[i][0] = 0.0;
+      tPosStep[i][0] += tPosStep[i][1];
+    }
+    if (tPosStep[i][0] < 0){
+      tPosStep[i][0] = 1.0;
+      tPosStep[i][0] += tPosStep[i][1];
+      success = (int)random(0,4);
+    }
+    float tmp = cos(tPosStep[i][0]);
+    t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+  }
+  
+  void updateBurstParticles(int i){
+    burstPosStep.get(i)[0] += burstPosStep.get(i)[1];    
+    if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
+      //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
+    }
+    float tmp = cos(burstPosStep.get(i)[0]);
+    t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+  }
+  
+  void removeFinishedBurstParticles(){
+    for(int i=burstPositions.size()-1; i>=0; i--){
+      if (burstPosStep.get(i)[0] > PI || burstPosStep.get(i)[0] < 0){
+         burstPosStep.remove(i);
+         burstPositions.remove(i);
+         break;
       }
     }
   }
@@ -227,8 +183,8 @@ class Point{
   }
   
   void reset(float _t){
-    for(int i=0; i<tPosses.length; i++){
-      tPosses[i][0] = _t;
+    for(int i=0; i<tPosStep.length; i++){
+      tPosStep[i][0] = _t;
     }
   }
   
@@ -236,25 +192,25 @@ class Point{
     tStep = tStep * ((int)random(0,2)* 2 -1);
     tPos = random(0,PI);
     
-    for(int i=0; i<tPosses.length; i++){
-      tPosses[i][0] = random(0,PI); //set tPos
-      tPosses[i][1] = tStep * ((int)random(0,2)* 2 -1); //set tStep
+    for(int i=0; i<tPosStep.length; i++){
+      tPosStep[i][0] = random(0,PI); //set tPos
+      tPosStep[i][1] = tStep * ((int)random(0,2)* 2 -1); //set tStep
     }
   }
   
   void particleBurst(int _side){  
     
-    int i = bursttPosses.size();
+    int i = burstPosStep.size();
     
       if(_side == LEFT_SIDE){ //left is 0, right is 1
-        bursttPosses.add(new Float[2]);
-        bursttPosses.get(i)[0] = 0.0; //+(i*0.02) //+(i*random(0.01,0.02))
-        bursttPosses.get(i)[1] = tStep*random(3.5,4.5);
+        burstPosStep.add(new Float[2]);
+        burstPosStep.get(i)[0] = 0.0; //+(i*0.02) //+(i*random(0.01,0.02))
+        burstPosStep.get(i)[1] = tStep*random(3.5,4.5);
       }
       if(_side == RIGHT_SIDE){
-        bursttPosses.add(new Float[2]);
-        bursttPosses.get(i)[0] = PI; //(i*0.02) //-(i*random(0.01,0.02))
-        bursttPosses.get(i)[1] = tStep*-random(3.5,4.5);
+        burstPosStep.add(new Float[2]);
+        burstPosStep.get(i)[0] = PI; //(i*0.02) //-(i*random(0.01,0.02))
+        burstPosStep.get(i)[1] = tStep*-random(3.5,4.5);
       }
       
       burstPositions.add(new PVector(0,0));
