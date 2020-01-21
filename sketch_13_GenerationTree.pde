@@ -88,8 +88,10 @@ void draw() {
 
   switch(mode){
     case 0: /*IDLE MODE*/ 
-      renderCrvPt();
+      //update curves and render
       updateCurves();
+      updateCurvePoints();
+      renderCurves();
       
       //update points + render
       for(int i=0; i<particles.size(); i++){
@@ -110,6 +112,7 @@ void draw() {
         }
       }
       
+      //animate curves
       if(frameCount%30==0){ //every 10 frames
         transitionCurves();
       }
