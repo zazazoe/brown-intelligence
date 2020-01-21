@@ -7,7 +7,7 @@ int     RIGHT_SIDE = 1;
 int     IDLE_MODE = 0;
 int     GAME_MODE = 1;
 
-float   treeRot = -1;
+float   treeRot = 0;
 PVector treeStartPoint;
 int     numGenerations = 5;
 int     minBranches = 1;
@@ -109,7 +109,7 @@ void draw() {
     }
     
     //animate curves
-    if(frameCount%5==0){ //every 5 frames //REPLACE WITH SOMETHING MILLIS BASED
+    if(frameCount%5==0){ //NOTE TO SELF: replace with something millis based
       transitionCurves();
     }
     break;

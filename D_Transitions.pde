@@ -51,9 +51,10 @@ void removeExcessCurve(){
 }
 
 void prepNextTree(){
-  treeStartPoint = new PVector(0, random(0,height));
-  segmentMinRot = (int)map(treeStartPoint.y, height, 0, -80.0, 20.0);
-  segmentMaxRot = (int)map(treeStartPoint.y, height, 0, -20.0, 80.0);
+  treeStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  segmentMinRot = (int)map(treeStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
+  segmentMaxRot = (int)map(treeStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
+  treeRot = (int)map(treeStartPoint.y, height, 0, -50, 50);
   
   reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);  
   newTreeLength = linesToSave.size();
