@@ -20,8 +20,32 @@ void transitionCurves(){
   }
 }
 
-void transitionPoints(){
-  TransitionParticlesToNerveCurves();
+void transitionToGameMode(){
+  if(particles.size() <= nrOfNerveCurves){
+    println("all current particles move: " + particles.size());
+    particlesToMove = particles.size();
+  } else {
+    println("subset of current particles move: " + particles.size());
+    particlesToMove = nrOfNerveCurves;
+  }
+
+  for(int i=0; i<particlesToMove; i++){
+    particles.get(i).setTransition(true);
+  }
+  
+  updateParticleAmount(nrOfNerveCurves);
+
+  for(int i=0; i<particles.size(); i++){
+    if(!particles.get(i).getTransition()){
+      particles.get(i).setPoint();
+      particles.get(i).setIdleColor(color(0));
+    }
+    particles.get(i).clearBurst();
+  }
+
+  println("enter transition to game mode");  
+  initTransitionParticlesToNerveCurves();
+  mode = TRANSITION_GAMEMODE;
 }
 
 ////////////////////
@@ -46,7 +70,7 @@ void createNewCurve(){
   createCurvePoints(curveTransitionIndex);
   
   curves.add(new AUCurve(knots.get(curveTransitionIndex),2,false));
-  particles.add(new Point(particleSpeed, curveTransitionIndex, particleSize, particleSize, particleTrailSize));
+  particles.add(new Point(particleSpeed, curveTransitionIndex, particleSize, particleTrailSize));
 }
 
 void removeExcessCurve(){

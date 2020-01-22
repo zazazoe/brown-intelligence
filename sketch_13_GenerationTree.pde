@@ -6,6 +6,8 @@ int     RIGHT_SIDE = 1;
 
 int     IDLE_MODE = 0;
 int     GAME_MODE = 1;
+int     TRANSITION_GAMEMODE = 2;
+int     TRANSITION_IDLEMODE = 3;
 
 float   treeRot = 0;
 PVector treeStartPoint;
@@ -51,7 +53,7 @@ int     curveTransitionIndex;
 int     newTreeLength;
 int     oldTreeLength;
 
-boolean particleTransition = false;
+boolean transitioning   = false;
 int     particlesToMove = 0;
 
 void setup(){
@@ -92,42 +94,27 @@ void draw() {
     renderCurves();
     
     //update points + render
-    
-    if(particleTransition == true){
-      TransitionParticlesToNerveCurves();
-      particleTransition = false;
-      for(int i=0; i<particles.size(); i++){
-        if(particles.get(i).getTransition() == true){
-          particleTransition = true;
-        }
-      }
-      if(particleTransition == false){
-        mode = GAME_MODE;
-      }
-    } else {
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).update(curves.get(i));
-      }
-      
-      if(renderParticles){
-      for(int i=0; i<particles.size(); i++){
-        float f1 = map(i, 0, particles.size(), 0,1);
-        float f2 = map(i, 0, particles.size(), 1,0);
-        
-        float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
-        float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
-        float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-        float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
-        
-        color c = color(r,g,b,255);
-        
-        particles.get(i).display(c);
-      }
-      }
+    for(int i=0; i<particles.size(); i++){
+      particles.get(i).update(curves.get(i));
     }
     
-    
-    
+    if(renderParticles){
+    for(int i=0; i<particles.size(); i++){
+      float f1 = map(i, 0, particles.size(), 0,1);
+      float f2 = map(i, 0, particles.size(), 1,0);
+      
+      float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
+      float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
+      float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
+      float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+      
+      color c = color(r,g,b,255);
+      
+      particles.get(i).setIdleColor(c);
+      particles.get(i).setIdleSize(particleSize);
+      particles.get(i).displayIdle();
+    }
+    }
     //animate curves
     if(frameCount%5==0){ //NOTE TO SELF: replace with something millis based
       transitionCurves();
@@ -145,6 +132,20 @@ void draw() {
       checkButtons();
     }
     break;  
+    
+  case 2: /*TRANSITION TO GAME MODE*/ 
+    transitionParticlesToNerveCurves();
+    transitioning = false;
+    for(int i=0; i<particles.size(); i++){
+      if(particles.get(i).getTransition() == true){
+        transitioning = true;
+      }
+    }
+    if(!transitioning){
+      mode = GAME_MODE;
+      println("change to game mode");
+    }
+    break;
   }
   
   blobx = 0; //CHECK THIS OUT AND CLEAN UP
@@ -215,21 +216,6 @@ void keyPressed(){
 
 void mousePressed(){
   if(mode == IDLE_MODE){
-    if(particles.size() <= nrOfNerveCurves){
-      println("all current particles move: " + particles.size());
-      particleTransition = true;
-      particlesToMove = particles.size();
-    } else {
-      println("subset of current particles move: " + particles.size());
-      particleTransition = true;
-      particlesToMove = nrOfNerveCurves;
-    }
-    
-    for(int i=0; i<particlesToMove; i++){
-      particles.get(i).setTransition(true);
-    }
-
-    updateParticleAmount(nrOfNerveCurves);     
-    println("enter game mode");  
+    transitionToGameMode();
   }
 }

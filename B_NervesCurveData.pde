@@ -25,6 +25,8 @@ int   gameParticleSize = 2;
 int   gameParticleBurstSize = 3;
 color gameParticleBurstColor;
 
+float transitionSpeed = 0.99;
+
 
 void initNerveCurves(){
   curveIndex = new int[curveSets];
@@ -100,50 +102,56 @@ void renderParticlesOnNerveCurves(){
   renderParticles(arm, armCurves);
 }
 
-void TransitionParticlesToNerveCurves(){
-  int perCategory = particlesToMove/curveSets;
-  
-  for(int i=0; i<perCategory; i++){
-    particles.get(i).transition(inactiveCurves[i]);
-    particles.get(i).display(color(red(colorIndex[inactive]), green(colorIndex[inactive]), blue(colorIndex[inactive])),
-                                   gameParticleSize,
-                                   gameParticleBurstSize,
-                                   gameParticleBurstColor);
-  }
-  
-  for(int i=perCategory; i<perCategory*2; i++){
-    particles.get(i).transition(legCurves[i-perCategory]);
-    particles.get(i).display(color(red(colorIndex[leg]), green(colorIndex[leg]), blue(colorIndex[leg])),
-                                   gameParticleSize,
-                                   gameParticleBurstSize,
-                                   gameParticleBurstColor);
-  }
-  
-  for(int i=perCategory*2; i<perCategory*3; i++){
-    if(i<particlesToMove){
-      particles.get(i).transition(armCurves[i-perCategory*2]);
-      particles.get(i).display(color(red(colorIndex[arm]), green(colorIndex[arm]), blue(colorIndex[arm])),
-                                     gameParticleSize,
-                                     gameParticleBurstSize,
-                                     gameParticleBurstColor);
-    }
-  }
+void transitionParticlesToNerveCurves(){
+  transitionParticles(inactive, inactiveCurves);
+  transitionParticles(leg, legCurves);
+  transitionParticles(arm, armCurves);
+}
+
+void initTransitionParticlesToNerveCurves(){
+  initTransitionParticles(inactive, inactiveCurves);
+  initTransitionParticles(leg, legCurves);
+  initTransitionParticles(arm, armCurves);
 }
 
 void renderParticles(int _curveIndex, AUBezier[] curveSet){
   int i=0;
-  
   for(int j=0; j<_curveIndex; j++){
     i+=curveIndex[j];
   }
-  
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>//
     if(j < particles.size()){
       particles.get(j).update(curveSet[j-i]);
-      particles.get(j).display(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex])),
-                                             gameParticleSize,
-                                             gameParticleBurstSize,
-                                             gameParticleBurstColor);
+      particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex])));
+      particles.get(i).setGameSize(gameParticleSize);
+      particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
+    } 
+  }
+}
+
+void transitionParticles(int _curveIndex, AUBezier[] curveSet){
+  int i=0;
+  for(int j=0; j<_curveIndex; j++){
+    i+=curveIndex[j];
+  }
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){
+    if(j < particles.size()){
+      particles.get(j).transition(curveSet[j-i], transitionSpeed);
+      particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex])));
+      particles.get(i).setGameSize(gameParticleSize);
+      particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
+    } 
+  }
+}
+
+void initTransitionParticles(int _curveIndex, AUBezier[] curveSet){
+  int i=0;
+  for(int j=0; j<_curveIndex; j++){
+    i+=curveIndex[j];
+  }
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){
+    if(j < particles.size()){
+      particles.get(j).setTransition(true, curveSet[j-i]);
     } 
   }
 }
