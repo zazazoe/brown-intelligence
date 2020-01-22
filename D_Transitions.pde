@@ -12,6 +12,7 @@ void transitionToNextTree(){
   } else if(curveTransitionIndex < oldTreeLength){
     if(knots.size()>newTreeLength){
       removeExcessCurve();
+      curveTransitionIndex++;
     } else {
       prepNextTree();
     }
@@ -59,6 +60,9 @@ void replaceExistingCurve(){
   createCurvePoints(curveTransitionIndex);
   
   curves.set(curveTransitionIndex, new AUCurve(knots.get(curveTransitionIndex),2,false));
+  
+  curveOpacity.get(curveTransitionIndex)[1] = 0;
+  if(curveTransitionIndex+1 < curveOpacity.size()) curveOpacity.get(curveTransitionIndex+1)[1] = 1;
 }
 
 void createNewCurve(){
@@ -70,6 +74,9 @@ void createNewCurve(){
   
   curves.add(new AUCurve(knots.get(curveTransitionIndex),2,false));
   particles.add(new Point(particleSpeed, curveTransitionIndex, particleSize, particleTrailSize));
+  curveOpacity.add(new float[2]);
+  curveOpacity.get(curveTransitionIndex)[0] = 0.0;
+  curveOpacity.get(curveTransitionIndex)[1] = 0.0;
 }
 
 void removeExcessCurve(){
@@ -79,6 +86,8 @@ void removeExcessCurve(){
   curvePoints.remove(lastItem);
   curves.remove(lastItem);
   particles.remove(lastItem);
+  curveOpacity.remove(lastItem);
+  if(lastItem-1 < curveOpacity.size()) curveOpacity.get(lastItem-1)[1] = 1;
 }
 
 void prepNextTree(){

@@ -97,7 +97,7 @@ class Point{
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
-      if(success == 1)        ;//lineOpacities[idNr] = 1.0;  //NOTE TO SELF: line opacities should be replaced with more generic function
+      if(success == 1) ;//lineOpacities[idNr] = 1.0;;//lineOpacities[idNr] = 1.0;  //NOTE TO SELF: line opacities should be replaced with more generic function
       if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
       success = (int)random(0,4);
