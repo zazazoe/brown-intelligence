@@ -7,7 +7,8 @@ int     RIGHT_SIDE = 1;
 int     IDLE_MODE = 0;
 int     GAME_MODE = 1;
 int     TRANSITION_GAMEMODE = 2;
-int     TRANSITION_IDLEMODE = 3;
+int     DRAW_GAMEMODE = 3;
+int     TRANSITION_IDLEMODE = 4;
 
 float   treeRot = 0;
 PVector treeStartPoint;
@@ -21,7 +22,7 @@ int     segmentMaxRot = 60;
 
 float   particleSpeed = 0.005;
 float   particleSize = 8;
-int     particleTrailSize = 4;
+int     particleTrailSize = 1;
 boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
@@ -53,8 +54,13 @@ int     curveTransitionIndex;
 int     newTreeLength;
 int     oldTreeLength;
 
-boolean transitioning   = false;
 int     particlesToMove = 0;
+boolean switchToIdle = false;
+boolean transitionToGame = false;
+
+int startTimer = 0;
+int drawTimer = 13000;
+
 
 void setup(){
   fullScreen();
@@ -84,64 +90,66 @@ void setup(){
 
 
 void draw() {
-  background(0);
-
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    //update curves and render
+    background(0);
     updateCurves();
     updateCurvePoints();
     renderCurves();
-    
-    //update points + render
     for(int i=0; i<particles.size(); i++){
-      particles.get(i).update(curves.get(i));
+      particles.get(i).updateIdle(curves.get(i));
     }
-    
     if(renderParticles){
-    for(int i=0; i<particles.size(); i++){
-      float f1 = map(i, 0, particles.size(), 0,1);
-      float f2 = map(i, 0, particles.size(), 1,0);
-      
-      float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
-      float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
-      float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-      float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
-      
-      color c = color(r,g,b,255);
-      
-      particles.get(i).setIdleColor(c);
-      particles.get(i).setIdleSize(particleSize);
-      particles.get(i).displayIdle();
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).setIdleColor(particleColor(i));
+        particles.get(i).setIdleSize(particleSize);
+        particles.get(i).displayIdle();
+      }
     }
-    }
-    //animate curves
     if(frameCount%5==0){ //NOTE TO SELF: replace with something millis based
-      transitionCurves();
+      transitionToNextTree();
+    }
+    if(transitionToGame){
+      transitionToGameMode();
+      mode = TRANSITION_GAMEMODE;
+      transitionToGame = false;
+      println("enter transition to game mode");  
     }
     break;
     
   case 1:  /*GAME MODE*/  
+    background(0);
     renderNerveCurves();
     if(renderParticles){
       renderParticlesOnNerveCurves();
     }
-    
     drawButtons();
     if(mousePressed && frameCount%4 == 0){
       checkButtons();
     }
+    if(switchToIdle){
+      updateParticleAmount(curves.size());   
+      mode = IDLE_MODE;
+      switchToIdle = false;
+      println("enter idle mode");
+    }
     break;  
     
   case 2: /*TRANSITION TO GAME MODE*/ 
+    background(0);
     transitionParticlesToNerveCurves();
-    transitioning = false;
-    for(int i=0; i<particles.size(); i++){
-      if(particles.get(i).getTransition() == true){
-        transitioning = true;
-      }
+    if(transitionDone()){
+      startTimer = millis();
+      mode = DRAW_GAMEMODE;
+      println("change to game mode");
     }
-    if(!transitioning){
+    break;
+
+  case 3: /*DRAW GAME MODE*/ 
+    if(renderParticles){
+      renderParticlesOnNerveCurves();
+    }
+    if(millis()-startTimer>drawTimer){
       mode = GAME_MODE;
       println("change to game mode");
     }
@@ -216,6 +224,35 @@ void keyPressed(){
 
 void mousePressed(){
   if(mode == IDLE_MODE){
-    transitionToGameMode();
+    transitionToGame = true;
   }
+}
+
+
+////////////////
+/*LITTLE TASKS*/
+////////////////
+
+color particleColor(int i){
+  float f1 = map(i, 0, particles.size(), 0,1);
+  float f2 = map(i, 0, particles.size(), 1,0);
+  
+  float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
+  float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
+  float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
+  float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+  
+  color c = color(r,g,b,255);
+  
+  return c;
+}
+
+boolean transitionDone(){
+  boolean transitionDone = true;
+  for(int i=0; i<particles.size(); i++){
+    if(particles.get(i).getTransition() == true){
+      transitionDone = false;
+    }
+  }
+  return transitionDone;
 }

@@ -1,6 +1,6 @@
 
 
-void transitionCurves(){
+void transitionToNextTree(){
   if(curveTransitionIndex < newTreeLength){
     if(curveTransitionIndex < oldTreeLength){
       replaceExistingCurve();
@@ -42,10 +42,9 @@ void transitionToGameMode(){
     }
     particles.get(i).clearBurst();
   }
-
-  println("enter transition to game mode");  
+  
   initTransitionParticlesToNerveCurves();
-  mode = TRANSITION_GAMEMODE;
+  transitionToGame=true;
 }
 
 ////////////////////

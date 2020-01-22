@@ -46,9 +46,7 @@ void checkButtons(){
         println("leg brain");
         break;
       case 100: //exit
-        mode = IDLE_MODE;
-        updateParticleAmount(curves.size());    
-        println("enter idle mode");
+        switchToIdle=true;
         break;
     }
   }

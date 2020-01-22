@@ -62,7 +62,7 @@ class Point{
 /*UPDATE BASED ON CURVE OR BEZIER*/
 ///////////////////////////////////
 
-  void update(AUCurve curve) {
+  void updateIdle(AUCurve curve) {
     for(int i=0; i<positions.length; i++){
       updateIdleParticles(i);
       pos = setCurvePos(curve, t);
@@ -78,14 +78,13 @@ class Point{
     }
   }
 
-  void update(AUBezier curve) {
+  void updateGame(AUBezier curve) {
     for(int i=0; i<positions.length; i++){
       updateIdleParticles(i);
       pos = setBezierPos(curve, t);
       positions[i] = new PVector(pos.x,pos.y);
     }
     
-    //update burst particles
     if(burstPositions.size() > 0){
       for(int i=0; i<burstPositions.size(); i++){
         updateBurstParticles(i);
@@ -247,8 +246,9 @@ class Point{
     float r = red(_c1)*_speed+red(_c2)*(1-_speed);
     float g = green(_c1)*_speed+green(_c2)*(1-_speed);
     float b = blue(_c1)*_speed+blue(_c2)*(1-_speed);
+    float a = alpha(_c1)*_speed+alpha(_c2)*(1-_speed);
     
-    c = color(r, g, b);
+    c = color(r, g, b, a);
   }
   
   void transitionSize(float _s1, float _s2, float _speed){
@@ -261,7 +261,7 @@ class Point{
   
   void setTransition(boolean _transition, AUBezier curve){
     transition = _transition;
-    float newPos = random(0.0, PI);
+    float newPos = 0.0;//random(0.0, PI);
     newStartPoint = setBezierPos(curve, newPos);
     reset(newPos);
   }
