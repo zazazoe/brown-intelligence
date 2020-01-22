@@ -33,7 +33,7 @@ int     lineWeight = 3;
 int     lineOpacity = 100;
 Float[] lineOpacities;
 float   lineOpacityMin = 0.8;
-float   lineFadeOutSpeed = 0.05;
+float   lineFadeOutSpeed = 0.1;
 
 float   attractionToOrigin = 15; 
 float   repulseFromMouse = 25;
@@ -122,6 +122,13 @@ void draw() {
     }
     if(transitionToGame){
       transitionToGameMode();
+      nerveSkeleton.beginDraw(); 
+      nerveSkeleton.clear();
+      nerveSkeleton.endDraw();
+      for(int i=0; i<curveOpacity.size(); i++){
+        curveOpacity.get(i)[1] = 1.0;
+      }
+      gameParticleSize = 1;
       mode = TRANSITION_GAMEMODE;
       transitionToGame = false;
       println("enter transition to game mode");  
@@ -130,9 +137,10 @@ void draw() {
  
   case 1: /*TRANSITION TO GAME MODE*/ 
     transitionParticlesToNerveCurves();
+    renderCurves();
+    
     if(transitionDone()){
       startTimer = millis();
-      gameParticleSize = 1;
       mode = DRAW_GAMEMODE; 
       println("change game draw mode");
     }
@@ -159,7 +167,7 @@ void draw() {
     image(nerveSkeleton, 0,0);
     
     if(millis()-startTimer>fadeTimer){
-      gameParticleSize = 2;
+      gameParticleSize = 3;
       for(int i=0; i<particles.size(); i++){
         particles.get(i).setSize(gameParticleSize);
         particles.get(i).disperse();
@@ -187,6 +195,9 @@ void draw() {
         particles.get(i).setSize(gameParticleSize);
         particles.get(i).disperse();
       }
+      for(int i=0; i<curveOpacity.size(); i++){
+        curveOpacity.get(i)[1] = 0.0;
+      }
       mode = IDLE_MODE;
       switchToIdle = false;
       println("enter idle mode");
@@ -196,7 +207,7 @@ void draw() {
   
   blobx = 0; //CHECK THIS OUT AND CLEAN UP
   bloby = 0;
-  updateCV();  
+  //updateCV();  
 
   fill(255);
   //text(frameRate, 20, height-20);

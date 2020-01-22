@@ -25,7 +25,7 @@ int   gameParticleSize = 4;
 int   gameParticleBurstSize = 3;
 color gameParticleBurstColor;
 
-float transitionSpeed = 0.99;
+float transitionSpeed = 0.96;
 
 
 void initNerveCurves(){
