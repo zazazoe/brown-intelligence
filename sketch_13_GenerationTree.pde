@@ -130,6 +130,11 @@ void draw() {
     }
     if(switchToIdle){
       updateParticleAmount(curves.size());   
+      gameParticleSize = 4;
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).setSize(gameParticleSize);
+        particles.get(i).disperse();
+      }
       mode = IDLE_MODE;
       switchToIdle = false;
       println("enter idle mode");
@@ -166,7 +171,7 @@ void draw() {
     float a = map(d, 0, fadeTimer, 0, 255);
     
     fill(0,0,0,a);
-    rect(0,0,width,height);
+    rect(0,0,1440,900);
     tint(255, a);
     image(nervousSystem,0,0);
     
