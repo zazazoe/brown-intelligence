@@ -8,7 +8,7 @@ int     IDLE_MODE = 0;
 int     GAME_MODE = 1;
 int     TRANSITION_GAMEMODE = 2;
 int     DRAW_GAMEMODE = 3;
-int     TRANSITION_IDLEMODE = 4;
+int     FADE_GAMEMODE = 4;
 
 float   treeRot = 0;
 PVector treeStartPoint;
@@ -59,7 +59,8 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 
 int startTimer = 0;
-int drawTimer = 13000;
+int drawTimer = 12000;
+int fadeTimer = 2000;
 
 
 void setup(){
@@ -140,6 +141,10 @@ void draw() {
     transitionParticlesToNerveCurves();
     if(transitionDone()){
       startTimer = millis();
+      gameParticleSize = 1;
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).setSize(gameParticleSize);
+      }
       mode = DRAW_GAMEMODE;
       println("change to game mode");
     }
@@ -150,6 +155,27 @@ void draw() {
       renderParticlesOnNerveCurves();
     }
     if(millis()-startTimer>drawTimer){
+      startTimer = millis();
+      mode = FADE_GAMEMODE;
+      println("change to game mode");
+    }
+    break;
+  
+  case 4: /*FADE GAME MODE*/
+    float d = millis()-startTimer;
+    float a = map(d, 0, fadeTimer, 0, 255);
+    
+    fill(0,0,0,a);
+    rect(0,0,width,height);
+    tint(255, a);
+    image(nervousSystem,0,0);
+    
+    if(d>fadeTimer){
+      gameParticleSize = 2;
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).setSize(gameParticleSize);
+        particles.get(i).disperse();
+      }
       mode = GAME_MODE;
       println("change to game mode");
     }

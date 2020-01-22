@@ -293,4 +293,8 @@ class Point{
   void setGameSize(float _s){
     sizeGame = _s;
   }
+  
+  void setSize(float _s){
+    size = _s;
+  }
 }
