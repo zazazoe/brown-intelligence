@@ -60,8 +60,13 @@ boolean transitionToGame = false;
 
 int startTimer = 0;
 int drawTimer = 12000;
-int fadeTimer = 2000;
+int fadeTimer = 500;
 
+float tintAlpha = 255;
+float tintAlphaStep = 0.5; 
+
+  
+PGraphics nerveSkeleton;
 
 void setup(){
   fullScreen();
@@ -75,6 +80,7 @@ void setup(){
   println("initiated controls");
   initCV();
   println("sensor started");
+  nerveSkeleton = createGraphics(width, height);
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
@@ -91,9 +97,10 @@ void setup(){
 
 
 void draw() {
+  background(0);
+  
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    background(0);
     updateCurves();
     updateCurvePoints();
     renderCurves();
@@ -119,8 +126,9 @@ void draw() {
     break;
     
   case 1:  /*GAME MODE*/  
-    background(0);
-    renderNerveCurves();
+    //renderNerveCurves();
+    image(nerveSkeleton, 0,0);
+    
     if(renderParticles){
       renderParticlesOnNerveCurves();
     }
@@ -130,7 +138,7 @@ void draw() {
     }
     if(switchToIdle){
       updateParticleAmount(curves.size());   
-      gameParticleSize = 4;
+      //gameParticleSize = 4;
       for(int i=0; i<particles.size(); i++){
         particles.get(i).setSize(gameParticleSize);
         particles.get(i).disperse();
@@ -142,24 +150,29 @@ void draw() {
     break;  
     
   case 2: /*TRANSITION TO GAME MODE*/ 
-    background(0);
     transitionParticlesToNerveCurves();
     if(transitionDone()){
       startTimer = millis();
       gameParticleSize = 1;
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).setSize(gameParticleSize);
-      }
-      mode = DRAW_GAMEMODE;
-      println("change to game mode");
+      //for(int i=0; i<particles.size(); i++){
+      //  particles.get(i).setSize(gameParticleSize);
+      //}
+      mode = DRAW_GAMEMODE; 
+      println("change game draw mode");
     }
     break;
 
   case 3: /*DRAW GAME MODE*/ 
     if(renderParticles){
-      renderParticlesOnNerveCurves();
+      updateParticlesOnNerveCurves();
+      nerveSkeleton.beginDraw();
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).displayDraw(); //draw on PGraphics nerveSkeleton
+      }
+      nerveSkeleton.endDraw();
+      image(nerveSkeleton, 0,0);
     }
-    if(millis()-startTimer>drawTimer){
+    if(millis()-startTimer>drawTimer){ 
       startTimer = millis();
       mode = FADE_GAMEMODE;
       println("change to game mode");
@@ -168,12 +181,14 @@ void draw() {
   
   case 4: /*FADE GAME MODE*/
     float d = millis()-startTimer;
-    float a = map(d, 0, fadeTimer, 0, 255);
+    //float a = map(d, 0, fadeTimer, 255, 150);
+    //nerveSkeleton.beginDraw();
+    //nerveSkeleton.tint(255, tintAlpha);
+    //nerveSkeleton.endDraw();
+    image(nerveSkeleton, 0,0);
+    //tintAlpha -= tintAlphaStep;
     
-    fill(0,0,0,a);
-    rect(0,0,1440,900);
-    tint(255, a);
-    image(nervousSystem,0,0);
+    println(tintAlpha);
     
     if(d>fadeTimer){
       gameParticleSize = 2;
@@ -181,6 +196,7 @@ void draw() {
         particles.get(i).setSize(gameParticleSize);
         particles.get(i).disperse();
       }
+      
       mode = GAME_MODE;
       println("change to game mode");
     }

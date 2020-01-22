@@ -167,12 +167,16 @@ class Point{
     noStroke();
     transitionColor(c, cGame, 0.99);
     transitionSize(size, gameParticleSize, 0.99);
-      
+    
+    nerveSkeleton.noStroke();
+    c = color(red(c),green(c),blue(c),255);
+     
     for(int i=0; i<positions.length; i++){
       fill(c);
       ellipse(positions[i].x,positions[i].y,size,size);
       //brightness += stepSize;
     }
+    
     
     if(burstPositions.size() > 0){
       fill(_burstColor);
@@ -180,6 +184,20 @@ class Point{
       for(int i=0; i<burstPositions.size(); i++){
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
       }
+    }
+  }
+  
+  void displayDraw() {
+    transitionColor(c, cGame, 0.99);
+    transitionSize(size, gameParticleSize, 0.90);
+    
+    nerveSkeleton.noStroke();
+    c = color(red(c),green(c),blue(c),255);
+    
+    for(int i=0; i<positions.length; i++){
+      nerveSkeleton.fill(c);
+      nerveSkeleton.ellipse(positions[i].x,positions[i].y,size,size);
+      //brightness += stepSize;
     }
   }
 

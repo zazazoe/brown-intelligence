@@ -102,6 +102,12 @@ void renderParticlesOnNerveCurves(){
   renderParticles(arm, armCurves);
 }
 
+void updateParticlesOnNerveCurves(){
+  updateParticles(inactive, inactiveCurves);
+  updateParticles(leg, legCurves);
+  updateParticles(arm, armCurves);
+}
+
 void transitionParticlesToNerveCurves(){
   transitionParticles(inactive, inactiveCurves);
   transitionParticles(leg, legCurves);
@@ -125,6 +131,20 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
       particles.get(i).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
+    } 
+  }
+}
+
+void updateParticles(int _curveIndex, AUBezier[] curveSet){
+  int i=0;
+  for(int j=0; j<_curveIndex; j++){
+    i+=curveIndex[j];
+  }
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>//
+    if(j < particles.size()){
+      particles.get(j).updateGame(curveSet[j-i]);
+      particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
+      particles.get(i).setGameSize(gameParticleSize);
     } 
   }
 }
