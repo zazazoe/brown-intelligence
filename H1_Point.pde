@@ -136,7 +136,7 @@ class Point{
         positions[i].y = _speed*positions[i].y + (1-_speed)*newStartPoint.y;
         
         float d = positions[i].dist(newStartPoint);
-        if(d<3){
+        if(d<1){
           setTransition(false);
           tPosStep[i][1] = tStep;
         }

@@ -37,7 +37,7 @@ void initNerveCurves(){
   colorIndex = new color[curveSets];
 
   /*LEG.*/ 
-  initCurveSet("legV4.csv", "legRefV4.csv");
+  initCurveSet("nerveData/legV4.csv", "nerveData/legRefV4.csv");
   
   legKnots = new float[nrOfCurves][][];
   legCurves = new AUBezier[nrOfCurves];
@@ -48,7 +48,7 @@ void initNerveCurves(){
   curveIndex[leg] = legCurves.length;
   
   /*ARM.*/ 
-  initCurveSet("armV4.csv", "armRefV4.csv");
+  initCurveSet("nerveData/armV4.csv", "nerveData/armRefV4.csv");
   
   armKnots = new float[nrOfCurves][][];
   armCurves = new AUBezier[nrOfCurves];
@@ -59,7 +59,7 @@ void initNerveCurves(){
   curveIndex[arm] = armCurves.length;
   
   /*HEART.*/ 
-  initCurveSet("heartV4.csv", "heartRefV4.csv");
+  initCurveSet("nerveData/heartV4.csv", "nerveData/heartRefV4.csv");
   
   heartKnots = new float[nrOfCurves][][];
   heartCurves = new AUBezier[nrOfCurves];
@@ -70,7 +70,7 @@ void initNerveCurves(){
   curveIndex[heart] = heartCurves.length;
   
   /*BLADDER.*/ 
-  initCurveSet("bladderV4.csv", "bladderRefV4.csv");
+  initCurveSet("nerveData/bladderV4.csv", "nerveData/bladderRefV4.csv");
   
   bladderKnots = new float[nrOfCurves][][];
   bladderCurves = new AUBezier[nrOfCurves];
@@ -81,7 +81,7 @@ void initNerveCurves(){
   curveIndex[bladder] = bladderCurves.length;
  
   /*INACTIVE NERVES.*/
-  initCurveSet("inactiveV7.csv", "inactiveRefV7.csv");
+  initCurveSet("nerveData/inactiveV7.csv", "nerveData/inactiveRefV7.csv");
   
   inactiveKnots = new float[nrOfCurves][][];
   inactiveCurves = new AUBezier[nrOfCurves];

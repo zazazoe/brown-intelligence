@@ -59,7 +59,7 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 
 int     startTimer = 0;
-int     treeTimer  = 1000;
+int     treeTimer  = 1500;
 int     drawTimer  = 12000;
 int     fadeTimer  = 250;
 
@@ -72,6 +72,32 @@ PImage    blackOverlay;
 PImage    deviceOverlay;
 PImage    organUnderlay;
 
+PImage    UI;
+PVector   UIexitpos = new PVector(1364, 836);
+PImage    UIleg;
+PVector   UIlegpos = new PVector(59, 852);
+PImage    UIbladder;
+PVector   UIbladderpos = new PVector(59, 745);
+PImage    UIarm;
+PVector   UIarmpos = new PVector(59, 665);
+PImage    UIheart;
+PVector   UIheartpos = new PVector(59, 585);
+PImage    UIbrain;
+PVector   UIbrainpos = new PVector(59, 505);
+PImage    UIbrainBladder;
+PVector   UIbrainbladderpos = new PVector(134, 505);
+PImage    UIbrainArm;
+PVector   UIbrainarmpos = new PVector(116, 463);
+PImage    UIbrainLeg;
+PVector   UIbrainlegpos = new PVector(116, 542);
+PImage    UIdevice;
+PVector   UIdevicepos = new PVector(59, 405);
+PImage    UIdeviceRings;
+PVector   UIdeviceringspos = new PVector(121, 382);
+PImage    UIdeviceDevice;
+PVector   UIdevicedevicepos = new PVector(121, 424);
+
+
 void setup(){
   fullScreen();
   frameRate(60);
@@ -82,11 +108,7 @@ void setup(){
   curveTransitionIndex = 0;
   initCP5();
   println("initiated controls");
-  nerveSkeleton   = createGraphics(width, height);
-  nerveSkeletonBG = createGraphics(width, height);
-  blackOverlay    = loadImage("blackOverlay.png");
-  deviceOverlay   = loadImage("deviceOverlay.png");
-  organUnderlay   = loadImage("organUnderlay.png");
+  loadImages();
   startTimer = millis();
   if(sensorConnected){
     initCV();
@@ -211,13 +233,14 @@ void draw() {
     if(renderParticles){
       renderParticlesOnNerveCurves();
     }
-    
     image(deviceOverlay,0,0);
     
-    drawButtons();
-    if(mousePressed && frameCount%4 == 0){
-      checkButtons();
-    }
+    //drawButtons();
+    image(UI, 0,0);
+    //if(mousePressed && frameCount%4 == 0){
+      PVector mouse = new PVector(mouseX, mouseY);
+      checkButtons(mouse);
+    //}
     if(switchToIdle){
       updateParticleAmount(curves.size());   
       //gameParticleSize = 4;
@@ -338,4 +361,27 @@ boolean transitionDone(){
     }
   }
   return transitionDone;
+}
+
+void loadImages(){
+  //game nerve skeleton drawing
+  nerveSkeleton   = createGraphics(width, height);
+  nerveSkeletonBG = createGraphics(width, height);
+  blackOverlay    = loadImage("imageAssets/blackOverlay.png");
+  deviceOverlay   = loadImage("imageAssets/deviceOverlay.png");
+  organUnderlay   = loadImage("imageAssets/organUnderlay.png");
+  
+  //game UI
+  UI              = loadImage("imageAssets/UI/UI.png");
+  UIleg           = loadImage("imageAssets/UI/leg.png");
+  UIarm           = loadImage("imageAssets/UI/arm.png");
+  UIheart         = loadImage("imageAssets/UI/heart.png");
+  UIbladder       = loadImage("imageAssets/UI/bladder.png");
+  UIbrain         = loadImage("imageAssets/UI/brain.png");
+  UIbrainBladder  = loadImage("imageAssets/UI/brain_bladder.png");
+  UIbrainArm      = loadImage("imageAssets/UI/brain_arm.png");
+  UIbrainLeg      = loadImage("imageAssets/UI/brain_leg.png");
+  UIdevice        = loadImage("imageAssets/UI/device.png");
+  UIdeviceRings   = loadImage("imageAssets/UI/device_ring.png");
+  UIdeviceDevice  = loadImage("imageAssets/UI/device_device.png");
 }
