@@ -129,14 +129,14 @@ class Point{
 /*TRANSITION POINTS FROM IDLE TO GAME MODE*/
 ////////////////////////////////////////////
   
-  void transition(AUBezier curve, float _speed){  
+  void transition(float _speed){  
     if(transition){
       for(int i=0; i<positions.length; i++){
         positions[i].x = _speed*positions[i].x + (1-_speed)*newStartPoint.x;
         positions[i].y = _speed*positions[i].y + (1-_speed)*newStartPoint.y;
         
         float d = positions[i].dist(newStartPoint);
-        if(d<1){
+        if(d<3){
           setTransition(false);
           tPosStep[i][1] = tStep;
         }
@@ -198,6 +198,20 @@ class Point{
     for(int i=0; i<positions.length; i++){
       nerveSkeleton.fill(c);
       nerveSkeleton.ellipse(positions[i].x,positions[i].y,size,size);
+      //brightness += stepSize;
+    }
+  }
+  
+  void displayDrawBG() {
+    transitionColor(c, cGame, 0.99);
+    transitionSize(size, gameParticleSize, 0.90);
+    
+    nerveSkeletonBG.noStroke();
+    c = color(red(c),green(c),blue(c),255);
+    
+    for(int i=0; i<positions.length; i++){
+      nerveSkeletonBG.fill(c);
+      nerveSkeletonBG.ellipse(positions[i].x,positions[i].y,size,size);
       //brightness += stepSize;
     }
   }
@@ -290,6 +304,9 @@ class Point{
   }
   
   void setPoint(){
+    if(positions.length<=0){
+      println("no positions lenght");
+    }
     for(int i=0; i<positions.length;  i++){
       positions[i] = new PVector(random(0,width), random(0,height));
     }

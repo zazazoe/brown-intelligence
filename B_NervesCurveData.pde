@@ -2,23 +2,27 @@ Table curveData;
 Table curveRef;
 int   nrOfCurves;
 
-float[][][] inactiveKnots;
-AUBezier[]  inactiveCurves;
 float[][][] legKnots;
 AUBezier[]  legCurves;
 float[][][] armKnots;
 AUBezier[]  armCurves;
-
-PImage nervousSystem;
+float[][][] heartKnots;
+AUBezier[]  heartCurves;
+float[][][] bladderKnots;
+AUBezier[]  bladderCurves;
+float[][][] inactiveKnots;
+AUBezier[]  inactiveCurves;
 
 int[]   curveIndex;
 color[] colorIndex;
-int     curveSets = 3; //update based on nr of curveSets
+int     curveSets = 5; //update based on nr of curveSets
 int     nrOfNerveCurves=0;
 
-int leg       = 0;
-int arm       = 1;
-int inactive  = 2;
+int leg      = 0;
+int arm      = 1;
+int heart    = 2;
+int bladder  = 3;
+int inactive = 4;
 //etc.
 
 int   gameParticleSize = 4;
@@ -31,22 +35,9 @@ float transitionSpeed = 0.96;
 void initNerveCurves(){
   curveIndex = new int[curveSets];
   colorIndex = new color[curveSets];
-  nervousSystem = loadImage("NervousSystem.png");
-  nervousSystem.resize(width, height);
-  
-  ///*INACTIVE NERVES.*/
-  initCurveSet("inactiveV3.csv", "inactiveRefV3.csv");
-  
-  inactiveKnots = new float[nrOfCurves][][];
-  inactiveCurves = new AUBezier[nrOfCurves];
-  
-  fillKnots(inactiveKnots);
-  fillCurves(inactiveCurves,inactiveKnots);
-  
-  curveIndex[inactive] = inactiveCurves.length;
-  
+
   /*LEG.*/ 
-  initCurveSet("legSensorV3.csv", "legSensorRefV3.csv");
+  initCurveSet("legV4.csv", "legRefV4.csv");
   
   legKnots = new float[nrOfCurves][][];
   legCurves = new AUBezier[nrOfCurves];
@@ -57,7 +48,7 @@ void initNerveCurves(){
   curveIndex[leg] = legCurves.length;
   
   /*ARM.*/ 
-  initCurveSet("armSensorV3.csv", "armSensorRefV3.csv");
+  initCurveSet("armV4.csv", "armRefV4.csv");
   
   armKnots = new float[nrOfCurves][][];
   armCurves = new AUBezier[nrOfCurves];
@@ -66,11 +57,46 @@ void initNerveCurves(){
   fillCurves(armCurves,armKnots);
   
   curveIndex[arm] = armCurves.length;
+  
+  /*HEART.*/ 
+  initCurveSet("heartV4.csv", "heartRefV4.csv");
+  
+  heartKnots = new float[nrOfCurves][][];
+  heartCurves = new AUBezier[nrOfCurves];
+  
+  fillKnots(heartKnots);
+  fillCurves(heartCurves,heartKnots);
+  
+  curveIndex[heart] = heartCurves.length;
+  
+  /*BLADDER.*/ 
+  initCurveSet("bladderV4.csv", "bladderRefV4.csv");
+  
+  bladderKnots = new float[nrOfCurves][][];
+  bladderCurves = new AUBezier[nrOfCurves];
+  
+  fillKnots(bladderKnots);
+  fillCurves(bladderCurves,bladderKnots);
+  
+  curveIndex[bladder] = bladderCurves.length;
  
+  /*INACTIVE NERVES.*/
+  initCurveSet("inactiveV7.csv", "inactiveRefV7.csv");
+  
+  inactiveKnots = new float[nrOfCurves][][];
+  inactiveCurves = new AUBezier[nrOfCurves];
+  
+  fillKnots(inactiveKnots);
+  fillCurves(inactiveCurves,inactiveKnots);
+  
+  curveIndex[inactive] = inactiveCurves.length;
+  
   /*DEFINE COLORS FOR EACH SET.*/
-  colorIndex[inactive] = color(153,51,255,lineOpacityMin*255);
-  colorIndex[leg]      = color(153,51,255,lineOpacityMin*255);
-  colorIndex[arm]      = color(153,51,255,lineOpacityMin*255);
+  colorIndex[leg]      = color(153,51,255,255);
+  colorIndex[arm]      = color(153,51,255,255);
+  colorIndex[heart]      = color(153,51,255,255);
+  colorIndex[bladder]      = color(153,51,255,255);
+  colorIndex[inactive] = color(153,51,255,255); //lineOpacityMin*255
   
   gameParticleBurstColor = color(225,225,225);
   
@@ -79,46 +105,40 @@ void initNerveCurves(){
   }
 }
 
-
-void renderNerveCurves(){
-  noFill();
-  //strokeWeight(1.5);
-  
-  image(nervousSystem,0,0);
-  
-  //stroke(colorIndex[inactive]);  
-  //drawCurves(inactiveKnots);
-  
-  //stroke(colorIndex[leg]); 
-  //drawCurves(legKnots);
-
-  //stroke(colorIndex[arm]); 
-  //drawCurves(armKnots);
-}
-
 void renderParticlesOnNerveCurves(){
-  renderParticles(inactive, inactiveCurves);
   renderParticles(leg, legCurves);
   renderParticles(arm, armCurves);
+  renderParticles(heart, heartCurves);
+  renderParticles(bladder, bladderCurves);
+  renderParticles(inactive, inactiveCurves);
 }
 
 void updateParticlesOnNerveCurves(){
-  updateParticles(inactive, inactiveCurves);
   updateParticles(leg, legCurves);
   updateParticles(arm, armCurves);
+  updateParticles(heart, heartCurves);
+  updateParticles(bladder, bladderCurves);
+  updateParticles(inactive, inactiveCurves);
 }
 
 void transitionParticlesToNerveCurves(){
-  transitionParticles(inactive, inactiveCurves);
   transitionParticles(leg, legCurves);
   transitionParticles(arm, armCurves);
+  transitionParticles(heart, heartCurves);
+  transitionParticles(bladder, bladderCurves);
+  transitionParticles(inactive, inactiveCurves);
 }
 
 void initTransitionParticlesToNerveCurves(){
-  initTransitionParticles(inactive, inactiveCurves);
+  println("initialising nerve curves");
+  
   initTransitionParticles(leg, legCurves);
   initTransitionParticles(arm, armCurves);
+  initTransitionParticles(heart, heartCurves);
+  initTransitionParticles(bladder, bladderCurves);
+  initTransitionParticles(inactive, inactiveCurves);
 }
+
 
 void renderParticles(int _curveIndex, AUBezier[] curveSet){
   int i=0;
@@ -129,7 +149,7 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(i).setGameSize(gameParticleSize);
+      particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
     } 
   }
@@ -144,7 +164,7 @@ void updateParticles(int _curveIndex, AUBezier[] curveSet){
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(i).setGameSize(gameParticleSize);
+      particles.get(j).setGameSize(gameParticleSize);
     } 
   }
 }
@@ -156,9 +176,9 @@ void transitionParticles(int _curveIndex, AUBezier[] curveSet){
   }
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
-      particles.get(j).transition(curveSet[j-i], transitionSpeed);
+      particles.get(j).transition(transitionSpeed);
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(i).setGameSize(gameParticleSize);
+      particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
     } 
   }

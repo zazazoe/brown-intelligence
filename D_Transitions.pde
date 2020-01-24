@@ -34,10 +34,13 @@ void transitionToGameMode(){
     particles.get(i).setTransition(true);
   }
   
+  println("before update particle amount is: " + particles.size());
   updateParticleAmount(nrOfNerveCurves);
-
+  println("after update particle amount is: " + particles.size());
+  
   for(int i=0; i<particles.size(); i++){
     if(!particles.get(i).getTransition()){
+      println("setting up point: " + i);
       particles.get(i).setPoint();
       particles.get(i).setIdleColor(color(0));
     }

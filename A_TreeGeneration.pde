@@ -45,12 +45,6 @@ void generateTree(float _startLength, float _startRotation, PVector _startPoint,
     curveOpacity.get(i)[0] = lineOpacityMin;
     curveOpacity.get(i)[1] = 0;
   }
-  
-  //lineOpacities = new Float[linesToSave.size()];
-  
-  //for(int i=0; i<lineOpacities.length; i++){
-  //  lineOpacities[i] = lineOpacityMin;
-  //}
 }
 
 void reGenerateTree(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit){
@@ -79,8 +73,7 @@ void renderCurves(){
     float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
     float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
     float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-    //float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
-    //lineFadeOutSpeed
+
     if(curveOpacity.get(i)[1] == 1){ //phase out
         curveOpacity.get(i)[0] -= lineFadeOutSpeed;
     } else if(curveOpacity.get(i)[1] == 0) { //normal

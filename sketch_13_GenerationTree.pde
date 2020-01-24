@@ -33,7 +33,7 @@ int     lineWeight = 3;
 int     lineOpacity = 100;
 Float[] lineOpacities;
 float   lineOpacityMin = 0.8;
-float   lineFadeOutSpeed = 0.1;
+float   lineFadeOutSpeed = 5;
 
 float   attractionToOrigin = 15; 
 float   repulseFromMouse = 25;
@@ -59,15 +59,18 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 
 int     startTimer = 0;
-int     treeTimer  = 2000;
+int     treeTimer  = 1000;
 int     drawTimer  = 12000;
-int     fadeTimer  = 500;
+int     fadeTimer  = 250;
 
-//float   tintAlpha = 255;
-//float   tintAlphaStep = 0.5; 
+boolean sensorConnected = false;
 
   
 PGraphics nerveSkeleton;
+PGraphics nerveSkeletonBG;
+PImage    blackOverlay;
+PImage    deviceOverlay;
+PImage    organUnderlay;
 
 void setup(){
   fullScreen();
@@ -79,10 +82,16 @@ void setup(){
   curveTransitionIndex = 0;
   initCP5();
   println("initiated controls");
-  initCV();
-  println("sensor started");
-  nerveSkeleton = createGraphics(width, height);
+  nerveSkeleton   = createGraphics(width, height);
+  nerveSkeletonBG = createGraphics(width, height);
+  blackOverlay    = loadImage("blackOverlay.png");
+  deviceOverlay   = loadImage("deviceOverlay.png");
+  organUnderlay   = loadImage("organUnderlay.png");
   startTimer = millis();
+  if(sensorConnected){
+    initCV();
+    println("sensor started");
+  }
   
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
@@ -130,7 +139,10 @@ void draw() {
       }
       gameParticleSize = 1;
       mode = TRANSITION_GAMEMODE;
+      //initTransitionParticlesToNerveCurves();
       transitionToGame = false;
+      println("total nr of particles:" + particles.size());
+      println("total nr of nerve curves:" + nrOfNerveCurves);
       println("enter transition to game mode");  
     }
     break;
@@ -138,8 +150,8 @@ void draw() {
   case 1: /*TRANSITION TO GAME MODE*/ 
     transitionParticlesToNerveCurves();
     renderCurves();
-    
     if(transitionDone()){
+      println("ready to start drawing");
       startTimer = millis();
       mode = DRAW_GAMEMODE; 
       println("change game draw mode");
@@ -149,12 +161,22 @@ void draw() {
   case 2: /*DRAW GAME MODE*/ 
     if(renderParticles){
       updateParticlesOnNerveCurves();
+      
       nerveSkeleton.beginDraw();
-      for(int i=0; i<particles.size(); i++){
+      for(int i=0; i<(particles.size()-inactiveCurves.length); i++){
         particles.get(i).displayDraw(); //draw on PGraphics nerveSkeleton
       }
       nerveSkeleton.endDraw();
+      
+      nerveSkeletonBG.beginDraw();
+      for(int i=(particles.size()-inactiveCurves.length); i<particles.size(); i++){
+        particles.get(i).displayDrawBG(); //draw on PGraphics nerveSkeleton
+      }
+      nerveSkeletonBG.endDraw();
+      
       image(nerveSkeleton, 0,0);
+      image(blackOverlay, 0,0);
+      image(nerveSkeletonBG, 0,0);
     }
     if(millis()-startTimer>drawTimer){ 
       startTimer = millis();
@@ -165,6 +187,8 @@ void draw() {
   
   case 3: /*FADE GAME MODE*/
     image(nerveSkeleton, 0,0);
+    image(blackOverlay, 0,0);
+    image(nerveSkeletonBG, 0,0);
     
     if(millis()-startTimer>fadeTimer){
       gameParticleSize = 3;
@@ -179,11 +203,17 @@ void draw() {
     break;
     
   case 4:  /*GAME MODE*/  
-    image(nerveSkeleton, 0,0);
+    image(organUnderlay,0,0);
+    image(nerveSkeleton,0,0);
+    image(blackOverlay, 0,0);
+    image(nerveSkeletonBG, 0,0);
     
     if(renderParticles){
       renderParticlesOnNerveCurves();
     }
+    
+    image(deviceOverlay,0,0);
+    
     drawButtons();
     if(mousePressed && frameCount%4 == 0){
       checkButtons();
@@ -207,7 +237,10 @@ void draw() {
   
   blobx = 0; //CHECK THIS OUT AND CLEAN UP
   bloby = 0;
-  //updateCV();  
+  
+  if(sensorConnected){
+    updateCV(); 
+  }
 
   fill(255);
   //text(frameRate, 20, height-20);
@@ -295,6 +328,7 @@ color particleColor(int i){
   
   return c;
 }
+
 
 boolean transitionDone(){
   boolean transitionDone = true;
