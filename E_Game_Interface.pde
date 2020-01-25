@@ -188,7 +188,10 @@ int whichButton(PVector mouse){
   
   if(mouse.dist(UIexitpos)<=bigButton){
     //exit
-    button = 100;
+    if(mousePressed && millis()-timeOutStart>timeOut){
+      timeOutStart = millis();
+      button = 100;
+    }
     println("exit button pressed");
   }
   

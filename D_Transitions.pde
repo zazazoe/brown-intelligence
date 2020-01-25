@@ -21,35 +21,30 @@ void transitionToNextTree(){
   }
 }
 
-void transitionToGameMode(){
-  if(particles.size() <= nrOfNerveCurves){
-    println("all current particles move: " + particles.size());
-    particlesToMove = particles.size();
-  } else {
-    println("subset of current particles move: " + particles.size());
-    particlesToMove = nrOfNerveCurves;
-  }
+//void transitionToGameMode(){
+//  if(particles.size() <= nrOfNerveCurves){
+//    particlesToMove = particles.size();
+//  } else {
+//    particlesToMove = nrOfNerveCurves;
+//  }
 
-  for(int i=0; i<particlesToMove; i++){
-    particles.get(i).setTransition(true);
-  }
+//  for(int i=0; i<particlesToMove; i++){
+//    particles.get(i).setTransition(true);
+//  }
+
+//  updateParticleAmount(nrOfNerveCurves);
   
-  println("before update particle amount is: " + particles.size());
-  updateParticleAmount(nrOfNerveCurves);
-  println("after update particle amount is: " + particles.size());
+//  for(int i=0; i<particles.size(); i++){
+//    if(!particles.get(i).getTransition()){
+//      particles.get(i).setPoint();
+//      particles.get(i).setIdleColor(color(0));
+//    }
+//    particles.get(i).clearBurst();
+//  }
   
-  for(int i=0; i<particles.size(); i++){
-    if(!particles.get(i).getTransition()){
-      println("setting up point: " + i);
-      particles.get(i).setPoint();
-      particles.get(i).setIdleColor(color(0));
-    }
-    particles.get(i).clearBurst();
-  }
-  
-  initTransitionParticlesToNerveCurves();
-  transitionToGame=true;
-}
+//  initTransitionParticlesToNerveCurves();
+//  transitionToGame=true;
+//}
 
 ////////////////////
 /*CURVE TRANSITION*/

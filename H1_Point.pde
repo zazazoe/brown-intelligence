@@ -215,33 +215,19 @@ class Point{
     }
   }
   
-  void displayDraw() {
+  void displayDraw(PGraphics canvas) {
     transitionColor(c, cGame, 0.99);
     transitionSize(size, gameParticleSize, 0.90);
     
-    nerveSkeleton.noStroke();
+    canvas.noStroke();
     c = color(red(c),green(c),blue(c),255);
     
     for(int i=0; i<positions.length; i++){
-      nerveSkeleton.fill(c);
-      nerveSkeleton.ellipse(positions[i].x,positions[i].y,size,size);
-      //brightness += stepSize;
+      canvas.fill(c);
+      canvas.ellipse(positions[i].x,positions[i].y,size,size);
     }
   }
-  
-  void displayDrawBG() {
-    transitionColor(c, cGame, 0.99);
-    transitionSize(size, gameParticleSize, 0.90);
-    
-    nerveSkeletonBG.noStroke();
-    c = color(red(c),green(c),blue(c),255);
-    
-    for(int i=0; i<positions.length; i++){
-      nerveSkeletonBG.fill(c);
-      nerveSkeletonBG.ellipse(positions[i].x,positions[i].y,size,size);
-      //brightness += stepSize;
-    }
-  }
+
 
 //////////////////////////////////////
 /*ADD, REMOVE & REPOSITION PARTICLES*/

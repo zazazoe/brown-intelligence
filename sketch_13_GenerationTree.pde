@@ -35,14 +35,13 @@ float   particleFadeSlowDown = 8;
 int     lineRandX = 10;
 int     lineRandY = 20;
 int     lineWeight = 3;
-int     lineOpacity = 100;
 Float[] lineOpacities;
-float   lineOpacityMin = 0.8;
-float   lineFadeOutSpeed = 1.0;
+float   lineOpacityMin = 0.8; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
+float   lineFadeOutSpeed;
 
 float   attractionToOrigin = 15; 
-float   repulseFromMouse = 25;
-float   mouseAffectRadius = 200;
+float   repulseFromMouse   = 25;
+float   mouseAffectRadius  = 200;
 float   mouseAffectRadiusStore = 400;
 boolean fixEndPoints = true;
 
@@ -56,8 +55,8 @@ int     blobCountPrev = 0;
 int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
-
 int     particlesToMove = 0;
+
 boolean switchToIdle = false;
 boolean transitionToGame = false;
 
@@ -70,7 +69,7 @@ int     idleFadeTimer = 1000;
 boolean sensorConnected = false;
   
 PGraphics nerveSkeleton;
-PGraphics nerveSkeletonBG;
+PGraphics nerveSkeletonFG;
 PImage    blackOverlay;
 PImage    deviceOverlay;
 PImage    organUnderlay;
@@ -103,6 +102,7 @@ PVector   UIdevicedevicepos = new PVector(121, 424);
 float     imageAlpha = 0.0;
 float     imageAlphaStep = 0.0; //set based on fade timer
 
+PVector   mouse;
 
 void setup(){
   fullScreen();
@@ -113,6 +113,7 @@ void setup(){
   treeStartPoint       = new PVector(0, height/2);
   mode                 = IDLE_MODE;
   startTimer           = millis();
+  mouse                = new PVector(0, 0);
   
   loadImages();
   initNerveCurves();
@@ -146,24 +147,13 @@ void draw() {
     updateCurves();
     updateCurvePoints();
     renderCurves();
-    
-    //NOTE TO SELF: move all this particle stuff to a tab and make them update functions, similar to above for curves
-    for(int i=0; i<particles.size(); i++){
-      particles.get(i).updateIdle(curves.get(i));
-    }
-    if(renderParticles){
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).setIdleColor(particleColor(i)); //actually changing
-        particles.get(i).setIdleSize(particleSize); //stupid to do every time (could be as move to mode and in setup?)
-        particles.get(i).displayIdle();
-      }
-    }
+    updateParticlesIdle();
+    renderParticlesIdle();
     
     if(millis()-startTimer>treeTimer){
       transitionToNextTree();
       startTimer = millis();
     }
-    
     if(transitionToGame){
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
@@ -177,28 +167,18 @@ void draw() {
  
   case 1: /*FADE OUT IDLE MODE*/ 
     renderCurves();
-    for(int i=0; i<particles.size(); i++){
-      particles.get(i).updateIdleFade(curves.get(i), particleFadeSlowDown); //slow down factor
-    }
-    if(renderParticles){
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).setIdleColor(particleColor(i)); //actually changing
-        particles.get(i).setIdleSize(particleSize); //stupid to do every time (could be as move to mode and in setup?)
-        particles.get(i).displayIdle();
-      }
-    }
+    updateParticlesIdleFade();
+    renderParticlesIdle();
     
     if(millis()-startTimer>idleFadeTimer){
       lineFadeOutSpeed = lineOpacityMin/(treeTimer/60.0);
-      
-      transitionToGameMode();
-      clearDrawingCanvas();
+      transitionParticlesToGameMode();
+      clearDrawingCanvas(nerveSkeleton);
+      clearDrawingCanvas(nerveSkeletonFG);
       gameParticleSize = 1;
-      println("total nr of particles:" + particles.size());
-      println("total nr of nerve curves:" + nrOfNerveCurves);
-      transitionToGame = false;
       startTimer = millis();
       mode = TRANSITION_GAMEMODE; 
+      transitionToGame = false;
       println("ready to move particles");
     }
     break;
@@ -206,6 +186,7 @@ void draw() {
   case 2: /*TRANSITION TO GAME MODE*/ 
     transitionParticlesToNerveCurves();
     renderCurves();
+    
     if(transitionDone()){
       println("ready to start drawing");
       startTimer = millis();
@@ -215,25 +196,14 @@ void draw() {
     break;
 
   case 3: /*DRAW GAME MODE*/ 
-    if(renderParticles){
-      drawNerveCurves(particleDrawingSpeed);
-      
-      nerveSkeleton.beginDraw();
-      for(int i=0; i<(particles.size()-inactiveCurves.length); i++){
-        particles.get(i).displayDraw(); //draw on PGraphics nerveSkeleton
-      }
-      nerveSkeleton.endDraw();
-      
-      nerveSkeletonBG.beginDraw();
-      for(int i=(particles.size()-inactiveCurves.length); i<particles.size(); i++){
-        particles.get(i).displayDrawBG(); //draw on PGraphics nerveSkeleton
-      }
-      nerveSkeletonBG.endDraw();
-      
-      image(nerveSkeleton, 0,0);
-      image(blackOverlay, 0,0);
-      image(nerveSkeletonBG, 0,0);
-    }
+    drawNerveCurves(particleDrawingSpeed);
+    drawParticlesOnCanvas(nerveSkeleton, 0, particles.size()-inactiveCurves.length);
+    drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
+
+    image(nerveSkeleton, 0,0);
+    image(blackOverlay, 0,0);
+    image(nerveSkeletonFG, 0,0);
+    
     if(millis()-startTimer>drawTimer){ 
       startTimer = millis();
       imageAlphaStep = 255.0/(fadeTimer/60.0); //NOTE TO SELF: based on 60fps
@@ -248,7 +218,7 @@ void draw() {
     tint(255, 255);
     image(nerveSkeleton, 0,0);
     image(blackOverlay, 0,0);
-    image(nerveSkeletonBG, 0,0);
+    image(nerveSkeletonFG, 0,0);
     tint(255, imageAlpha);
     image(deviceOverlay,0,0);
     image(UI, 0,0);
@@ -257,10 +227,7 @@ void draw() {
     
     if(millis()-startTimer>fadeTimer){
       gameParticleSize = 3;
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).setSize(gameParticleSize);
-        particles.get(i).disperse();
-      }
+      setParticlesForGame();
       tint(255,255);
       mode = GAME_MODE;
       println("change to game mode");
@@ -273,13 +240,14 @@ void draw() {
     image(organUnderlay,0,0);
     image(nerveSkeleton,0,0);
     image(blackOverlay, 0,0);
-    image(nerveSkeletonBG, 0,0);
+    image(nerveSkeletonFG, 0,0);
     if(renderParticles){
       renderParticlesOnNerveCurves(); //NOTE TO SELF: can particles be layered, so all bursts on top and all idle on bottom? Split in two functions...
     }
     image(deviceOverlay,0,0);
     
-    PVector mouse = new PVector(mouseX, mouseY);
+    mouse.x = mouseX;
+    mouse.y = mouseY;
     checkButtons(mouse);
     
     image(UI, 0,0);
@@ -292,16 +260,12 @@ void draw() {
 
     if(switchToIdle){
       updateParticleAmount(curves.size());   
-      //gameParticleSize = 4;
-      for(int i=0; i<particles.size(); i++){
-        particles.get(i).setSize(gameParticleSize);
-        particles.get(i).disperse();
-      }
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 0.0;
       }
-      mode = IDLE_MODE;
+      startTimer = millis() + treeTimer;
       switchToIdle = false;
+      mode = IDLE_MODE;
       println("enter idle mode");
     }
     break;  
@@ -314,7 +278,7 @@ void draw() {
     updateCV(); 
   }
 
-  fill(255);
+  //fill(255);
   //text(frameRate, 20, height-20);
 } //<>//
 
@@ -380,7 +344,7 @@ void keyPressed(){
 }
 
 void mousePressed(){
-  if(mode == IDLE_MODE){
+  if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
     transitionToGame = true;
   }
 }
@@ -418,7 +382,7 @@ boolean transitionDone(){
 void loadImages(){
   //game nerve skeleton drawing
   nerveSkeleton   = createGraphics(width, height);
-  nerveSkeletonBG = createGraphics(width, height);
+  nerveSkeletonFG = createGraphics(width, height);
   blackOverlay    = loadImage("imageAssets/blackOverlay.png");
   deviceOverlay   = loadImage("imageAssets/deviceOverlay.png");
   organUnderlay   = loadImage("imageAssets/organUnderlay.png");
@@ -438,11 +402,8 @@ void loadImages(){
   UIdeviceDevice  = loadImage("imageAssets/UI/device_device.png");
 }
 
-void clearDrawingCanvas(){
-  nerveSkeleton.beginDraw(); 
-  nerveSkeleton.clear();
-  nerveSkeleton.endDraw();
-  nerveSkeletonBG.beginDraw(); 
-  nerveSkeletonBG.clear();
-  nerveSkeletonBG.endDraw();
+void clearDrawingCanvas(PGraphics canvas){
+  canvas.beginDraw();
+  canvas.clear();
+  canvas.endDraw();
 }
