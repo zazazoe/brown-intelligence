@@ -94,6 +94,23 @@ class Point{
     }
   }
   
+  void updateGameDraw(AUBezier curve, float _tStep) {
+    for(int i=0; i<positions.length; i++){
+      updateIdleParticles(i, _tStep);
+      pos = setBezierPos(curve, t);
+      positions[i] = new PVector(pos.x,pos.y);
+    }
+  }
+  
+  void updateIdleFade(AUCurve curve, float _tStep) {
+    for(int i=0; i<positions.length; i++){
+      _tStep = tPosStep[i][1]/_tStep;
+      updateIdleParticles(i, _tStep);
+      pos = setCurvePos(curve, t);
+      positions[i] = new PVector(pos.x,pos.y);
+    }
+  }
+  
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
@@ -101,6 +118,16 @@ class Point{
       if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
       success = (int)random(0,4);
+    }
+    float tmp = cos(tPosStep[i][0]);
+    t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+  }
+  
+  void updateIdleParticles(int i, float _tStep){
+    tPosStep[i][0] += _tStep; //add tstep to tpos
+    if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
+      if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
+      if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
     }
     float tmp = cos(tPosStep[i][0]);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);

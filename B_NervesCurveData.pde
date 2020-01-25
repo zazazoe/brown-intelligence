@@ -29,8 +29,6 @@ int   gameParticleSize = 4;
 int   gameParticleBurstSize = 3;
 color gameParticleBurstColor;
 
-float transitionSpeed = 0.96;
-
 
 void initNerveCurves(){
   curveIndex = new int[curveSets];
@@ -121,6 +119,14 @@ void updateParticlesOnNerveCurves(){
   updateParticles(inactive, inactiveCurves);
 }
 
+void drawNerveCurves(float _tStep){
+  drawParticles(leg, legCurves, _tStep);
+  drawParticles(arm, armCurves, _tStep);
+  drawParticles(heart, heartCurves, _tStep);
+  drawParticles(bladder, bladderCurves, _tStep);
+  drawParticles(inactive, inactiveCurves, _tStep);
+}
+
 void transitionParticlesToNerveCurves(){
   transitionParticles(leg, legCurves);
   transitionParticles(arm, armCurves);
@@ -169,6 +175,20 @@ void updateParticles(int _curveIndex, AUBezier[] curveSet){
   }
 }
 
+void drawParticles(int _curveIndex, AUBezier[] curveSet, float _tStep){
+  int i=0;
+  for(int j=0; j<_curveIndex; j++){
+    i+=curveIndex[j];
+  }
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){
+    if(j < particles.size()){
+      particles.get(j).updateGameDraw(curveSet[j-i], _tStep);
+      particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
+      particles.get(j).setGameSize(gameParticleSize);
+    } 
+  }
+}
+
 void transitionParticles(int _curveIndex, AUBezier[] curveSet){
   int i=0;
   for(int j=0; j<_curveIndex; j++){
@@ -176,7 +196,7 @@ void transitionParticles(int _curveIndex, AUBezier[] curveSet){
   }
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
-      particles.get(j).transition(transitionSpeed);
+      particles.get(j).transition(particleTransitionSpeed);
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
       particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);

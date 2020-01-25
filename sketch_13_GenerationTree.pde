@@ -5,20 +5,21 @@ int     LEFT_SIDE = 0;
 int     RIGHT_SIDE = 1;
 
 int     IDLE_MODE = 0;
-int     TRANSITION_GAMEMODE = 1;
-int     DRAW_GAMEMODE = 2;
-int     FADE_GAMEMODE = 3;
-int     GAME_MODE = 4;
+int     FADE_IDLEMODE = 1;
+int     TRANSITION_GAMEMODE = 2;
+int     DRAW_GAMEMODE = 3;
+int     FADE_GAMEMODE = 4;
+int     GAME_MODE = 5;
 
 float   treeRot = 0;
 PVector treeStartPoint;
-int     numGenerations = 5;
+int     numGenerations = 4;
 int     minBranches = 1;
-int     maxBranches = 5;
-float   segmentMinLength = 50;
-float   segmentMaxLength = 500;
-int     segmentMinRot = -60;
-int     segmentMaxRot = 60;
+int     maxBranches = 3;
+float   segmentMinLength = 75;
+float   segmentMaxLength = 200;
+int     segmentMinRot = -50;
+int     segmentMaxRot = 50;
 
 float   particleSpeed = 0.005;
 float   particleSize = 8;
@@ -26,14 +27,17 @@ int     particleTrailSize = 1;
 boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
+float   particleDrawingSpeed = 0.005;
+float   particleTransitionSpeed = 0.90;
+float   particleFadeSlowDown = 6;
 
 int     lineRandX = 10;
-int     lineRandY = 10;
+int     lineRandY = 20;
 int     lineWeight = 3;
 int     lineOpacity = 100;
 Float[] lineOpacities;
 float   lineOpacityMin = 0.8;
-float   lineFadeOutSpeed = 5;
+float   lineFadeOutSpeed = 1.0;
 
 float   attractionToOrigin = 15; 
 float   repulseFromMouse = 25;
@@ -50,7 +54,7 @@ float   blobyPrev;
 int     blobCount = 0;
 int     blobCountPrev = 0;
 
-int     curveTransitionIndex;
+int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
 
@@ -59,12 +63,12 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 
 int     startTimer = 0;
-int     treeTimer  = 1500;
+int     treeTimer  = 5000;
 int     drawTimer  = 12000;
-int     fadeTimer  = 250;
+int     fadeTimer  = 1000;
+int     idleFadeTimer = 1000; 
 
 boolean sensorConnected = false;
-
   
 PGraphics nerveSkeleton;
 PGraphics nerveSkeletonBG;
@@ -97,24 +101,29 @@ PVector   UIdeviceringspos = new PVector(121, 382);
 PImage    UIdeviceDevice;
 PVector   UIdevicedevicepos = new PVector(121, 424);
 
+float     imageAlpha = 0.0;
+float     imageAlphaStep = 0.0; //set based on fade timer
+
 
 void setup(){
   fullScreen();
   frameRate(60);
   
   //init parameters
-  treeStartPoint = new PVector(0, height/2);
-  mode = IDLE_MODE;
-  curveTransitionIndex = 0;
-  initCP5();
-  println("initiated controls");
+  lineFadeOutSpeed     = lineOpacityMin/(treeTimer/60.0);
+  treeStartPoint       = new PVector(0, height/2);
+  mode                 = IDLE_MODE;
+  startTimer           = millis();
+  
   loadImages();
-  startTimer = millis();
+  initNerveCurves();
+  initCP5();
+
   if(sensorConnected){
     initCV();
     println("sensor started");
   }
-  
+
   //generate a tree
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
   reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
@@ -122,10 +131,6 @@ void setup(){
   oldTreeLength = curves.size();
   println("generated old tree: " + oldTreeLength);
   println("generated new tree: " + newTreeLength);
-  
-  //pre-load data for nerves system curves
-  initNerveCurves();
-  println("loaded nerve data");
 }
 
 
@@ -137,6 +142,8 @@ void draw() {
     updateCurves();
     updateCurvePoints();
     renderCurves();
+    
+    //NOTE TO SELF: move all this particle stuff to a tab and make them update functions, similar to above for curves
     for(int i=0; i<particles.size(); i++){
       particles.get(i).updateIdle(curves.get(i));
     }
@@ -147,29 +154,52 @@ void draw() {
         particles.get(i).displayIdle();
       }
     }
+    
     if(millis()-startTimer>treeTimer){
       transitionToNextTree();
       startTimer = millis();
     }
+    
     if(transitionToGame){
-      transitionToGameMode();
-      nerveSkeleton.beginDraw(); 
-      nerveSkeleton.clear();
-      nerveSkeleton.endDraw();
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
       }
-      gameParticleSize = 1;
-      mode = TRANSITION_GAMEMODE;
-      //initTransitionParticlesToNerveCurves();
-      transitionToGame = false;
-      println("total nr of particles:" + particles.size());
-      println("total nr of nerve curves:" + nrOfNerveCurves);
-      println("enter transition to game mode");  
+      startTimer = millis();
+      lineFadeOutSpeed = lineOpacityMin/(idleFadeTimer/60.0);
+      mode = FADE_IDLEMODE;
+      println("fade out idle mode");  
     }
     break;
  
-  case 1: /*TRANSITION TO GAME MODE*/ 
+  case 1: /*FADE OUT IDLE MODE*/ 
+    renderCurves();
+    for(int i=0; i<particles.size(); i++){
+      particles.get(i).updateIdleFade(curves.get(i), particleFadeSlowDown); //slow down factor
+    }
+    if(renderParticles){
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).setIdleColor(particleColor(i)); //actually changing
+        particles.get(i).setIdleSize(particleSize); //stupid to do every time (could be as move to mode and in setup?)
+        particles.get(i).displayIdle();
+      }
+    }
+    
+    if(millis()-startTimer>idleFadeTimer){
+      lineFadeOutSpeed = lineOpacityMin/(treeTimer/60.0);
+      
+      transitionToGameMode();
+      clearDrawingCanvas();
+      gameParticleSize = 1;
+      println("total nr of particles:" + particles.size());
+      println("total nr of nerve curves:" + nrOfNerveCurves);
+      transitionToGame = false;
+      startTimer = millis();
+      mode = TRANSITION_GAMEMODE; 
+      println("ready to move particles");
+    }
+    break;
+  
+  case 2: /*TRANSITION TO GAME MODE*/ 
     transitionParticlesToNerveCurves();
     renderCurves();
     if(transitionDone()){
@@ -180,9 +210,9 @@ void draw() {
     }
     break;
 
-  case 2: /*DRAW GAME MODE*/ 
+  case 3: /*DRAW GAME MODE*/ 
     if(renderParticles){
-      updateParticlesOnNerveCurves();
+      drawNerveCurves(particleDrawingSpeed);
       
       nerveSkeleton.beginDraw();
       for(int i=0; i<(particles.size()-inactiveCurves.length); i++){
@@ -202,15 +232,24 @@ void draw() {
     }
     if(millis()-startTimer>drawTimer){ 
       startTimer = millis();
+      imageAlphaStep = 255.0/(fadeTimer/60.0); //NOTE TO SELF: based on 60fps
       mode = FADE_GAMEMODE;
       println("change to game mode");
     }
     break;
   
-  case 3: /*FADE GAME MODE*/
+  case 4: /*FADE GAME MODE*/
+    tint(255, imageAlpha);
+    image(organUnderlay,0,0);
+    tint(255, 255);
     image(nerveSkeleton, 0,0);
     image(blackOverlay, 0,0);
     image(nerveSkeletonBG, 0,0);
+    tint(255, imageAlpha);
+    image(deviceOverlay,0,0);
+    image(UI, 0,0);
+    
+    //NOTE TO SELF: also make particles fade in more subtle
     
     if(millis()-startTimer>fadeTimer){
       gameParticleSize = 3;
@@ -218,29 +257,33 @@ void draw() {
         particles.get(i).setSize(gameParticleSize);
         particles.get(i).disperse();
       }
-      
+      tint(255,255);
       mode = GAME_MODE;
       println("change to game mode");
     }
+    if(imageAlpha<255) imageAlpha += imageAlphaStep;
+    println(imageAlpha);
     break;
     
-  case 4:  /*GAME MODE*/  
+  case 5:  /*GAME MODE*/  
     image(organUnderlay,0,0);
     image(nerveSkeleton,0,0);
     image(blackOverlay, 0,0);
     image(nerveSkeletonBG, 0,0);
-    
     if(renderParticles){
-      renderParticlesOnNerveCurves();
+      renderParticlesOnNerveCurves(); //NOTE TO SELF: can particles be layered, so all bursts on top and all idle on bottom? Split in two functions...
     }
     image(deviceOverlay,0,0);
     
-    //drawButtons();
+    PVector mouse = new PVector(mouseX, mouseY);
+    checkButtons(mouse);
+    
     image(UI, 0,0);
-    //if(mousePressed && frameCount%4 == 0){
-      PVector mouse = new PVector(mouseX, mouseY);
-      checkButtons(mouse);
-    //}
+    if(brainButton) image(UIbrain, 0,0);
+    if(deviceButton) image(UIdevice, 0,0);
+    //NOTE TO ADD: if device rings, show rings explanation
+    //NOTE TO ADD: if device device, show device explanation
+
     if(switchToIdle){
       updateParticleAmount(curves.size());   
       //gameParticleSize = 4;
@@ -305,14 +348,17 @@ void keyPressed(){
     case 'f':
       if(mode == GAME_MODE)
         sendNerveBurst(leg, RIGHT_SIDE);
+        image(UIbrainLeg,0,0);
       break;
     case 'g':
       if(mode == GAME_MODE)
-        sendNerveBurst(leg, LEFT_SIDE);
+        sendNerveBurst(arm, RIGHT_SIDE);
+        image(UIbrainArm,0,0);
       break;
     case 'h':
       if(mode == GAME_MODE)
-        sendNerveBurst(arm, RIGHT_SIDE);
+        sendNerveBurst(bladder, RIGHT_SIDE);
+        image(UIbrainBladder,0,0);
       break;
     case 'j':
       if(mode == GAME_MODE)
@@ -384,4 +430,13 @@ void loadImages(){
   UIdevice        = loadImage("imageAssets/UI/device.png");
   UIdeviceRings   = loadImage("imageAssets/UI/device_ring.png");
   UIdeviceDevice  = loadImage("imageAssets/UI/device_device.png");
+}
+
+void clearDrawingCanvas(){
+  nerveSkeleton.beginDraw(); 
+  nerveSkeleton.clear();
+  nerveSkeleton.endDraw();
+  nerveSkeletonBG.beginDraw(); 
+  nerveSkeletonBG.clear();
+  nerveSkeletonBG.endDraw();
 }

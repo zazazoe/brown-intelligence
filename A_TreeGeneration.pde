@@ -61,6 +61,8 @@ void reGenerateTree(float _startLength, float _startRotation, PVector _startPoin
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
   addPointRandomization();
+  
+  curveOpacity.get(0)[1] = 1.0;
 }
 
 
