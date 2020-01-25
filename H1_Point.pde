@@ -135,7 +135,7 @@ class Point{
   
   void updateBurstParticles(int i){
     burstPosStep.get(i)[0] += burstPosStep.get(i)[1];    
-    if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == LEFT_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == RIGHT_SIDE){
+    if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == MOTOR_SIDE){
       //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
     }
     float tmp = cos(burstPosStep.get(i)[0]);
@@ -163,7 +163,7 @@ class Point{
         positions[i].y = _speed*positions[i].y + (1-_speed)*newStartPoint.y;
         
         float d = positions[i].dist(newStartPoint);
-        if(d<1){
+        if(d<0.5){
           setTransition(false);
           tPosStep[i][1] = tStep;
         }
@@ -256,12 +256,12 @@ class Point{
   
   void particleBurst(int _side){   
     int i = burstPosStep.size();
-      if(_side == LEFT_SIDE){ //left is 0, right is 1
+      if(_side == SENSOR_SIDE){ //left is 0, right is 1
         burstPosStep.add(new Float[2]);
         burstPosStep.get(i)[0] = 0.0; //+(i*0.02) //+(i*random(0.01,0.02))
         burstPosStep.get(i)[1] = tStep*random(3.5,4.5);
       }
-      if(_side == RIGHT_SIDE){
+      if(_side == MOTOR_SIDE){
         burstPosStep.add(new Float[2]);
         burstPosStep.get(i)[0] = PI; //(i*0.02) //-(i*random(0.01,0.02))
         burstPosStep.get(i)[1] = tStep*-random(3.5,4.5);

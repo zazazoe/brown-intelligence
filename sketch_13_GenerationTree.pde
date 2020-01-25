@@ -1,9 +1,10 @@
 import AULib.*;
 
 //variables
-int     LEFT_SIDE = 0;
-int     RIGHT_SIDE = 1;
+int     SENSOR_SIDE = 0;
+int     MOTOR_SIDE  = 1;
 
+int     mode;
 int     IDLE_MODE = 0;
 int     FADE_IDLEMODE = 1;
 int     TRANSITION_GAMEMODE = 2;
@@ -28,8 +29,8 @@ boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
 float   particleDrawingSpeed = 0.005;
-float   particleTransitionSpeed = 0.90;
-float   particleFadeSlowDown = 6;
+float   particleTransitionSpeed = 0.93;
+float   particleFadeSlowDown = 8;
 
 int     lineRandX = 10;
 int     lineRandY = 20;
@@ -44,8 +45,6 @@ float   repulseFromMouse = 25;
 float   mouseAffectRadius = 200;
 float   mouseAffectRadiusStore = 400;
 boolean fixEndPoints = true;
-
-int     mode;
 
 float   blobx;
 float   bloby;
@@ -125,6 +124,11 @@ void setup(){
   }
 
   //generate a tree
+  treeStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  segmentMinRot = (int)map(treeStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
+  segmentMaxRot = (int)map(treeStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
+  treeRot = (int)map(treeStartPoint.y, height, 0, -50, 50);
+  
   generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
   reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
   newTreeLength = linesToSave.size();
@@ -281,8 +285,10 @@ void draw() {
     image(UI, 0,0);
     if(brainButton) image(UIbrain, 0,0);
     if(deviceButton) image(UIdevice, 0,0);
-    //NOTE TO ADD: if device rings, show rings explanation
-    //NOTE TO ADD: if device device, show device explanation
+    if(deviceRings) image(UIdeviceRings, 0,0);
+    if(deviceDevice) image(UIdeviceDevice, 0,0);
+    //if(deviceRings) image(...., 0,0); NOTE TO ADD: if device rings, show rings explanation
+    //if(deviceDevice) image(...., 0,0); NOTE TO ADD: if device device, show device explanation
 
     if(switchToIdle){
       updateParticleAmount(curves.size());   
@@ -334,35 +340,35 @@ void keyPressed(){
     case 'a':
       if(mode == IDLE_MODE){
         for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(LEFT_SIDE);
+          particles.get(i).particleBurst(SENSOR_SIDE);
         }
       }
       break;
     case 's':
       if(mode == IDLE_MODE){
         for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(RIGHT_SIDE);
+          particles.get(i).particleBurst(MOTOR_SIDE);
         }
       }
       break;
     case 'f':
       if(mode == GAME_MODE)
-        sendNerveBurst(leg, RIGHT_SIDE);
+        sendNerveBurst(leg, MOTOR_SIDE);
         image(UIbrainLeg,0,0);
       break;
     case 'g':
       if(mode == GAME_MODE)
-        sendNerveBurst(arm, RIGHT_SIDE);
+        sendNerveBurst(arm, MOTOR_SIDE);
         image(UIbrainArm,0,0);
       break;
     case 'h':
       if(mode == GAME_MODE)
-        sendNerveBurst(bladder, RIGHT_SIDE);
+        sendNerveBurst(bladder, MOTOR_SIDE);
         image(UIbrainBladder,0,0);
       break;
     case 'j':
       if(mode == GAME_MODE)
-        sendNerveBurst(arm, LEFT_SIDE);
+        sendNerveBurst(arm, SENSOR_SIDE);
       break;
     case '1':
       cp5.saveProperties(("parameters"));

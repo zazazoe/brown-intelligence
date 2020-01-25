@@ -61,11 +61,11 @@ void calculateContourBoundingBoxes() {
     if(blobCountPrev == 0 && blobCount == 0){
       if(blobx <= width/2){
         for(int j=0; j<particles.size(); j++){
-          particles.get(j).particleBurst(LEFT_SIDE);
+          particles.get(j).particleBurst(SENSOR_SIDE);
         }
       } else if(blobx > width/2) {
         for(int j=0; j<particles.size(); j++){
-          particles.get(j).particleBurst(RIGHT_SIDE);
+          particles.get(j).particleBurst(MOTOR_SIDE);
         }
       }
     }
