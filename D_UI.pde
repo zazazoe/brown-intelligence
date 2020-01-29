@@ -48,19 +48,29 @@ PImage  UIdeviceDevice;
 PVector UIdevicedevicepos = new PVector(121, 424);
 
 
-void drawButtons(){
-  rectMode(CENTER);
-  fill(200);
-  rect(buttonX, height-buttonHeight1, buttonSize,buttonSize);
-  rect(buttonX, height-buttonHeight2, buttonSize,buttonSize);
-  rect(buttonX, height-buttonHeight3, buttonSize,buttonSize);
-  rect(buttonX, height-buttonHeight4, buttonSize,buttonSize);
+//void drawButtons(){
+//  rectMode(CENTER);
+//  fill(200);
+//  rect(buttonX, height-buttonHeight1, buttonSize,buttonSize);
+//  rect(buttonX, height-buttonHeight2, buttonSize,buttonSize);
+//  rect(buttonX, height-buttonHeight3, buttonSize,buttonSize);
+//  rect(buttonX, height-buttonHeight4, buttonSize,buttonSize);
   
-  ellipse(width-exitX, exitY, buttonSize, buttonSize);
+//  ellipse(width-exitX, exitY, buttonSize, buttonSize);
+//}
+
+void renderUI(){
+  image(UI, 0,0);
+  if(brainButton)  image(UIbrain, 0,0);
+  if(deviceButton) image(UIdevice, 0,0);
+  if(deviceRings)  image(UIdeviceRings, 0,0);
+  if(deviceDevice) image(UIdeviceDevice, 0,0);
+  if(deviceRings)  image(deviceRingsOverlay, 0,0); //NOTE TO SELF: FADE IN SUBTLE
+  if(deviceDevice) image(deviceDeviceOverlay, 0,0); //NOTE TO SELF: FADE IN SUBTLE
 }
 
-void checkButtons(PVector mouse){
-  int button = whichButton(mouse);
+void checkButtons(float mX, float mY){
+  int button = whichButton(new PVector(mX, mY));
 
   if(button>0){
     switch(button){
@@ -224,4 +234,19 @@ int whichButton(PVector mouse){
   }
   
   return button;
+}
+
+void loadUIImages(){
+  UI              = loadImage("imageAssets/UI/UI.png");
+  UIleg           = loadImage("imageAssets/UI/leg.png");
+  UIarm           = loadImage("imageAssets/UI/arm.png");
+  UIheart         = loadImage("imageAssets/UI/heart.png");
+  UIbladder       = loadImage("imageAssets/UI/bladder.png");
+  UIbrain         = loadImage("imageAssets/UI/brain.png");
+  UIbrainBladder  = loadImage("imageAssets/UI/brain_bladder.png");
+  UIbrainArm      = loadImage("imageAssets/UI/brain_arm.png");
+  UIbrainLeg      = loadImage("imageAssets/UI/brain_leg.png");
+  UIdevice        = loadImage("imageAssets/UI/device.png");
+  UIdeviceRings   = loadImage("imageAssets/UI/device_ring.png");
+  UIdeviceDevice  = loadImage("imageAssets/UI/device_device.png");
 }

@@ -38,6 +38,22 @@ int     newTreeLength;
 int     oldTreeLength;
 
 
+void initCurves(){
+  curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
+  
+  curveSetStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
+  segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
+  curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
+  
+  generateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
+  regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
+  newTreeLength = curvesToSave.size();
+  oldTreeLength = curves.size();
+  println("generated old tree: " + oldTreeLength);
+  println("generated new tree: " + newTreeLength);
+}
+
 void generateCurveSet(float _startLength, float _startRotation, PVector _startPoint, int _generationLimit, float _particleSpeed, float _particleSize, int _particleTrailSize){
   generationLimit = _generationLimit;
   points = new ArrayList[generationLimit];
