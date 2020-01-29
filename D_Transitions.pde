@@ -21,31 +21,6 @@ void transitionToNextTree(){
   }
 }
 
-//void transitionToGameMode(){
-//  if(particles.size() <= nrOfNerveCurves){
-//    particlesToMove = particles.size();
-//  } else {
-//    particlesToMove = nrOfNerveCurves;
-//  }
-
-//  for(int i=0; i<particlesToMove; i++){
-//    particles.get(i).setTransition(true);
-//  }
-
-//  updateParticleAmount(nrOfNerveCurves);
-  
-//  for(int i=0; i<particles.size(); i++){
-//    if(!particles.get(i).getTransition()){
-//      particles.get(i).setPoint();
-//      particles.get(i).setIdleColor(color(0));
-//    }
-//    particles.get(i).clearBurst();
-//  }
-  
-//  initTransitionParticlesToNerveCurves();
-//  transitionToGame=true;
-//}
-
 ////////////////////
 /*CURVE TRANSITION*/
 ////////////////////

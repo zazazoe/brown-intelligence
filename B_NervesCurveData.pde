@@ -225,7 +225,7 @@ void sendNerveBurst(int _curveIndex, int _side){
   
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
-      particles.get(j).particleBurst(_side);
+      particles.get(j).particleBurst(_side, random(3.5,4.5));
     } 
   }
 }

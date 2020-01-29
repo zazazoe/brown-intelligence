@@ -108,15 +108,18 @@ PImage    UIdeviceDevice;
 PVector   UIdevicedevicepos = new PVector(121, 424);
 
 float     imageAlpha = 0.0;
-float     imageAlphaStep = 0.0; //set based on fade timer
+float     imageAlphaStep = 0.0; //will be set based on fade timer
 
 PVector   mouse;
 
-int       timePassed=0;
+int       z0 = -1;
+int       z1 = 0;
+int       z2 = 1;
+int       z3 = 2;
 
 
 void setup(){
-  fullScreen(OPENGL);
+  fullScreen(OPENGL); //efficient, but 3d, so need to control z-space
   frameRate(60);
   
   //init parameters
@@ -153,8 +156,7 @@ void setup(){
 
 void draw() {
   background(0);
-  timePassed=millis();
-  
+
   switch(mode){
   case 0: /*IDLE MODE*/ 
     if(millis()-startTimer>treeTimer){
@@ -165,8 +167,6 @@ void draw() {
     updateCurves();
     updateCurvePoints();
     updateParticlesIdle();
-    
-    
     renderCurves(); 
     renderParticlesIdle();
     
@@ -249,7 +249,6 @@ void draw() {
       println("change to game mode");
     }
     if(imageAlpha<255) imageAlpha += imageAlphaStep;
-    println(imageAlpha);
     break;
     
   case 5:  /*GAME MODE*/  
@@ -267,24 +266,20 @@ void draw() {
     checkButtons(mouse);
     
     image(UI, 0,0);
-    if(brainButton) image(UIbrain, 0,0);
+    if(brainButton)  image(UIbrain, 0,0);
     if(deviceButton) image(UIdevice, 0,0);
-    if(deviceRings) image(UIdeviceRings, 0,0);
+    if(deviceRings)  image(UIdeviceRings, 0,0);
     if(deviceDevice) image(UIdeviceDevice, 0,0);
-    if(deviceRings) image(deviceRingsOverlay, 0,0); //NOTE TO ADD: if device rings, show rings explanation
-    if(deviceDevice) image(deviceDeviceOverlay, 0,0); //NOTE TO ADD: if device device, show device explanation
+    if(deviceRings)  image(deviceRingsOverlay, 0,0); //NOTE TO SELF: FADE IN SUBTLE
+    if(deviceDevice) image(deviceDeviceOverlay, 0,0); //NOTE TO SELF: FADE IN SUBTLE
 
-    if(switchToIdle){
-      //updateParticleAmount(curves.size());   
+    if(switchToIdle){ 
       transitionParticlesToIdleMode();
-      
-      lineFadeOutSpeed = lineOpacityMin/(treeTimer/120.0);
+      lineFadeOutSpeed = lineOpacityMin/(treeTimer/120.0); //NOTE TO SELF: update proper
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 0.0;
       }
-
       switchToIdle = false;
-      //transitionToIdle = true;
       mode = TRANSITION_IDLEMODE;
       println("enter idle mode");
     }
@@ -309,8 +304,8 @@ void draw() {
     updateCV(); 
   }
 
-  //fill(255);
-  //text(frameRate, 20, height-20);
+  fill(255);
+  text(frameRate, 20, height-20);
 } //<>//
 
 
@@ -334,16 +329,18 @@ void keyPressed(){
       break;
     case 'a':
       if(mode == IDLE_MODE){
-        opencv = new OpenCV(this, 480, 270);
-        opencv.loadImage(camera.getDepthImage());
-        background = opencv.getSnapshot();
-        println("background set");
+        if(camera.isCameraAvailable()){
+          opencv = new OpenCV(this, 480, 270);
+          opencv.loadImage(camera.getDepthImage());
+          background = opencv.getSnapshot();
+          println("background set");
+        }
       }
       break;
     case 's':
       if(mode == IDLE_MODE){
         for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(MOTOR_SIDE);
+          particles.get(i).particleBurst(MOTOR_SIDE, random(3.5,4.5));
         }
       }
       break;
