@@ -1,4 +1,7 @@
 
+int SENSOR_SIDE = 0;
+int MOTOR_SIDE  = 1;
+
 int nrOfButtons = 4;
 int buttonSize = 40;
 
@@ -18,6 +21,31 @@ boolean deviceDevice = false;
 
 int timeOutStart=0;
 int timeOut=500;
+
+PImage  UI;
+PVector UIexitpos = new PVector(1364, 836);
+PImage  UIleg;
+PVector UIlegpos = new PVector(59, 852);
+PImage  UIbladder;
+PVector UIbladderpos = new PVector(59, 745);
+PImage  UIarm;
+PVector UIarmpos = new PVector(59, 665);
+PImage  UIheart;
+PVector UIheartpos = new PVector(59, 585);
+PImage  UIbrain;
+PVector UIbrainpos = new PVector(59, 505);
+PImage  UIbrainBladder;
+PVector UIbrainbladderpos = new PVector(134, 505);
+PImage  UIbrainArm;
+PVector UIbrainarmpos = new PVector(116, 463);
+PImage  UIbrainLeg;
+PVector UIbrainlegpos = new PVector(116, 542);
+PImage  UIdevice;
+PVector UIdevicepos = new PVector(59, 405);
+PImage  UIdeviceRings;
+PVector UIdeviceringspos = new PVector(121, 382);
+PImage  UIdeviceDevice;
+PVector UIdevicedevicepos = new PVector(121, 424);
 
 
 void drawButtons(){

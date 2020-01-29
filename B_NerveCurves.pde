@@ -1,3 +1,4 @@
+
 Table curveData;
 Table curveRef;
 int   nrOfCurves;
@@ -39,7 +40,6 @@ void initNerveCurves(){
   
   legKnots = new float[nrOfCurves][][];
   legCurves = new AUBezier[nrOfCurves];
-  
   fillKnots(legKnots);
   fillCurves(legCurves,legKnots);
   
@@ -50,7 +50,6 @@ void initNerveCurves(){
   
   armKnots = new float[nrOfCurves][][];
   armCurves = new AUBezier[nrOfCurves];
-  
   fillKnots(armKnots);
   fillCurves(armCurves,armKnots);
   
@@ -61,7 +60,6 @@ void initNerveCurves(){
   
   heartKnots = new float[nrOfCurves][][];
   heartCurves = new AUBezier[nrOfCurves];
-  
   fillKnots(heartKnots);
   fillCurves(heartCurves,heartKnots);
   
@@ -72,7 +70,6 @@ void initNerveCurves(){
   
   bladderKnots = new float[nrOfCurves][][];
   bladderCurves = new AUBezier[nrOfCurves];
-  
   fillKnots(bladderKnots);
   fillCurves(bladderCurves,bladderKnots);
   
@@ -83,7 +80,6 @@ void initNerveCurves(){
   
   inactiveKnots = new float[nrOfCurves][][];
   inactiveCurves = new AUBezier[nrOfCurves];
-  
   fillKnots(inactiveKnots);
   fillCurves(inactiveCurves,inactiveKnots);
   
@@ -92,9 +88,9 @@ void initNerveCurves(){
   /*DEFINE COLORS FOR EACH SET.*/
   colorIndex[leg]      = color(153,51,255,255);
   colorIndex[arm]      = color(153,51,255,255);
-  colorIndex[heart]      = color(153,51,255,255);
-  colorIndex[bladder]      = color(153,51,255,255);
-  colorIndex[inactive] = color(153,51,255,255); //lineOpacityMin*255
+  colorIndex[heart]    = color(153,51,255,255);
+  colorIndex[bladder]  = color(153,51,255,255);
+  colorIndex[inactive] = color(153,51,255,255); //curveOpacityMin*255
   
   gameParticleBurstColor = color(225,225,225);
   
@@ -151,7 +147,7 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
   for(int j=0; j<_curveIndex; j++){
     i+=curveIndex[j];
   }
-  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>// //<>//
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>//
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
@@ -166,7 +162,7 @@ void updateParticles(int _curveIndex, AUBezier[] curveSet){
   for(int j=0; j<_curveIndex; j++){
     i+=curveIndex[j];
   }
-  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>//
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));

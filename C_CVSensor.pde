@@ -1,21 +1,25 @@
 import gab.opencv.*;
 import java.awt.Rectangle;
-import processing.video.*;
-import ch.bildspur.realsense.*;
 
 RealSenseCamera camera = new RealSenseCamera(this);
 
-OpenCV opencv;
 ArrayList<Contour> contours;
+OpenCV  opencv;
 boolean displayContours = true;
+PImage  background;
+PImage  contoursImage;
 
-PImage background;
-PImage contoursImage;
-
-int threshold = 39;
-int blobSizeThreshold = 28;
-
+int     threshold = 39;
+int     blobSizeThreshold = 28;
 boolean isBackgroundSave = false;
+boolean sensorConnected = false;
+
+float   blobx;
+float   bloby;
+float   blobxPrev;
+float   blobyPrev;
+int     blobCount = 0;
+int     blobCountPrev = 0;
 
 void initCV(){
   camera.start(480, 270, 30, true, false);

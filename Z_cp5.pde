@@ -1,4 +1,3 @@
-import controlP5.*;
 
 ControlP5 cp5;
 
@@ -15,18 +14,18 @@ void initCP5(){
 
   cp5.setColorBackground(color(150));
   
-  cpL1 = cp5.addColorPicker("lines1")
+  cpL1 = cp5.addColorPicker("curves1")
           .setPosition(20, 10)
           .setColorValue(color(215, 215, 148, 128))
           .setColorLabel(labelColor)
-          .setLabel("lineColor upper limit")
+          .setLabel("curveColor upper limit")
           ;
           
-  cpL2 = cp5.addColorPicker("lines2")
+  cpL2 = cp5.addColorPicker("curves2")
           .setPosition(20, 80)
           .setColorValue(color(63, 220, 241, 104))
           .setColorLabel(labelColor)
-          .setLabel("lineColor lower limit")
+          .setLabel("curveColor lower limit")
           ;
           
   cpP = cp5.addColorPicker("particles")
@@ -73,7 +72,7 @@ void initCP5(){
      .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
      ;
   
-  cp5.addSlider("lineWeight")
+  cp5.addSlider("curveWeight")
      .setRange(1, 10)
      .setValue(3)
      .setPosition(20, 310)
@@ -81,7 +80,7 @@ void initCP5(){
      .setColorLabel(labelColor)
      ;
   
-  cp5.addSlider("lineRandX")
+  cp5.addSlider("curveRandX")
      .setRange(1, 30)
      .setValue(10)
      .setPosition(20, 325)
@@ -89,7 +88,7 @@ void initCP5(){
      .setColorLabel(labelColor)
      ;
   
-  cp5.addSlider("lineRandY")
+  cp5.addSlider("curveRandY")
      .setRange(1, 30)
      .setValue(10)
      .setPosition(20, 340)
@@ -184,7 +183,7 @@ void initCP5(){
      .getCaptionLabel().align(ControlP5.RIGHT_OUTSIDE, CENTER)
      ;
      
-  cp5.addSlider("lineOpacityMin")
+  cp5.addSlider("curveOpacityMin")
      .setRange(0.0, 1.0)
      .setValue(0.4)
      .setPosition(20, 550)
@@ -192,7 +191,7 @@ void initCP5(){
      .setColorLabel(labelColor)
      ;
      
-  cp5.addSlider("lineFadeOutSpeed")
+  cp5.addSlider("curveFadeOutSpeed")
      .setRange(0.001, 0.10)
      .setValue(0.005)
      .setPosition(20, 565)
@@ -200,7 +199,6 @@ void initCP5(){
      .setColorLabel(labelColor)
      ;
      
-  
   //by default do not show   
   cp5.hide();
 }

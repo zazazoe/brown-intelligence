@@ -1,4 +1,4 @@
-class Point{
+class Particle{
 
   float t;
   float tStep;
@@ -30,7 +30,7 @@ class Point{
   PVector newStartPoint;
 
   //speed defined by stepsize so smaller nr is faster, bigger nr is slower
-  Point(float _tStep, int _idNr, float _size, int _nrOfPoints){   
+  Particle(float _tStep, int _idNr, float _size, int _nrOfPoints){   
     t=0.0;
     idNr = _idNr;
     size = _size;
@@ -115,7 +115,7 @@ class Point{
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
-      if(success == 1) ;//lineOpacities[idNr] = 1.0;;//lineOpacities[idNr] = 1.0;  //NOTE TO SELF: line opacities should be replaced with more generic function
+      if(success == 1) ;//curveOpacities[idNr] = 1.0;;//curveOpacities[idNr] = 1.0;  //NOTE TO SELF: curve opacities should be replaced with more generic function
       if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
       success = (int)random(0,4);
@@ -137,7 +137,7 @@ class Point{
   void updateBurstParticles(int i){
     burstPosStep.get(i)[0] += burstPosStep.get(i)[1];    
     if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == MOTOR_SIDE){
-      //lineOpacities[idNr] = 1.0; /*line opacities should be replaced with more generic function*/
+      //curveOpacities[idNr] = 1.0; /*curve opacities should be replaced with more generic function*/
     }
     float tmp = cos(burstPosStep.get(i)[0]);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);

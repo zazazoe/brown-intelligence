@@ -1,8 +1,7 @@
 import AULib.*;
-
-//variables
-int     SENSOR_SIDE = 0;
-int     MOTOR_SIDE  = 1;
+import processing.video.*;
+import ch.bildspur.realsense.*;
+import controlP5.*;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -13,65 +12,15 @@ int     FADE_GAMEMODE = 4;
 int     GAME_MODE = 5;
 int     TRANSITION_IDLEMODE = 6;
 
-float   treeRot = 0;
-PVector treeStartPoint;
-int     numGenerations = 4;
-int     minBranches = 1;
-int     maxBranches = 3;
-float   segmentMinLength = 75;
-float   segmentMaxLength = 200;
-int     segmentMinRot = -50;
-int     segmentMaxRot = 50;
-
-float   particleSpeed = 0.005;
-float   particleSize = 8;
-float   particleBurstSize = 8;
-int     particleTrailSize = 1;
-boolean renderParticles = true;
-boolean syncParticles = false;
-boolean disperseParticles = true;
-float   particleDrawingSpeed = 0.005;
-float   particleTransitionSpeed = 0.93;
-float   particleTransitionSpeedIdle = 0.96;
-float   particleFadeSlowDown = 8;
-color   burstColor;
-
-int     lineRandX = 10;
-int     lineRandY = 20;
-int     lineWeight = 3;
-Float[] lineOpacities;
-float   lineOpacityMin = 0.8; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
-float   lineFadeOutSpeed;
-
-float   attractionToOrigin = 15; 
-float   repulseFromMouse   = 25;
-float   mouseAffectRadius  = 200;
-float   mouseAffectRadiusStore = 400;
-boolean fixEndPoints = true;
-
-float   blobx;
-float   bloby;
-float   blobxPrev;
-float   blobyPrev;
-int     blobCount = 0;
-int     blobCountPrev = 0;
-
-int     curveTransitionIndex = 0;
-int     newTreeLength;
-int     oldTreeLength;
-int     particlesToMove = 0;
-
 boolean switchToIdle = false;
 boolean transitionToGame = false;
 boolean transitionToIdle = false;
 
 int     startTimer = 0;
-int     treeTimer  = 5000;
+int     curveTimer = 5000;
 int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
 int     idleFadeTimer = 1000; 
-
-boolean sensorConnected = false;
   
 PGraphics nerveSkeleton;
 PGraphics nerveSkeletonFG;
@@ -80,32 +29,6 @@ PImage    deviceOverlay;
 PImage    organUnderlay;
 PImage    deviceDeviceOverlay;
 PImage    deviceRingsOverlay;
-
-
-PImage    UI;
-PVector   UIexitpos = new PVector(1364, 836);
-PImage    UIleg;
-PVector   UIlegpos = new PVector(59, 852);
-PImage    UIbladder;
-PVector   UIbladderpos = new PVector(59, 745);
-PImage    UIarm;
-PVector   UIarmpos = new PVector(59, 665);
-PImage    UIheart;
-PVector   UIheartpos = new PVector(59, 585);
-PImage    UIbrain;
-PVector   UIbrainpos = new PVector(59, 505);
-PImage    UIbrainBladder;
-PVector   UIbrainbladderpos = new PVector(134, 505);
-PImage    UIbrainArm;
-PVector   UIbrainarmpos = new PVector(116, 463);
-PImage    UIbrainLeg;
-PVector   UIbrainlegpos = new PVector(116, 542);
-PImage    UIdevice;
-PVector   UIdevicepos = new PVector(59, 405);
-PImage    UIdeviceRings;
-PVector   UIdeviceringspos = new PVector(121, 382);
-PImage    UIdeviceDevice;
-PVector   UIdevicedevicepos = new PVector(121, 424);
 
 float     imageAlpha = 0.0;
 float     imageAlphaStep = 0.0; //will be set based on fade timer
@@ -117,37 +40,33 @@ int       z1 = 0;
 int       z2 = 1;
 int       z3 = 2;
 
-
 void setup(){
-  fullScreen(OPENGL); //efficient, but 3d, so need to control z-space
+  fullScreen(OPENGL);
   frameRate(60);
   
-  //init parameters
-  lineFadeOutSpeed     = lineOpacityMin/(treeTimer/60.0);
-  treeStartPoint       = new PVector(0, height/2);
-  mode                 = IDLE_MODE;
-  startTimer           = millis();
-  mouse                = new PVector(0, 0);
-  burstColor           = color(255);
-
-  loadImages();
-  initNerveCurves();
-  initCP5();
-
+  /*INIT PARAMETERS*/
+  mode             = IDLE_MODE;
+  startTimer       = millis();
+  mouse            = new PVector(0, 0);
+  curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
+   
   if(sensorConnected){
     initCV();
     println("sensor started");
   }
+  loadImages();
+  initNerveCurves();
+  initCP5();
 
-  //generate a tree
-  treeStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
-  segmentMinRot = (int)map(treeStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
-  segmentMaxRot = (int)map(treeStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
-  treeRot = (int)map(treeStartPoint.y, height, 0, -50, 50);
+  /*GENERATE FIRST SET OF TREES*/
+  curveSetStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
+  segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
+  curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
   
-  generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
-  reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
-  newTreeLength = linesToSave.size();
+  generateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
+  regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
+  newTreeLength = curvesToSave.size();
   oldTreeLength = curves.size();
   println("generated old tree: " + oldTreeLength);
   println("generated new tree: " + newTreeLength);
@@ -159,7 +78,7 @@ void draw() {
 
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    if(millis()-startTimer>treeTimer){
+    if(millis()-startTimer>curveTimer){
       transitionToNextTree();
       startTimer = millis();
     }
@@ -175,7 +94,7 @@ void draw() {
         curveOpacity.get(i)[1] = 1.0;
       }
       startTimer = millis();
-      lineFadeOutSpeed = lineOpacityMin/(idleFadeTimer/60.0);
+      curveFadeOutSpeed = curveOpacityMin/(idleFadeTimer/60.0);
       mode = FADE_IDLEMODE;
       println("fade out idle mode");  
     }
@@ -187,7 +106,7 @@ void draw() {
     renderParticlesIdle();
     
     if(millis()-startTimer>idleFadeTimer){
-      lineFadeOutSpeed = lineOpacityMin/(treeTimer/60.0);
+      curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
       transitionParticlesToGameMode();
       clearDrawingCanvas(nerveSkeleton);
       clearDrawingCanvas(nerveSkeletonFG);
@@ -275,7 +194,7 @@ void draw() {
 
     if(switchToIdle){ 
       transitionParticlesToIdleMode();
-      lineFadeOutSpeed = lineOpacityMin/(treeTimer/120.0); //NOTE TO SELF: update proper
+      curveFadeOutSpeed = curveOpacityMin/(curveTimer/120.0); //NOTE TO SELF: update proper
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 0.0;
       }
@@ -290,7 +209,7 @@ void draw() {
     transitionParticlesToIdleCurves();
     
     if(transitionDone()){
-      startTimer = millis() + treeTimer;
+      startTimer = millis() + curveTimer;
       mode = IDLE_MODE;
       println("change back to idle mode");
     }
@@ -306,7 +225,7 @@ void draw() {
 
   fill(255);
   text(frameRate, 20, height-20);
-} //<>//
+}
 
 
 
@@ -324,8 +243,7 @@ void keyPressed(){
       cp5.hide();
       break;
     case 'r': //regenerate a tree
-      //generateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize);
-      reGenerateTree(segmentMaxLength, treeRot, treeStartPoint, numGenerations);
+      regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
       break;
     case 'a':
       if(mode == IDLE_MODE){
@@ -382,21 +300,6 @@ void mousePressed(){
 ////////////////
 /*LITTLE TASKS*/
 ////////////////
-
-color particleColor(int i){
-  float f1 = map(i, 0, particles.size(), 0,1);
-  float f2 = map(i, 0, particles.size(), 1,0);
-  
-  float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
-  float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
-  float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-  float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
-  
-  color c = color(r,g,b,255);
-  
-  return c;
-}
-
 
 boolean transitionDone(){
   boolean transitionDone = true;

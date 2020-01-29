@@ -1,4 +1,18 @@
 
+float   particleSpeed = 0.005;
+float   particleSize = 8;
+float   particleBurstSize = 8;
+int     particleTrailSize = 1;
+boolean renderParticles = true;
+boolean syncParticles = false;
+boolean disperseParticles = true;
+float   particleDrawingSpeed = 0.005;
+float   particleTransitionSpeed = 0.93;
+float   particleTransitionSpeedIdle = 0.96;
+float   particleFadeSlowDown = 8;
+color   burstColor = color(255) ;
+int     particlesToMove = 0;
+
 
 void updateParticlesIdle(){
   for(int i=0; i<particles.size(); i++){
@@ -78,4 +92,34 @@ void setParticlesForGame(){
     particles.get(i).setSize(gameParticleSize);
     particles.get(i).disperse();
   }
+}
+
+void updateParticleAmount(int amount) {
+    if(particles.size() > amount){
+      for(int i=particles.size()-1; i>amount-1; i--){
+        particles.remove(i);
+      }
+    } else if(particles.size() < amount){
+      for(int i=particles.size(); i<amount; i++){
+        particles.add(new Particle(particleSpeed, i, particleSize, particleTrailSize));
+      }
+    }
+  }
+
+////////////////
+/*LITTLE TASKS*/
+////////////////
+
+color particleColor(int i){
+  float f1 = map(i, 0, particles.size(), 0,1);
+  float f2 = map(i, 0, particles.size(), 1,0);
+  
+  float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
+  float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
+  float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
+  float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+  
+  color c = color(r,g,b,255);
+  
+  return c;
 }
