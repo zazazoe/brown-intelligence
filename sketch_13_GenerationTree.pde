@@ -11,6 +11,7 @@ int     TRANSITION_GAMEMODE = 2;
 int     DRAW_GAMEMODE = 3;
 int     FADE_GAMEMODE = 4;
 int     GAME_MODE = 5;
+int     TRANSITION_IDLEMODE = 6;
 
 float   treeRot = 0;
 PVector treeStartPoint;
@@ -30,6 +31,7 @@ boolean syncParticles = false;
 boolean disperseParticles = true;
 float   particleDrawingSpeed = 0.005;
 float   particleTransitionSpeed = 0.93;
+float   particleTransitionSpeedIdle = 0.96;
 float   particleFadeSlowDown = 8;
 
 int     lineRandX = 10;
@@ -59,6 +61,7 @@ int     particlesToMove = 0;
 
 boolean switchToIdle = false;
 boolean transitionToGame = false;
+boolean transitionToIdle = false;
 
 int     startTimer = 0;
 int     treeTimer  = 5000;
@@ -66,7 +69,7 @@ int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
 int     idleFadeTimer = 1000; 
 
-boolean sensorConnected = true;
+boolean sensorConnected = false;
   
 PGraphics nerveSkeleton;
 PGraphics nerveSkeletonFG;
@@ -267,16 +270,30 @@ void draw() {
     if(deviceDevice) image(deviceDeviceOverlay, 0,0); //NOTE TO ADD: if device device, show device explanation
 
     if(switchToIdle){
-      updateParticleAmount(curves.size());   
+      //updateParticleAmount(curves.size());   
+      transitionParticlesToIdleMode();
+      
+      lineFadeOutSpeed = lineOpacityMin/(treeTimer/120.0);
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 0.0;
       }
-      startTimer = millis() + treeTimer;
+
       switchToIdle = false;
-      mode = IDLE_MODE;
+      //transitionToIdle = true;
+      mode = TRANSITION_IDLEMODE;
       println("enter idle mode");
     }
     break;  
+  case 6: /*TRANSITION TO IDLE MODE*/ 
+    renderCurves();
+    transitionParticlesToIdleCurves();
+    
+    if(transitionDone()){
+      startTimer = millis() + treeTimer;
+      mode = IDLE_MODE;
+      println("change back to idle mode");
+    }
+    break;
   }
   
   blobx = 0; //CHECK THIS OUT AND CLEAN UP

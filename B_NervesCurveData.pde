@@ -211,7 +211,7 @@ void initTransitionParticles(int _curveIndex, AUBezier[] curveSet){
   }
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
-      particles.get(j).setTransition(true, curveSet[j-i]);
+      particles.get(j).setTransition(true, curveSet[j-i], 0.0);
     } 
   }
 }

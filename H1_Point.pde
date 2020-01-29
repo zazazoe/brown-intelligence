@@ -163,7 +163,7 @@ class Point{
         positions[i].y = _speed*positions[i].y + (1-_speed)*newStartPoint.y;
         
         float d = positions[i].dist(newStartPoint);
-        if(d<0.5){
+        if(d<1){
           setTransition(false);
           tPosStep[i][1] = tStep;
         }
@@ -177,6 +177,8 @@ class Point{
 
   void displayIdle() {
     noStroke();
+    transitionColor(c, cIdle, 0.99);
+    transitionSize(size, sizeIdle, 0.99);
     
     for(int i=0; i<positions.length; i++){
       fill(cIdle);
@@ -305,10 +307,17 @@ class Point{
     transition = _transition;
   }
   
-  void setTransition(boolean _transition, AUBezier curve){
+  void setTransition(boolean _transition, AUBezier curve, float _t){
     transition = _transition;
-    float newPos = 0.0;//random(0.0, PI);
+    float newPos = _t; //random(0.0, PI);
     newStartPoint = setBezierPos(curve, newPos);
+    reset(newPos);
+  }
+  
+  void setTransition(boolean _transition, AUCurve curve, float _t){
+    transition = _transition;
+    float newPos = _t; //random(0.0, PI);
+    newStartPoint = setCurvePos(curve, newPos);
     reset(newPos);
   }
   
@@ -327,7 +336,7 @@ class Point{
   
   void setIdleColor(color _c){
     cIdle = _c;
-    c = cIdle;
+    //c = cIdle;
   }
   
   void setGameColor(color _c){
@@ -336,7 +345,7 @@ class Point{
   
   void setIdleSize(float _s){
     sizeIdle = _s;
-    size = sizeIdle;
+    //size = sizeIdle;
   }
   
   void setGameSize(float _s){
