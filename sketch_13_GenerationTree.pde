@@ -66,7 +66,7 @@ int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
 int     idleFadeTimer = 1000; 
 
-boolean sensorConnected = false;
+boolean sensorConnected = true;
   
 PGraphics nerveSkeleton;
 PGraphics nerveSkeletonFG;
@@ -311,9 +311,10 @@ void keyPressed(){
       break;
     case 'a':
       if(mode == IDLE_MODE){
-        for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(SENSOR_SIDE);
-        }
+        opencv = new OpenCV(this, 480, 270);
+        opencv.loadImage(camera.getDepthImage());
+        background = opencv.getSnapshot();
+        println("background set");
       }
       break;
     case 's':

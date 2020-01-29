@@ -1,38 +1,44 @@
 import gab.opencv.*;
 import java.awt.Rectangle;
 import processing.video.*;
-import controlP5.*;
 import ch.bildspur.realsense.*;
 
 RealSenseCamera camera = new RealSenseCamera(this);
 
 OpenCV opencv;
 ArrayList<Contour> contours;
-boolean displayContours = false;
+boolean displayContours = true;
 
-int threshold = 65;
-int blobSizeThreshold = 100;
-int blurSize = 5;
+PImage background;
+PImage contoursImage;
 
+int threshold = 39;
+int blobSizeThreshold = 28;
+
+boolean isBackgroundSave = false;
 
 void initCV(){
   camera.start(480, 270, 30, true, false);
   opencv = new OpenCV(this, 480, 270);
   contours = new ArrayList<Contour>(); 
+  background = loadImage("BGcapture.jpg");
 }
 
 void updateCV(){
-  if(frameCount%2==0) camera.readFrames();
-  camera.createDepthImage(0, 2100);
-  
-  opencv.loadImage(camera.getDepthImage());
-  opencv.threshold(threshold);
-  opencv.dilate();
-  opencv.erode();
-  opencv.blur(blurSize);
-  
-  contours = opencv.findContours(true, true);  
-  calculateContourBoundingBoxes();
+  if(frameCount%2==0) {
+    camera.readFrames();
+    camera.createDepthImage(0, 2500);
+    
+    opencv.loadImage(camera.getDepthImage());
+    opencv.diff(background);
+    opencv.threshold(threshold);
+    //opencv.dilate();
+    //opencv.erode();
+    //opencv.blur(blurSize);
+    
+    contours = opencv.findContours(true, true);  
+  }
+    calculateContourBoundingBoxes();
 }
 
 void calculateContourBoundingBoxes() {  
