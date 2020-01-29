@@ -16,7 +16,9 @@ void renderParticlesIdle(){
   if(renderParticles){
     for(int i=0; i<particles.size(); i++){
       particles.get(i).setIdleColor(particleColor(i)); //actually changing
+      particles.get(i).setBurstColor(burstColor); //stupid to do every time (could be as move to mode and in setup?)
       particles.get(i).setIdleSize(particleSize); //stupid to do every time (could be as move to mode and in setup?)
+      particles.get(i).setBurstSize(particleBurstSize); //stupid to do every time (could be as move to mode and in setup?)
       particles.get(i).displayIdle();
     }
   }
@@ -53,27 +55,8 @@ void transitionParticlesToGameMode(){
 }
 
 void transitionParticlesToIdleMode(){
-  //if(particles.size() <= nrOfNerveCurves){
-  //  particlesToMove = particles.size();
-  //} else {
-  //  particlesToMove = nrOfNerveCurves;
-  //}
-  //for(int i=0; i<particlesToMove; i++){
-  //  particles.get(i).setTransition(true);
-  //}
   updateParticleAmount(curves.size());
-  //for(int i=0; i<particles.size(); i++){
-  //  particles.get(i).setTransition(true);
-  //}
-  
-  //for(int i=0; i<particles.size(); i++){
-  //  if(!particles.get(i).getTransition()){
-  //    particles.get(i).setPoint();
-  //    particles.get(i).setIdleColor(color(0));
-  //  }
-  //  particles.get(i).clearBurst();
-  //}
-  
+
   for(int i=0; i<particles.size(); i++){
     particles.get(i).setTransition(true, curves.get(i), random(0.0, PI));
   }

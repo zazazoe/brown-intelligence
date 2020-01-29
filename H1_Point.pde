@@ -9,6 +9,7 @@ class Point{
   float sizeGame;
   color c;
   color cIdle;
+  color cBurst;
   color cGame;
   
   PVector   pos;
@@ -186,7 +187,7 @@ class Point{
     }
     
     if(burstPositions.size() > 0){
-      fill(cIdle);
+      fill(cBurst);
       for(int i=0; i<burstPositions.size(); i++){
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, burstSize, burstSize);
       }
@@ -247,12 +248,12 @@ class Point{
       if(_side == SENSOR_SIDE){ //left is 0, right is 1
         burstPosStep.add(new Float[2]);
         burstPosStep.get(i)[0] = 0.0; //+(i*0.02) //+(i*random(0.01,0.02))
-        burstPosStep.get(i)[1] = tStep*random(3.5,4.5);
+        burstPosStep.get(i)[1] = tStep*random(1.5,1.5); //NOTE TO SELF, make proper variable, dif for idle and game >speed
       }
       if(_side == MOTOR_SIDE){
         burstPosStep.add(new Float[2]);
         burstPosStep.get(i)[0] = PI; //(i*0.02) //-(i*random(0.01,0.02))
-        burstPosStep.get(i)[1] = tStep*-random(3.5,4.5);
+        burstPosStep.get(i)[1] = tStep*-random(1.5,1.5); //NOTE TO SELF, make proper variable, dif for idle and game >speed
       }
       burstPositions.add(new PVector(0,0));
       side = _side;
@@ -336,7 +337,10 @@ class Point{
   
   void setIdleColor(color _c){
     cIdle = _c;
-    //c = cIdle;
+  }
+  
+  void setBurstColor(color _c){
+    cBurst = _c;
   }
   
   void setGameColor(color _c){
@@ -345,7 +349,10 @@ class Point{
   
   void setIdleSize(float _s){
     sizeIdle = _s;
-    //size = sizeIdle;
+  }
+  
+  void setBurstSize(float _s){
+    burstSize = _s;
   }
   
   void setGameSize(float _s){

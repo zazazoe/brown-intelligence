@@ -25,6 +25,7 @@ int     segmentMaxRot = 50;
 
 float   particleSpeed = 0.005;
 float   particleSize = 8;
+float   particleBurstSize = 8;
 int     particleTrailSize = 1;
 boolean renderParticles = true;
 boolean syncParticles = false;
@@ -33,6 +34,7 @@ float   particleDrawingSpeed = 0.005;
 float   particleTransitionSpeed = 0.93;
 float   particleTransitionSpeedIdle = 0.96;
 float   particleFadeSlowDown = 8;
+color   burstColor;
 
 int     lineRandX = 10;
 int     lineRandY = 20;
@@ -123,7 +125,8 @@ void setup(){
   mode                 = IDLE_MODE;
   startTimer           = millis();
   mouse                = new PVector(0, 0);
-  
+  burstColor           = color(255);
+
   loadImages();
   initNerveCurves();
   initCP5();
@@ -154,16 +157,18 @@ void draw() {
   
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    updateCurves();
-    updateCurvePoints();
-    renderCurves();
-    updateParticlesIdle();
-    renderParticlesIdle();
-
     if(millis()-startTimer>treeTimer){
       transitionToNextTree();
       startTimer = millis();
     }
+    
+    updateCurves();
+    updateCurvePoints();
+    updateParticlesIdle();
+    
+    
+    renderCurves(); 
+    renderParticlesIdle();
     
     if(transitionToGame){
       for(int i=0; i<curveOpacity.size(); i++){
@@ -283,7 +288,8 @@ void draw() {
       mode = TRANSITION_IDLEMODE;
       println("enter idle mode");
     }
-    break;  
+    break; 
+    
   case 6: /*TRANSITION TO IDLE MODE*/ 
     renderCurves();
     transitionParticlesToIdleCurves();
