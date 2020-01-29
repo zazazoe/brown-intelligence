@@ -69,13 +69,19 @@ void reGenerateTree(float _startLength, float _startRotation, PVector _startPoin
 
 void renderCurves(){ 
   for(int i=0; i<knots.size(); i++) {
+    timePassed=millis();
+    
     float f1 = map(i, 0, knots.size(), 0,1);
     float f2 = map(i, 0, knots.size(), 1,0);
-    
     float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
     float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
     float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-
+    
+    if(i == 5)
+    {
+      println("0: " + (millis()-timePassed));
+      timePassed=millis();
+    }
     if(curveOpacity.get(i)[1] == 1){ //phase out
         curveOpacity.get(i)[0] -= lineFadeOutSpeed;
     } else if(curveOpacity.get(i)[1] == 0) { //normal
@@ -85,19 +91,35 @@ void renderCurves(){
         curveOpacity.get(i)[0] += lineFadeOutSpeed;
       }
     }
-    
     float a = 255*curveOpacity.get(i)[0]; //*lineOpacities[i]
+    
+    if(i == 5)
+    {
+      println("1: " + (millis()-timePassed));
+      timePassed=millis();
+    }
     
     stroke(r,g,b,a);
     strokeWeight(lineWeight);
     noFill();
-
-    beginShape();
+    
+      beginShape();
       for (int j=0; j<knots.get(i).length; j++) {
         int x = j % knots.get(i).length;
-        curveVertex(knots.get(i)[x][0], knots.get(i)[x][1]);
+        float x1 = knots.get(i)[x][0];
+        float y1 = knots.get(i)[x][1];
+
+          curveVertex(x1, y1);
+         
       }
     endShape();
+    
+    
+    if(i == 5)
+    {
+      println("2: " + (millis()-timePassed));
+      timePassed=millis();
+    }
    } 
 }
 

@@ -73,6 +73,9 @@ PGraphics nerveSkeletonFG;
 PImage    blackOverlay;
 PImage    deviceOverlay;
 PImage    organUnderlay;
+PImage    deviceDeviceOverlay;
+PImage    deviceRingsOverlay;
+
 
 PImage    UI;
 PVector   UIexitpos = new PVector(1364, 836);
@@ -104,8 +107,11 @@ float     imageAlphaStep = 0.0; //set based on fade timer
 
 PVector   mouse;
 
+int       timePassed=0;
+
+
 void setup(){
-  fullScreen();
+  fullScreen(OPENGL);
   frameRate(60);
   
   //init parameters
@@ -141,6 +147,7 @@ void setup(){
 
 void draw() {
   background(0);
+  timePassed=millis();
   
   switch(mode){
   case 0: /*IDLE MODE*/ 
@@ -149,11 +156,12 @@ void draw() {
     renderCurves();
     updateParticlesIdle();
     renderParticlesIdle();
-    
+
     if(millis()-startTimer>treeTimer){
       transitionToNextTree();
       startTimer = millis();
     }
+    
     if(transitionToGame){
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
@@ -255,8 +263,8 @@ void draw() {
     if(deviceButton) image(UIdevice, 0,0);
     if(deviceRings) image(UIdeviceRings, 0,0);
     if(deviceDevice) image(UIdeviceDevice, 0,0);
-    //if(deviceRings) image(...., 0,0); NOTE TO ADD: if device rings, show rings explanation
-    //if(deviceDevice) image(...., 0,0); NOTE TO ADD: if device device, show device explanation
+    if(deviceRings) image(deviceRingsOverlay, 0,0); //NOTE TO ADD: if device rings, show rings explanation
+    if(deviceDevice) image(deviceDeviceOverlay, 0,0); //NOTE TO ADD: if device device, show device explanation
 
     if(switchToIdle){
       updateParticleAmount(curves.size());   
@@ -381,12 +389,14 @@ boolean transitionDone(){
 
 void loadImages(){
   //game nerve skeleton drawing
-  nerveSkeleton   = createGraphics(width, height);
-  nerveSkeletonFG = createGraphics(width, height);
-  blackOverlay    = loadImage("imageAssets/blackOverlay.png");
-  deviceOverlay   = loadImage("imageAssets/deviceOverlay.png");
-  organUnderlay   = loadImage("imageAssets/organUnderlay.png");
-  
+  nerveSkeleton       = createGraphics(width, height);
+  nerveSkeletonFG     = createGraphics(width, height);
+  blackOverlay        = loadImage("imageAssets/blackOverlay.png");
+  deviceOverlay       = loadImage("imageAssets/deviceOverlay.png");
+  organUnderlay       = loadImage("imageAssets/organUnderlay.png");
+  deviceDeviceOverlay = loadImage("imageAssets/deviceDevice.png");
+  deviceRingsOverlay  = loadImage("imageAssets/deviceRings.png");
+
   //game UI
   UI              = loadImage("imageAssets/UI/UI.png");
   UIleg           = loadImage("imageAssets/UI/leg.png");
