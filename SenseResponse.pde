@@ -28,7 +28,7 @@ int     z2 = 1;
 int     z3 = 2;
 
 void setup(){
-  fullScreen(OPENGL);
+  fullScreen(OPENGL, 2); //NOTE TO SELF: change display back to 1
   frameRate(60);  
   mode             = IDLE_MODE;
   timerStart       = millis();

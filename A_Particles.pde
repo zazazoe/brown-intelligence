@@ -1,8 +1,7 @@
 
 float   particleSpeed = 0.005;
 float   particleSize = 8;
-float   particleBurstSize = 8;
-int     particleTrailSize = 1;
+int     particleTrailSize = 1; //NOTE TO SELF: may want to remove... now have burst
 boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
@@ -10,9 +9,12 @@ float   particleDrawingSpeed = 0.005;
 float   particleTransitionSpeed = 0.93;
 float   particleTransitionSpeedIdle = 0.96;
 float   particleFadeSlowDown = 8;
-color   burstColor = color(255) ;
 int     particlesToMove = 0;
+int     successRate = 3;
 
+color   burstColor = color(255) ;
+float   burstSpeed = 0.075;
+float   particleBurstSize = 8;
 
 void updateParticlesIdle(){
   for(int i=0; i<particles.size(); i++){
@@ -73,6 +75,7 @@ void transitionParticlesToIdleMode(){
 
   for(int i=0; i<particles.size(); i++){
     particles.get(i).setTransition(true, curves.get(i), random(0.0, PI));
+    //particles.get(i).disperse();
   }
   
   transitionToIdle=true;

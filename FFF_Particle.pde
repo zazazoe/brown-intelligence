@@ -37,8 +37,8 @@ class Particle{
     tStep = _tStep;
     nrOfPoints = _nrOfPoints;
     pos = new PVector(0,0);
-    tPosStep = new Float[nrOfPoints][2]; //0 is tPos, 1 is tStep
-    positions = new PVector[nrOfPoints];
+    tPosStep = new Float[nrOfPoints][2]; //0 is tPos, 1 is tStep //NOTE TO SELF: maybe simplify to single point... now have burst
+    positions = new PVector[nrOfPoints]; //NOTE TO SELF: maybe simplify to single point... now have burst
     
     for(int i=0; i<nrOfPoints; i++){
       tPosStep[i][0] = random(0.0, PI);
@@ -48,14 +48,14 @@ class Particle{
     
     burst = false;
     bursttPos = 0.0;
-    bursttStep = _tStep*15;  //NOTE TO SELF: make this proper variable
+    bursttStep = burstSpeed;
     burstPos = new PVector(0,0);
-    burstSize = 1.5*_size;  //NOTE TO SELF: make this proper variable
+    burstSize = particleBurstSize;
     
     burstPosStep = new ArrayList<Float[]>();
     burstPositions = new ArrayList<PVector>();
     
-    success = (int)random(0,4);  //NOTE TO SELF: make this proper variable, + implement below
+    success = (int)random(0,successRate);
     transition = false;
   }
 
@@ -115,10 +115,14 @@ class Particle{
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
-      if(success == 1) ;//curveOpacities[idNr] = 1.0;;//curveOpacities[idNr] = 1.0;  //NOTE TO SELF: curve opacities should be replaced with more generic function
+      if(idNr<curveOpacity.size()){
+        if(success == 1 && curveOpacity.get(idNr)[1]<1.0){
+          curveOpacity.get(idNr)[0] = 1.0;
+        }
+      }
       if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
-      success = (int)random(0,4);
+      success = (int)random(0,successRate);
     }
     float tmp = cos(tPosStep[i][0]);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);
@@ -127,17 +131,25 @@ class Particle{
   void updateIdleParticles(int i, float _tStep){
     tPosStep[i][0] += _tStep; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
+      if(idNr<curveOpacity.size()){
+        if(success == 1 && curveOpacity.get(idNr)[1]<1.0){
+          curveOpacity.get(idNr)[0] = 1.0;
+        }
+      }
       if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
+      success = (int)random(0,successRate);
     }
     float tmp = cos(tPosStep[i][0]);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);
   }
   
   void updateBurstParticles(int i){
-    burstPosStep.get(i)[0] += burstPosStep.get(i)[1];    
-    if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == MOTOR_SIDE){
-      //curveOpacities[idNr] = 1.0; /*curve opacities should be replaced with more generic function*/
+    burstPosStep.get(i)[0] += burstPosStep.get(i)[1]; 
+    if(idNr<curveOpacity.size()){
+      if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == MOTOR_SIDE){
+        curveOpacity.get(idNr)[0] = 1.0;
+      }
     }
     float tmp = cos(burstPosStep.get(i)[0]);
     t = map(tmp, 1.0, -1.0, 0.0, 1.0);
@@ -166,7 +178,6 @@ class Particle{
         float d = positions[i].dist(newStartPoint);
         if(d<1){
           setTransition(false);
-          tPosStep[i][1] = tStep;
         }
       }
     }
@@ -271,6 +282,13 @@ class Particle{
     }
   }
   
+  void reset(float _t, int dir){
+    for(int i=0; i<tPosStep.length; i++){
+      tPosStep[i][0] = _t;
+      tPosStep[i][1] = tStep * dir; //((int)random(0,2)* 2 -1); //set tStep
+    }
+  }
+  
   void clearBurst(){
     burstPosStep.clear();
     burstPositions.clear();
@@ -325,7 +343,7 @@ class Particle{
     transition = _transition;
     float newPos = _t; //random(0.0, PI);
     newStartPoint = setCurvePos(curve, newPos);
-    reset(newPos);
+    reset(newPos, (int)random(0,2)* 2 -1);
   }
   
   boolean getTransition(){

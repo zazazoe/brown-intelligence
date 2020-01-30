@@ -20,7 +20,7 @@ ArrayList<Particle> particles;
 ArrayList<CurvePoint[]> curvePoints;
 ArrayList<float[]> curveOpacity;
 
-int     curveRandX = 10;
+int     curveRandX = 15;
 int     curveRandY = 20;
 int     curveWeight = 3;
 Float[] curveOpacities;
