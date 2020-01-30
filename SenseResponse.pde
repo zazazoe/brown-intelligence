@@ -16,7 +16,7 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 boolean transitionToIdle = false;
 
-int     startTimer = 0;
+int     timerStart = 0;
 int     curveTimer = 5000;
 int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
@@ -31,14 +31,14 @@ void setup(){
   fullScreen(OPENGL);
   frameRate(60);  
   mode             = IDLE_MODE;
-  startTimer       = millis();
+  timerStart       = millis();
 
   loadImages();
   loadUIImages();
   initNerveCurves();
   initCP5();
   initCurves();
-  if(sensorConnected) initCV();   
+  if(sensorConnected) initCV(); 
 }
 
 
@@ -52,9 +52,9 @@ void draw() {
     updateParticlesIdle();
     renderCurves(); 
     renderParticlesIdle();  
-    if(millis()-startTimer>curveTimer){
+    if(millis()-timerStart>curveTimer){
       transitionToNextTree();
-      startTimer = millis();
+      timerStart = millis();
     }
     if(transitionToGame)
       transition(FADE_IDLEMODE);
@@ -64,7 +64,7 @@ void draw() {
     renderCurves();
     updateParticlesIdleFade();
     renderParticlesIdle();
-    if(millis()-startTimer>idleFadeTimer)
+    if(millis()-timerStart>idleFadeTimer)
       transition(TRANSITION_GAMEMODE);
     break;
     
@@ -83,7 +83,7 @@ void draw() {
     image(blackOverlay, 0,0);
     image(nerveSkeletonFG, 0,0);
     
-    if(millis()-startTimer>drawTimer)
+    if(millis()-timerStart>drawTimer)
       transition(FADE_GAMEMODE);
     break;
     
@@ -101,7 +101,7 @@ void draw() {
     
     if(imageAlpha<255)
       imageAlpha += imageAlphaStep;
-    if(millis()-startTimer>fadeTimer)
+    if(millis()-timerStart>fadeTimer)
       transition(GAME_MODE);
     break;   
     
@@ -143,7 +143,7 @@ void draw() {
 void transition(int _toMode){
   switch(_toMode){
     case 0: //TO IDLE MODE
-      startTimer = millis() + curveTimer;
+      timerStart = millis() + curveTimer;
       mode = IDLE_MODE;
       println("change back to idle mode");
       break;
@@ -151,7 +151,7 @@ void transition(int _toMode){
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
       }
-      startTimer = millis();
+      timerStart = millis();
       curveFadeOutSpeed = curveOpacityMin/(idleFadeTimer/60.0);
       mode = FADE_IDLEMODE;
       println("fade out idle mode");  
@@ -162,18 +162,18 @@ void transition(int _toMode){
       clearDrawingCanvas(nerveSkeleton);
       clearDrawingCanvas(nerveSkeletonFG);
       gameParticleSize = 1;
-      startTimer = millis();
+      timerStart = millis();
       mode = TRANSITION_GAMEMODE; 
       transitionToGame = false;
       println("ready to move particles");
       break;
     case 3:
-      startTimer = millis();
+      timerStart = millis();
       mode = DRAW_GAMEMODE; 
       println("change game draw mode");
       break;
     case 4:
-      startTimer = millis();
+      timerStart = millis();
       imageAlphaStep = 255.0/(fadeTimer/60.0); //NOTE TO SELF: based on 60fps
       mode = FADE_GAMEMODE;
       println("change to game mode");

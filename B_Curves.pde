@@ -37,9 +37,23 @@ int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
 
+PShader lineShader;
+PShader lineShader3;
+float[] clr_white = {1., 1., 1.};
 
 void initCurves(){
   curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
+  //lineShader  = loadShader("linefrag.glsl", "linevert.glsl");
+  //lineShader3 = loadShader("linefrag_skel.glsl", "linevert_skel.glsl");
+  
+  //lineShader.set("stroke_weight", 4);
+  //lineShader.set("stroke_color", clr_white);
+  //lineShader.set("push", 0);
+  //lineShader.set("render_solid", 0);
+  //lineShader.set("alpha", 1.);
+  
+  //lineShader3.set("stroke_color", clr_white);
+  //lineShader3.set("stroke_weight", 255);
   
   curveSetStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
   segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
@@ -135,20 +149,22 @@ void renderCurves(){
     stroke(r,g,b,a);
     strokeWeight(curveWeight);
     noFill();
-    
+
     pushMatrix();
     translate(0,0,z1);
+      //shader(lineShader3, LINES);
       beginShape();
       for (int j=0; j<knots.get(i).length; j++) {
         int x = j % knots.get(i).length;
         float x1 = knots.get(i)[x][0];
         float y1 = knots.get(i)[x][1];
 
-          curveVertex(x1, y1);
-         
+        curveVertex(x1, y1); 
       }
       endShape();
     popMatrix();
+    
+    
    } 
 }
 
