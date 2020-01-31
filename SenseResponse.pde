@@ -2,6 +2,9 @@ import AULib.*;
 import processing.video.*;
 import ch.bildspur.realsense.*;
 import controlP5.*;
+import peasy.*;
+
+PeasyCam cam;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -33,6 +36,8 @@ int     zx = 10;
 void setup(){
   fullScreen(OPENGL, 2); //NOTE TO SELF: change display back to 1
   frameRate(60);  
+  cam = new PeasyCam(this, 100);
+  
   mode             = IDLE_MODE;
   timerStart       = millis();
 
@@ -50,9 +55,9 @@ void draw() {
 
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    updateCurves();
-    updateCurvePoints();
-    updateParticlesIdle();
+    //updateCurves();
+    //updateCurvePoints();
+    //updateParticlesIdle();
     
     pushMatrix();
     translate(0,0,z1);
@@ -61,13 +66,13 @@ void draw() {
     
     pushMatrix();
     translate(0,0,z2);
-    renderParticlesIdle(); 
+    //renderParticlesIdle(); 
     popMatrix();
     
-    if(millis()-timerStart>curveTimer){
-      transitionToNextTree();
-      timerStart = millis();
-    }
+    //if(millis()-timerStart>curveTimer){
+    //  transitionToNextTree();
+    //  timerStart = millis();
+    //}
     if(transitionToGame)
       transition(FADE_IDLEMODE);
     break;
@@ -347,9 +352,9 @@ void keyPressed(){
 }
 
 void mousePressed(){
-  if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
-    transitionToGame = true;
-  }
+  //if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
+  //  transitionToGame = true;
+  //}
 }
 
 ////////////////

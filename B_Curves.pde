@@ -8,13 +8,15 @@ float   segmentMinLength = 75;
 float   segmentMaxLength = 200;
 int     segmentMinRot = -50;
 int     segmentMaxRot = 50;
+int     segmentMinRotZ = -50;
+int     segmentMaxRotZ = 50;
 
 int     generationLimit;
 ArrayList<Segment>[] points;
 ArrayList<ArrayList<PVector>> curvesToSave;
 int     counter;
 
-ArrayList<float[][]> knots;
+ArrayList<float[][]> knots; //needs z space
 ArrayList<AUCurve> curves;
 ArrayList<Particle> particles;
 ArrayList<CurvePoint[]> curvePoints;
@@ -37,10 +39,6 @@ int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
 
-//PShader lineShader;
-//PShader lineShader3;
-//float[] clr_white = {1., 1., 1.};
-
 color  clrA = color(212,  20,  90);
 color  clrB = color(252, 238,  33);
 color  clrC = color( 41, 171, 226);
@@ -52,28 +50,21 @@ color  curveClr2;
 
 void initCurves(){
   curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
-  //lineShader  = loadShader("linefrag.glsl", "linevert.glsl");
-  //lineShader3 = loadShader("linefrag_skel.glsl", "linevert_skel.glsl");
-  
-  //lineShader.set("stroke_weight", 4);
-  //lineShader.set("stroke_color", clr_white);
-  //lineShader.set("push", 0);
-  //lineShader.set("render_solid", 0);
-  //lineShader.set("alpha", 1.);
-  
-  //lineShader3.set("stroke_color", clr_white);
-  //lineShader3.set("stroke_weight", 255);
-  
+
   curveClr1 = clrA;
   curveClr2 = clrB;
   
-  curveSetStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
-  segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
-  segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
-  curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
+  /**/
+  curveSetStartPoint = new PVector(0, height/2, 0); //random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  segmentMinRot = -50;
+  segmentMaxRot = 50;
+  curveSetRot = 0;
+  //segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
+  //segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
+  //curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
   
   generateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
-  regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
+  //regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
   newTreeLength = curvesToSave.size();
   oldTreeLength = curves.size();
   println("generated old tree: " + oldTreeLength);
@@ -90,10 +81,12 @@ void generateCurveSet(float _startLength, float _startRotation, PVector _startPo
     points[i] = new ArrayList<Segment>();
   }
   
+  /*change inside*/
   segment(_startLength, _startRotation, _startPoint, 0);
+  
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
-  addPointRandomization();
+  //addPointRandomization();
   
   knots = new ArrayList<float[][]>();
   curves = new ArrayList<AUCurve>();
@@ -102,13 +95,17 @@ void generateCurveSet(float _startLength, float _startRotation, PVector _startPo
   curveOpacity = new ArrayList<float[]>();
   
   for(int i=0; i<curvesToSave.size(); i++){
-    knots.add(new float[curvesToSave.get(i).size()+2][2]);
+    /*made array of 3 to save z value*/
+    knots.add(new float[curvesToSave.get(i).size()+2][3]);
     curvePoints.add(new CurvePoint[curvesToSave.get(i).size()+2]);
     
+    /*added z*/
     createKnots(i);
+    /*added z*/
     createCurvePoints(i);
     
-    curves.add(new AUCurve(knots.get(i),2,false));
+    /*AUCurve with 3 values*/
+    curves.add(new AUCurve(knots.get(i),3,false));
     particles.add(new Particle(_particleSpeed, i, _particleSize, _particleTrailSize)); //float _tStep, int _idNr, float _minSize, float _maxSize, int _trail
     curveOpacity.add(new float[2]);
     curveOpacity.get(i)[0] = curveOpacityMin;
@@ -173,8 +170,12 @@ void renderCurves(){
         int x = j % knots.get(i).length;
         float x1 = knots.get(i)[x][0];
         float y1 = knots.get(i)[x][1];
-
-        curveVertex(x1, y1); 
+        float z1 = knots.get(i)[x][2];
+        
+        //println("x1 value: " + x1);
+        
+        curveVertex(x1, y1, z1); 
+        println(x1 + "'" + y1 + "'" + z1);
       }
       endShape();
    } 
@@ -214,8 +215,10 @@ void updateCurveColors(){
   
   void updateCurves(){
     for(int i=0; i<curvePoints.size(); i++){
+      /*inside added z*/
       updateKnots(i);
-      curves.set(i, new AUCurve(knots.get(i),2,false));
+      /*changed AUCurve to 3*/
+      curves.set(i, new AUCurve(knots.get(i),3,false));
     }
   }
   
@@ -223,6 +226,7 @@ void updateCurveColors(){
     for(int i = 1; i<curvePoints.get(nr).length; i++){
       knots.get(nr)[i][0] = curvePoints.get(nr)[i].pos().x;
       knots.get(nr)[i][1] = curvePoints.get(nr)[i].pos().y;
+      knots.get(nr)[i][2] = curvePoints.get(nr)[i].pos().z;
     }
   }
   
@@ -317,11 +321,14 @@ void prepNextTree(){
   void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {
     PVector point = new PVector();
     
-    point.x = cos(radians(_segmentRotation));
-    point.y = sin(radians(_segmentRotation));
+    float tmpZ = random(segmentMinRot, segmentMaxRot);
+    
+    point.x = cos(radians(_segmentRotation))*cos(radians(tmpZ));
+    point.y = cos(radians(_segmentRotation))*sin(radians(tmpZ));
+    point.z = sin(radians(_segmentRotation));
     point.mult(_segmentLength);
     point.add(_prevPoint);
-    
+
     points[_generation].add(new Segment(_prevPoint, point)); 
     _generation += 1;
     
@@ -408,33 +415,36 @@ void prepNextTree(){
     //duplicate first point
     knots.get(nr)[0][0] = curvesToSave.get(nr).get(0).x;
     knots.get(nr)[0][1] = curvesToSave.get(nr).get(0).y;
+    knots.get(nr)[0][2] = curvesToSave.get(nr).get(0).z;
 
     //transfer all curve points
     for(int i = 1; i<curvesToSave.get(nr).size()+1; i++){
       knots.get(nr)[i][0] = curvesToSave.get(nr).get(i-1).x;
       knots.get(nr)[i][1] = curvesToSave.get(nr).get(i-1).y;
+      knots.get(nr)[i][2] = curvesToSave.get(nr).get(i-1).z;
     }
     
     //duplicate last point
     knots.get(nr)[curvesToSave.get(nr).size()+1][0] = curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).x;
     knots.get(nr)[curvesToSave.get(nr).size()+1][1] = curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).y;
+    knots.get(nr)[curvesToSave.get(nr).size()+1][2] = curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).z;
   }
   
   void createCurvePoints(int nr){ 
     //duplicate first point
-    curvePoints.get(nr)[0] = new CurvePoint(new PVector(curvesToSave.get(nr).get(0).x,curvesToSave.get(nr).get(0).y), false);
+    curvePoints.get(nr)[0] = new CurvePoint(new PVector(curvesToSave.get(nr).get(0).x,curvesToSave.get(nr).get(0).y, curvesToSave.get(nr).get(0).z), false);
     
     //transfer all curve points
     for(int i = 1; i<curvesToSave.get(nr).size()+1; i++){
       if(i==1){
-        curvePoints.get(nr)[i] = new CurvePoint(new PVector(curvesToSave.get(nr).get(i-1).x,curvesToSave.get(nr).get(i-1).y), false);
+        curvePoints.get(nr)[i] = new CurvePoint(new PVector(curvesToSave.get(nr).get(i-1).x,curvesToSave.get(nr).get(i-1).y, curvesToSave.get(nr).get(i-1).z), false);
       } else {
-        curvePoints.get(nr)[i] = new CurvePoint(new PVector(curvesToSave.get(nr).get(i-1).x,curvesToSave.get(nr).get(i-1).y), true);
+        curvePoints.get(nr)[i] = new CurvePoint(new PVector(curvesToSave.get(nr).get(i-1).x,curvesToSave.get(nr).get(i-1).y, curvesToSave.get(nr).get(i-1).z), true);
       }
     }
     
     //duplicate last point
-    curvePoints.get(nr)[curvesToSave.get(nr).size()+1] = new CurvePoint(new PVector(curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).x,curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).y), true);
+    curvePoints.get(nr)[curvesToSave.get(nr).size()+1] = new CurvePoint(new PVector(curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).x,curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).y, curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).z), true);
   }
   
   

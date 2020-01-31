@@ -43,7 +43,7 @@ class Particle{
     for(int i=0; i<nrOfPoints; i++){
       tPosStep[i][0] = random(0.0, PI);
       tPosStep[i][1] = _tStep * ((int)random(0,2)* 2 -1);
-      positions[i] = new PVector(0,0);
+      positions[i] = new PVector(0,0,0);
     }
     
     burst = false;
