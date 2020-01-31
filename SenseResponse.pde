@@ -20,7 +20,7 @@ int     timerStart = 0;
 int     curveTimer = 5000;
 int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
-int     idleFadeTimer = 1000; 
+int     idleFadeTimer = 1500; 
 
 int     z0 = -1;
 int     z1 = 0;
@@ -79,7 +79,8 @@ void draw() {
     updateParticlesIdleFade();
     pushMatrix();
     translate(0,0,z2);
-    renderParticlesIdle();
+    //renderParticlesIdle();
+    transitionParticlesToNerveCurves();
     popMatrix();
     
     if(millis()-timerStart>idleFadeTimer)
@@ -189,6 +190,7 @@ void transition(int _toMode){
     case 1:
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
+        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), 1.5,0.5);
       }
       timerStart = millis();
       curveFadeOutSpeed = curveOpacityMin/(idleFadeTimer/60.0);
