@@ -134,7 +134,9 @@ void draw() {
   
   if(sensorConnected)
     updateCV(); 
-
+  
+  updateCurveColors();
+  
   fill(255);
   text(frameRate, 20, height-20);
 }

@@ -37,9 +37,18 @@ int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
 
-PShader lineShader;
-PShader lineShader3;
-float[] clr_white = {1., 1., 1.};
+//PShader lineShader;
+//PShader lineShader3;
+//float[] clr_white = {1., 1., 1.};
+
+color  clrA = color(212,  20,  90);
+color  clrB = color(252, 238,  33);
+color  clrC = color( 41, 171, 226);
+color  clrD = color( 75, 181,  74);
+
+color  curveClr1;
+color  curveClr2;
+
 
 void initCurves(){
   curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
@@ -54,6 +63,9 @@ void initCurves(){
   
   //lineShader3.set("stroke_color", clr_white);
   //lineShader3.set("stroke_weight", 255);
+  
+  curveClr1 = clrA;
+  curveClr2 = clrB;
   
   curveSetStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
   segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
@@ -132,9 +144,14 @@ void renderCurves(){
     float f1 = map(i, 0, knots.size(), 0,1);
     float f2 = map(i, 0, knots.size(), 1,0);
     
-    float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
-    float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
-    float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());    
+    //float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
+    //float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
+    //float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());    
+    
+    float r = f1*red(curveClr1) + f2*red(curveClr2);
+    float g = f1*green(curveClr1) + f2*green(curveClr2);
+    float b = f1*blue(curveClr1) + f2*blue(curveClr2);    
+    
     if(curveOpacity.get(i)[1] == 1){ //phase out
         curveOpacity.get(i)[0] -= curveFadeOutSpeed;
     } else if(curveOpacity.get(i)[1] == 0) { //normal
@@ -168,7 +185,33 @@ void renderCurves(){
    } 
 }
 
-
+void updateCurveColors(){
+  float f1;
+  float f2;
+  float r;
+  float g;
+  float b;
+  
+  if(second()<30){
+    f1 = map(second(), 0, 29, 0, 1);
+    f2 = map(second(), 0, 29, 1, 0);
+  } else {
+    f1 = map(second(), 30, 60, 1, 0);
+    f2 = map(second(), 30, 60, 0, 1);
+  }
+    
+  r = f1*red(clrA) + f2*red(clrC);
+  g = f1*green(clrA) + f2*green(clrC);
+  b = f1*blue(clrA) + f2*blue(clrC);
+  
+  curveClr1 = color(r,g,b);
+  
+  r = f1*red(clrB) + f2*red(clrD);
+  g = f1*green(clrB) + f2*green(clrD);
+  b = f1*blue(clrB) + f2*blue(clrD);
+  
+  curveClr2 = color(r,g,b);
+}
   
 //////////////////////////////////////
 /* UPDATE CURVES, KNOTS, CURVEPOINTS*/
@@ -398,3 +441,5 @@ void prepNextTree(){
     //duplicate last point
     curvePoints.get(nr)[curvesToSave.get(nr).size()+1] = new CurvePoint(new PVector(curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).x,curvesToSave.get(nr).get(curvesToSave.get(nr).size()-1).y), true);
   }
+  
+  
