@@ -17,7 +17,7 @@ boolean transitionToGame = false;
 boolean transitionToIdle = false;
 
 int     timerStart = 0;
-int     curveTimer = 5000;
+int     curveTimer = 1000;
 int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
 int     idleFadeTimer = 1500; 
@@ -26,6 +26,8 @@ int     z0 = -1;
 int     z1 = 0;
 int     z2 = 1;
 int     z3 = 2;
+int     z4 = 3;
+int     z5 = 4;
 int     zx = 10;
 
 void setup(){
@@ -71,16 +73,15 @@ void draw() {
     break;
  
   case 1: /*FADE OUT IDLE MODE*/ 
+    updateParticlesIdleFade();
+    
     pushMatrix();
     translate(0,0,z1);
-    renderCurves();
+      renderCurves();
     popMatrix();
-    
-    updateParticlesIdleFade();
     pushMatrix();
     translate(0,0,z2);
-    //renderParticlesIdle();
-    transitionParticlesToNerveCurves();
+      renderParticlesIdle();
     popMatrix();
     
     if(millis()-timerStart>idleFadeTimer)
@@ -88,8 +89,14 @@ void draw() {
     break;
     
   case 2: /*TRANSITION TO GAME MODE*/ 
-    transitionParticlesToNerveCurves();
-    renderCurves();
+    pushMatrix();
+    translate(0,0,z1);
+      transitionParticlesToNerveCurves();
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z2);
+      renderCurves();
+    popMatrix();
     if(transitionDone())
       transition(DRAW_GAMEMODE);
     break;
@@ -101,31 +108,48 @@ void draw() {
     
     pushMatrix();
     translate(0,0,z1);
-    image(nerveSkeleton, 0,0);
+      image(nerveSkeleton, 0,0);
     popMatrix();
     pushMatrix();
-    translate(0,0,z2);
-    image(blackOverlay, 0,0);
+    translate(0,0,z1);
+      image(blackOverlay, 0,0);
     popMatrix();
     pushMatrix();
     translate(0,0,z3);
-    image(nerveSkeletonFG, 0,0);
+      image(nerveSkeletonFG, 0,0);
     popMatrix();
     
-    if(millis()-timerStart>drawTimer)
+    if(transitionDone())//millis()-timerStart>drawTimer)
       transition(FADE_GAMEMODE);
     break;
     
   case 4: /*FADE GAME MODE*/
     tint(255, imageAlpha);
-    image(organUnderlay,0,0);
+    pushMatrix();
+    translate(0,0,z1);
+      image(organUnderlay,0,0);
+    popMatrix();
+    
     tint(255, 255);
-    image(nerveSkeleton, 0,0);
-    image(blackOverlay, 0,0);
-    image(nerveSkeletonFG, 0,0);
+    pushMatrix();
+    translate(0,0,z2);
+      image(nerveSkeleton, 0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z3);
+      image(blackOverlay, 0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z4);
+      image(nerveSkeletonFG, 0,0);
+    popMatrix();
+    
     tint(255, imageAlpha);
-    image(deviceOverlay,0,0);
-    image(UI, 0,0);
+    pushMatrix();
+    translate(0,0,zx);
+      image(deviceOverlay,0,0);
+      image(UI, 0,0);
+    popMatrix();
     //NOTE TO SELF: also make particles fade in more subtle
     
     if(imageAlpha<255)
@@ -135,32 +159,51 @@ void draw() {
     break;   
     
   case 5:  /*GAME MODE*/  
-    image(organUnderlay,0,0);
-    image(nerveSkeleton,0,0);
-    image(blackOverlay, 0,0);
-    image(nerveSkeletonFG, 0,0);
-    if(renderParticles){
-      renderParticlesOnNerveCurves(); //NOTE TO SELF: can particles be layered, so all bursts on top and all idle on bottom? Split in two functions...
-    }
-    image(deviceOverlay,0,0);
-
-    checkButtons(mouseX, mouseY);
-    renderUI();
+    pushMatrix();
+    translate(0,0,z0);
+      image(organUnderlay,0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z1);
+      image(nerveSkeleton,0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z2);
+      image(blackOverlay, 0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z3);
+      image(nerveSkeletonFG, 0,0);
+    popMatrix();
+    pushMatrix();
+      translate(0,0,z4);
+      if(renderParticles){
+        renderParticlesOnNerveCurves(); //NOTE TO SELF: can particles be layered, so all bursts on top and all idle on bottom? Split in two functions...
+      }
+    popMatrix();
+    pushMatrix();
+    translate(0,0,zx);
+      image(deviceOverlay,0,0);
+      checkButtons(mouseX, mouseY);
+      renderUI();
+    popMatrix();
+   
     if(switchToIdle)
       transition(TRANSITION_IDLEMODE);
-    
-    
     break;  
     
   case 6: /*TRANSITION TO IDLE MODE*/ 
-    renderCurves();
-    transitionParticlesToIdleCurves();  
+    pushMatrix();
+    translate(0,0,z1);
+      renderCurves();
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z2);
+      transitionParticlesToIdleCurves();  
+    popMatrix();
+   
     if(transitionDone())
       transition(IDLE_MODE);
-    
-    for(int i=0; i<curveOpacity.size(); i++){
-      println("opacity " + i + ": " + curveOpacity.get(i)[0]);
-    }
     break;
   }
   
@@ -170,7 +213,7 @@ void draw() {
   if(sensorConnected)
     updateCV(); 
   
-  updateCurveColors();
+  updateCurveColors(); //NOTE TO SELF: adjust speed of color change here
   
   pushMatrix();
   translate(0,0,zx);
@@ -209,6 +252,9 @@ void transition(int _toMode){
       println("ready to move particles");
       break;
     case 3:
+      for(int i=0; i<particles.size(); i++){
+        particles.get(i).setTransition(true);
+      }
       timerStart = millis();
       mode = DRAW_GAMEMODE; 
       println("change game draw mode");
@@ -233,7 +279,7 @@ void transition(int _toMode){
       mode = TRANSITION_IDLEMODE;
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 0.0;
-        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), -1.0,0.0);
+        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), -1.5,-0.5);
       }
       println("enter idle mode");
       break;

@@ -151,7 +151,8 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(j).setGameColor(particleColor(j));
+      //particles.get(j).setGameColor(particleColor(j));
+      particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
     } 
@@ -167,7 +168,8 @@ void updateParticles(int _curveIndex, AUBezier[] curveSet){
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(j).setGameColor(particleColor(j));
+      //particles.get(j).setGameColor(particleColor(j));
+      particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
     } 
   }
@@ -182,7 +184,8 @@ void drawParticles(int _curveIndex, AUBezier[] curveSet, float _tStep){
     if(j < particles.size()){
       particles.get(j).updateGameDraw(curveSet[j-i], _tStep);
       //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(j).setGameColor(particleColor(j));
+      //particles.get(j).setGameColor(particleColor(j));
+      particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
     } 
   }
@@ -197,7 +200,8 @@ void transitionParticles(int _curveIndex, AUBezier[] curveSet){
     if(j < particles.size()){
       particles.get(j).transition(particleTransitionSpeed);
       //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      particles.get(j).setGameColor(particleColor(j));
+      //particles.get(j).setGameColor(particleColor(j));
+      particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
     } 

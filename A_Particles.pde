@@ -5,16 +5,18 @@ int     particleTrailSize = 1; //NOTE TO SELF: may want to remove... now have bu
 boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
-float   particleDrawingSpeed = 0.005;
+float   particleDrawingSpeed = 0.01;
 float   particleTransitionSpeed = 0.93;
 float   particleTransitionSpeedIdle = 0.96;
 float   particleFadeSlowDown = 8;
 int     particlesToMove = 0;
 int     successRate = 3;
 
-color   burstColor = color(255) ;
+color   burstColor = color(255);
 float   burstSpeed = 0.075;
 float   particleBurstSize = 8;
+
+color   gameColor = color(70,53,159);
 
 void updateParticlesIdle(){
   for(int i=0; i<particles.size(); i++){
@@ -25,6 +27,7 @@ void updateParticlesIdle(){
 void updateParticlesIdleFade(){
   for(int i=0; i<particles.size(); i++){
     particles.get(i).updateIdleFade(curves.get(i), particleFadeSlowDown); //slow down factor
+    particles.get(i).clearBurst();
   }
 }
 
@@ -76,6 +79,7 @@ void transitionParticlesToIdleMode(){
   for(int i=0; i<particles.size(); i++){
     particles.get(i).setTransition(true, curves.get(i), random(0.0, PI));
     //particles.get(i).disperse();
+    particles.get(i).clearBurst();
   }
   
   transitionToIdle=true;
@@ -120,13 +124,13 @@ color particleColor(int i){
   //float r = f1*red(cpL1.getColorValue()) + f2*red(cpL2.getColorValue());
   //float g = f1*green(cpL1.getColorValue()) + f2*green(cpL2.getColorValue());
   //float b = f1*blue(cpL1.getColorValue()) + f2*blue(cpL2.getColorValue());
-  float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
+  //float a = f1*alpha(cpL1.getColorValue()) + f2*alpha(cpL2.getColorValue());
   
   float r = f1*red(curveClr1) + f2*red(curveClr2);
   float g = f1*green(curveClr1) + f2*green(curveClr2);
   float b = f1*blue(curveClr1) + f2*blue(curveClr2);    
-  
+
   color c = color(r,g,b,255);
-  
+
   return c;
 }

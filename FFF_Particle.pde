@@ -99,6 +99,9 @@ class Particle{
     for(int i=0; i<positions.length; i++){
       updateIdleParticles(i, _tStep);
       pos = setBezierPos(curve, t);
+      if(t>0.99){
+        setTransition(false);
+      }
       positions[i] = new PVector(pos.x,pos.y);
     }
   }
@@ -227,11 +230,11 @@ class Particle{
   }
   
   void displayDraw(PGraphics canvas) {
-    transitionColor(c, cGame, 0.99);
+    //transitionColor(c, cGame, 0.99);
     transitionSize(size, gameParticleSize, 0.90);
     
     canvas.noStroke();
-    c = color(red(c),green(c),blue(c),255);
+    c = color(red(gameColor),green(gameColor),blue(gameColor),255);
 
     for(int i=0; i<positions.length; i++){
       canvas.fill(c);
