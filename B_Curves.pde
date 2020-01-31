@@ -64,7 +64,7 @@ void initCurves(){
   //curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
   
   generateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations, particleSpeed, particleSize, particleTrailSize); //segement length, rotation, starting point, gen limit, particleSpeed, particleSize, particleTrailSize
-  //regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
+  regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
   newTreeLength = curvesToSave.size();
   oldTreeLength = curves.size();
   println("generated old tree: " + oldTreeLength);
@@ -175,7 +175,6 @@ void renderCurves(){
         //println("x1 value: " + x1);
         
         curveVertex(x1, y1, z1); 
-        println(x1 + "'" + y1 + "'" + z1);
       }
       endShape();
    } 
@@ -264,26 +263,26 @@ void transitionToNextTree(){
 }
 
 void replaceExistingCurve(){
-  knots.set(curveTransitionIndex, new float[curvesToSave.get(curveTransitionIndex).size()+2][2]);
+  knots.set(curveTransitionIndex, new float[curvesToSave.get(curveTransitionIndex).size()+2][3]);
   curvePoints.set(curveTransitionIndex, new CurvePoint[curvesToSave.get(curveTransitionIndex).size()+2]);
   
   createKnots(curveTransitionIndex);
   createCurvePoints(curveTransitionIndex);
   
-  curves.set(curveTransitionIndex, new AUCurve(knots.get(curveTransitionIndex),2,false));
+  curves.set(curveTransitionIndex, new AUCurve(knots.get(curveTransitionIndex),3,false));
   
   curveOpacity.get(curveTransitionIndex)[1] = 0;
   if(curveTransitionIndex+1 < curveOpacity.size()) curveOpacity.get(curveTransitionIndex+1)[1] = 1;
 }
 
 void createNewCurve(){
-  knots.add(new float[curvesToSave.get(curveTransitionIndex).size()+2][2]);
+  knots.add(new float[curvesToSave.get(curveTransitionIndex).size()+2][3]);
   curvePoints.add(new CurvePoint[curvesToSave.get(curveTransitionIndex).size()+2]);
   
   createKnots(curveTransitionIndex);
   createCurvePoints(curveTransitionIndex);
   
-  curves.add(new AUCurve(knots.get(curveTransitionIndex),2,false));
+  curves.add(new AUCurve(knots.get(curveTransitionIndex),3,false));
   particles.add(new Particle(particleSpeed, curveTransitionIndex, particleSize, particleTrailSize));
   curveOpacity.add(new float[2]);
   curveOpacity.get(curveTransitionIndex)[0] = 0.0;
@@ -302,10 +301,14 @@ void removeExcessCurve(){
 }
 
 void prepNextTree(){
-  curveSetStartPoint = new PVector(0, random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
-  segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
-  segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
-  curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
+  curveSetStartPoint = new PVector(0, height/2, 0); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  segmentMinRot = -50;
+  segmentMaxRot = 50;
+  curveSetRot = 0;
+  
+  //segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
+  //segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
+  //curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
   
   regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);  
   newTreeLength = curvesToSave.size();
@@ -321,14 +324,16 @@ void prepNextTree(){
   void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {
     PVector point = new PVector();
     
-    float tmpZ = random(segmentMinRot, segmentMaxRot);
+    float tmpZ = random(segmentMinRotZ, segmentMaxRotZ);
     
     point.x = cos(radians(_segmentRotation))*cos(radians(tmpZ));
     point.y = cos(radians(_segmentRotation))*sin(radians(tmpZ));
     point.z = sin(radians(_segmentRotation));
     point.mult(_segmentLength);
     point.add(_prevPoint);
-
+    
+    println("rotZ : " + tmpZ);
+    
     points[_generation].add(new Segment(_prevPoint, point)); 
     _generation += 1;
     

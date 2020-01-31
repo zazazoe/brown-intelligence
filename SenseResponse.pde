@@ -57,17 +57,17 @@ void draw() {
   case 0: /*IDLE MODE*/ 
     //updateCurves();
     //updateCurvePoints();
-    //updateParticlesIdle();
+    updateParticlesIdle();
     
-    pushMatrix();
-    translate(0,0,z1);
+    //pushMatrix();
+    //translate(0,0,z1);
     renderCurves(); 
-    popMatrix();
+    //popMatrix();
     
-    pushMatrix();
-    translate(0,0,z2);
-    //renderParticlesIdle(); 
-    popMatrix();
+    //pushMatrix();
+    //translate(0,0,z2);
+    renderParticlesIdle(); 
+    //popMatrix();
     
     //if(millis()-timerStart>curveTimer){
     //  transitionToNextTree();
@@ -352,9 +352,9 @@ void keyPressed(){
 }
 
 void mousePressed(){
-  //if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
-  //  transitionToGame = true;
-  //}
+  if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
+    //transitionToGame = true;
+  }
 }
 
 ////////////////

@@ -67,7 +67,7 @@ class Particle{
     for(int i=0; i<positions.length; i++){
       updateIdleParticles(i);
       pos = setCurvePos(curve, t);
-      positions[i] = new PVector(pos.x,pos.y);
+      positions[i] = new PVector(pos.x,pos.y,pos.z);
     }
 
     if(burstPositions.size() > 0){
@@ -111,7 +111,7 @@ class Particle{
       _tStep = tPosStep[i][1]/_tStep;
       updateIdleParticles(i, _tStep);
       pos = setCurvePos(curve, t);
-      positions[i] = new PVector(pos.x,pos.y);
+      positions[i] = new PVector(pos.x,pos.y,pos.z);
     }
   }
   
@@ -194,16 +194,25 @@ class Particle{
     noStroke();
     transitionColor(c, cIdle, 0.99);
     transitionSize(size, sizeIdle, 0.99);
-
+    
+    
     for(int i=0; i<positions.length; i++){
+      pushMatrix();
+      translate(positions[i].x,positions[i].y, positions[i].z);
       fill(cIdle);
-      ellipse(positions[i].x,positions[i].y,size,size);
+      //ellipse(positions[i].x,positions[i].y,size,size);
+      sphere(size);
+      popMatrix();
     }
     
     if(burstPositions.size() > 0){
       fill(cBurst);
       for(int i=0; i<burstPositions.size(); i++){
-        ellipse(burstPositions.get(i).x, burstPositions.get(i).y, burstSize, burstSize);
+        pushMatrix();
+        translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
+        //ellipse(burstPositions.get(i).x, burstPositions.get(i).y, burstSize, burstSize);
+        sphere(burstSize);
+        popMatrix();
       }
     }
   }
@@ -297,6 +306,7 @@ class Particle{
     PVector p = new PVector();   
     p.x = curve.getX(t);
     p.y = curve.getY(t);
+    p.z = curve.getZ(t);
     
     return(p);
   }

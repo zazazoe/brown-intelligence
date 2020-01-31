@@ -6,8 +6,8 @@ class CurvePoint {
   
   
   CurvePoint(PVector loc, boolean m){
-    origin = new PVector(loc.x, loc.y);
-    current = new PVector(loc.x, loc.y);
+    origin = new PVector(loc.x, loc.y, loc.z);
+    current = new PVector(loc.x, loc.y, loc.z);
     move = m;
   }
   
