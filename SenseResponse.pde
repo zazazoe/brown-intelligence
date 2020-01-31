@@ -26,6 +26,7 @@ int     z0 = -1;
 int     z1 = 0;
 int     z2 = 1;
 int     z3 = 2;
+int     zx = 10;
 
 void setup(){
   fullScreen(OPENGL, 2); //NOTE TO SELF: change display back to 1
@@ -50,8 +51,17 @@ void draw() {
     updateCurves();
     updateCurvePoints();
     updateParticlesIdle();
+    
+    pushMatrix();
+    translate(0,0,z1);
     renderCurves(); 
-    renderParticlesIdle();  
+    popMatrix();
+    
+    pushMatrix();
+    translate(0,0,z2);
+    renderParticlesIdle(); 
+    popMatrix();
+    
     if(millis()-timerStart>curveTimer){
       transitionToNextTree();
       timerStart = millis();
@@ -61,9 +71,17 @@ void draw() {
     break;
  
   case 1: /*FADE OUT IDLE MODE*/ 
+    pushMatrix();
+    translate(0,0,z1);
     renderCurves();
+    popMatrix();
+    
     updateParticlesIdleFade();
+    pushMatrix();
+    translate(0,0,z2);
     renderParticlesIdle();
+    popMatrix();
+    
     if(millis()-timerStart>idleFadeTimer)
       transition(TRANSITION_GAMEMODE);
     break;
@@ -79,9 +97,19 @@ void draw() {
     drawNerveCurves(particleDrawingSpeed);
     drawParticlesOnCanvas(nerveSkeleton, 0, particles.size()-inactiveCurves.length);
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
+    
+    pushMatrix();
+    translate(0,0,z1);
     image(nerveSkeleton, 0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z2);
     image(blackOverlay, 0,0);
+    popMatrix();
+    pushMatrix();
+    translate(0,0,z3);
     image(nerveSkeletonFG, 0,0);
+    popMatrix();
     
     if(millis()-timerStart>drawTimer)
       transition(FADE_GAMEMODE);
@@ -119,6 +147,8 @@ void draw() {
     renderUI();
     if(switchToIdle)
       transition(TRANSITION_IDLEMODE);
+    
+    
     break;  
     
   case 6: /*TRANSITION TO IDLE MODE*/ 
@@ -126,6 +156,10 @@ void draw() {
     transitionParticlesToIdleCurves();  
     if(transitionDone())
       transition(IDLE_MODE);
+    
+    for(int i=0; i<curveOpacity.size(); i++){
+      println("opacity " + i + ": " + curveOpacity.get(i)[0]);
+    }
     break;
   }
   
@@ -137,8 +171,11 @@ void draw() {
   
   updateCurveColors();
   
+  pushMatrix();
+  translate(0,0,zx);
   fill(255);
   text(frameRate, 20, height-20);
+  popMatrix();
 }
 
 
@@ -189,12 +226,13 @@ void transition(int _toMode){
       break;
     case 6:
       transitionParticlesToIdleMode();
-      curveFadeOutSpeed = curveOpacityMin/(curveTimer/120.0); //NOTE TO SELF: update proper
-      for(int i=0; i<curveOpacity.size(); i++){
-        curveOpacity.get(i)[1] = 0.0;
-      }
+      curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0); //NOTE TO SELF: update proper 
       switchToIdle = false;
       mode = TRANSITION_IDLEMODE;
+      for(int i=0; i<curveOpacity.size(); i++){
+        curveOpacity.get(i)[1] = 0.0;
+        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), -1.0,0.0);
+      }
       println("enter idle mode");
       break;
   }

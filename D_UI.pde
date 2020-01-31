@@ -25,7 +25,7 @@ int timeOut=500;
 PImage  UI;
 PVector UIexitpos = new PVector(1364, 836);
 PImage  UIleg;
-PVector UIlegpos = new PVector(59, 852);
+PVector UIlegpos = new PVector(59, 825);
 PImage  UIbladder;
 PVector UIbladderpos = new PVector(59, 745);
 PImage  UIarm;

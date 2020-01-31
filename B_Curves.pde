@@ -167,8 +167,6 @@ void renderCurves(){
     strokeWeight(curveWeight);
     noFill();
 
-    pushMatrix();
-    translate(0,0,z1);
       //shader(lineShader3, LINES);
       beginShape();
       for (int j=0; j<knots.get(i).length; j++) {
@@ -179,9 +177,6 @@ void renderCurves(){
         curveVertex(x1, y1); 
       }
       endShape();
-    popMatrix();
-    
-    
    } 
 }
 

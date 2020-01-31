@@ -115,8 +115,8 @@ class Particle{
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
-      if(idNr<curveOpacity.size()){
-        if(success == 1 && curveOpacity.get(idNr)[1]<1.0){
+      if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
+        if(success == 1){
           curveOpacity.get(idNr)[0] = 1.0;
         }
       }
@@ -131,8 +131,8 @@ class Particle{
   void updateIdleParticles(int i, float _tStep){
     tPosStep[i][0] += _tStep; //add tstep to tpos
     if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
-      if(idNr<curveOpacity.size()){
-        if(success == 1 && curveOpacity.get(idNr)[1]<1.0){
+      if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
+        if(success == 1){
           curveOpacity.get(idNr)[0] = 1.0;
         }
       }
@@ -146,7 +146,7 @@ class Particle{
   
   void updateBurstParticles(int i){
     burstPosStep.get(i)[0] += burstPosStep.get(i)[1]; 
-    if(idNr<curveOpacity.size()){
+    if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
       if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == MOTOR_SIDE){
         curveOpacity.get(idNr)[0] = 1.0;
       }
@@ -191,9 +191,7 @@ class Particle{
     noStroke();
     transitionColor(c, cIdle, 0.99);
     transitionSize(size, sizeIdle, 0.99);
-    
-    pushMatrix();
-    translate(0,0,z2);
+
     for(int i=0; i<positions.length; i++){
       fill(cIdle);
       ellipse(positions[i].x,positions[i].y,size,size);
@@ -205,7 +203,6 @@ class Particle{
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, burstSize, burstSize);
       }
     }
-    popMatrix();
   }
   
   void displayGame(int _burstSize, color _burstColor) {
@@ -216,8 +213,6 @@ class Particle{
     nerveSkeleton.noStroke();
     c = color(red(c),green(c),blue(c),255);
     
-    pushMatrix();
-    translate(0,0,z2);
     for(int i=0; i<positions.length; i++){
       fill(c);
       ellipse(positions[i].x,positions[i].y,size,size);
@@ -229,7 +224,6 @@ class Particle{
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
       }
     }
-    popMatrix();
   }
   
   void displayDraw(PGraphics canvas) {
@@ -238,14 +232,11 @@ class Particle{
     
     canvas.noStroke();
     c = color(red(c),green(c),blue(c),255);
-    
-    pushMatrix();
-    translate(0,0,z2);
+
     for(int i=0; i<positions.length; i++){
       canvas.fill(c);
       canvas.ellipse(positions[i].x,positions[i].y,size,size);
     }
-    popMatrix();
   }
 
 
