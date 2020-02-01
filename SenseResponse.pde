@@ -33,10 +33,17 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
+int     translateX;
+int     translateY;
+int     translateZ;
+float   rotateX;
+float   rotateY=0;
+float   rotateZ=-0.2;
+
 void setup(){
-  fullScreen(OPENGL, 2); //NOTE TO SELF: change display back to 1
+  fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //OPENGL
   frameRate(60);  
-  cam = new PeasyCam(this, 100);
+  //cam = new PeasyCam(this, 100);
   
   mode             = IDLE_MODE;
   timerStart       = millis();
@@ -47,32 +54,44 @@ void setup(){
   initCP5();
   initCurves();
   if(sensorConnected) initCV(); 
+  
+  //translateX = width/2;
+  //translateY = height/2;
+  //translateZ = 0;
+  //rotateX = 0;
+  //rotateY = 0;
+  //rotateZ = 0;
 }
 
 
 void draw() {
   background(0);
-
+  if(mousePressed){
+    //lights();
+    //directionalLight(255, 255, 255, 0, -1, 0);
+    //spotLight(255, 0, 0, width/2, height/2, 400, 0, 0, -1, PI/4, 2);
+    //pointLight(255, 0, 0, width/2, height/2, 400);
+  }
+  
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    //updateCurves();
-    //updateCurvePoints();
+    updateCurves();
+    updateCurvePoints();
     updateParticlesIdle();
     
-    //pushMatrix();
-    //translate(0,0,z1);
+    pushMatrix();
+    translate(translateX,translateY,translateZ);
+    rotateX(rotateX);
+    rotateY(rotateY);
+    rotateZ(rotateZ);
     renderCurves(); 
-    //popMatrix();
-    
-    //pushMatrix();
-    //translate(0,0,z2);
     renderParticlesIdle(); 
-    //popMatrix();
+    popMatrix();
     
-    //if(millis()-timerStart>curveTimer){
-    //  transitionToNextTree();
-    //  timerStart = millis();
-    //}
+    if(millis()-timerStart>curveTimer){
+      transitionToNextTree();
+      timerStart = millis();
+    }
     if(transitionToGame)
       transition(FADE_IDLEMODE);
     break;

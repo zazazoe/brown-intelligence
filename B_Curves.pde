@@ -2,14 +2,14 @@
 float   curveSetRot = 0;
 PVector curveSetStartPoint;
 int     numGenerations = 4;
-int     minBranches = 1;
-int     maxBranches = 3;
-float   segmentMinLength = 75;
-float   segmentMaxLength = 200;
-int     segmentMinRot = -50;
-int     segmentMaxRot = 50;
-int     segmentMinRotZ = -50;
+int     minBranches = 3;
+int     maxBranches = 4;
+//float   segmentMinLength = 150;
+float   segmentMaxLength = 400;
+//int     segmentMinRot = -50;
+int     segmentMaxRot = 10;
 int     segmentMaxRotZ = 50;
+int     segmentMaxRotY = 20;
 
 int     generationLimit;
 ArrayList<Segment>[] points;
@@ -22,8 +22,9 @@ ArrayList<Particle> particles;
 ArrayList<CurvePoint[]> curvePoints;
 ArrayList<float[]> curveOpacity;
 
-int     curveRandX = 15;
-int     curveRandY = 20;
+int     curveRandX = 20;
+int     curveRandY = 15;
+int     curveRandZ = 20;
 int     curveWeight = 3;
 Float[] curveOpacities;
 float   curveOpacityMin = 0.8; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
@@ -55,9 +56,9 @@ void initCurves(){
   curveClr2 = clrB;
   
   /**/
-  curveSetStartPoint = new PVector(0, height/2, 0); //random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
-  segmentMinRot = -50;
-  segmentMaxRot = 50;
+  curveSetStartPoint = new PVector(0, 0, 0); //random(0,height)); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  //segmentMinRot = -50;
+  //segmentMaxRot = 50;
   curveSetRot = 0;
   //segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
   //segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
@@ -82,11 +83,11 @@ void generateCurveSet(float _startLength, float _startRotation, PVector _startPo
   }
   
   /*change inside*/
-  segment(_startLength, _startRotation, _startPoint, 0);
+  segment(_startLength, _startRotation, 0, _startPoint, 0);
   
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
-  //addPointRandomization();
+  addPointRandomization();
   
   knots = new ArrayList<float[][]>();
   curves = new ArrayList<AUCurve>();
@@ -123,7 +124,7 @@ void regenerateCurveSet(float _startLength, float _startRotation, PVector _start
     points[i] = new ArrayList<Segment>();
   }
   
-  segment(_startLength, _startRotation, _startPoint, 0);
+  segment(_startLength, _startRotation, 0, _startPoint, 0);
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
   addPointRandomization();
@@ -301,9 +302,9 @@ void removeExcessCurve(){
 }
 
 void prepNextTree(){
-  curveSetStartPoint = new PVector(0, height/2, 0); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
-  segmentMinRot = -50;
-  segmentMaxRot = 50;
+  curveSetStartPoint = new PVector(0, 0, 0); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
+  //segmentMinRot = -50;
+  //segmentMaxRot = 50;
   curveSetRot = 0;
   
   //segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
@@ -321,26 +322,47 @@ void prepNextTree(){
 /* GENERATE TREE AND CONVERT TO SET OF POINTS*/
 ///////////////////////////////////////////////
   
-  void segment(float _segmentLength, float _segmentRotation, PVector _prevPoint, int _generation) {
+  void segment(float _segmentLength, float _segmentRotation, float _rotZ, PVector _prevPoint, int _generation) {
     PVector point = new PVector();
     
-    float tmpZ = random(segmentMinRotZ, segmentMaxRotZ);
-    
-    point.x = cos(radians(_segmentRotation))*cos(radians(tmpZ));
-    point.y = cos(radians(_segmentRotation))*sin(radians(tmpZ));
-    point.z = sin(radians(_segmentRotation));
+    point.x = cos(radians(_segmentRotation))*cos(radians(_rotZ));
+    point.y = sin(radians(_segmentRotation));
+    point.z = cos(radians(_segmentRotation))*sin(radians(_rotZ));
     point.mult(_segmentLength);
     point.add(_prevPoint);
     
-    println("rotZ : " + tmpZ);
+    //println("rotZ : " + tmpZ);
     
     points[_generation].add(new Segment(_prevPoint, point)); 
+    
     _generation += 1;
+    //_rotZ += random(segmentMaxRotZ/2,segmentMaxRotZ);
+    //_rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+    //_rotZ += random(0,segmentMaxRotZ);
+    float tmp = random(-segmentMaxRot,segmentMaxRot);
+    _segmentRotation+=tmp;
     
     if(_generation<generationLimit) {
-      int tmp = floor(random(minBranches, maxBranches));
-      for(int i=0; i<tmp; i++){
-         segment(map(_generation, 0, generationLimit, segmentMaxLength, segmentMinLength), random(segmentMinRot, segmentMaxRot), point, _generation);
+      int branches = floor(random(minBranches, maxBranches));
+      for(int i=0; i<branches; i++){
+        //segment(map(_generation, 0, generationLimit, segmentMaxLength, segmentMinLength), random(minBranches,maxBranches), point, _generation);
+        if(i==0){
+          if(_generation==generationLimit-1){
+            _rotZ += random(segmentMaxRotZ/2,segmentMaxRotZ);
+            segment(_segmentLength*random(0.5, 0.7), _segmentRotation, _rotZ, point, _generation);
+          }else{
+            _rotZ += random(segmentMaxRotZ/2,segmentMaxRotZ);
+            segment(_segmentLength*random(0.8, 1.0), _segmentRotation, _rotZ, point, _generation);
+          }
+        }
+        if(i==1){
+          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+          segment(_segmentLength*random(0.5, 0.7), _segmentRotation+random(segmentMaxRotY,segmentMaxRotY*2), _rotZ, point, _generation);
+        }
+        if(i==2){
+          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+          segment(_segmentLength*random(0.5, 0.7), _segmentRotation-random(segmentMaxRotY,segmentMaxRotY*2), _rotZ, point, _generation);
+        }
       }
     }   
   }
@@ -405,7 +427,8 @@ void prepNextTree(){
     for(int i=0; i<curvesToSave.size(); i++){
       for(int j=0;j<curvesToSave.get(i).size();j++){
         curvesToSave.get(i).set(j, new PVector(curvesToSave.get(i).get(j).x + random(0,curveRandX), 
-                                              curvesToSave.get(i).get(j).y + random(0,curveRandY)));
+                                               curvesToSave.get(i).get(j).y + random(0,curveRandY),
+                                               curvesToSave.get(i).get(j).z + random(0,curveRandZ)));
       }
     }
   }
