@@ -95,6 +95,10 @@ void setup(){
   fogColor.set("fogFar", 1000.0);
   
   hint(DISABLE_DEPTH_MASK);
+  hint(DISABLE_OPENGL_ERRORS);
+  hint(ENABLE_STROKE_PERSPECTIVE);
+  strokeCap(ROUND);
+  hint(DISABLE_DEPTH_TEST);
 }
 
 
@@ -131,10 +135,10 @@ void draw() {
     
     resetShader();
     
-    //if(millis()-timerStart>curveTimer){
-    //  transitionToNextTree();
-    //  timerStart = millis();
-    //}
+    if(millis()-timerStart>curveTimer){
+      transitionToNextTree();
+      timerStart = millis();
+    }
 
     if(transitionToGame)
       transition(FADE_IDLEMODE);

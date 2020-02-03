@@ -8,7 +8,7 @@ int     maxBranches = 3;
 float   segmentMaxLength = 300;
 //int     segmentMinRot = -50;
 int     segmentMaxRot = 10;
-int     segmentMaxRotZ = 30;
+int     segmentMaxRotZ = 28;
 int     segmentMaxRotY = 10;
 
 int     generationLimit;
@@ -25,7 +25,7 @@ ArrayList<float[]> curveOpacity;
 int     curveRandX = 0; //15;
 int     curveRandY = 5; //15;
 int     curveRandZ = 5; //15;
-int     curveWeight = 3;
+int     curveWeight = 1;
 Float[] curveOpacities;
 float   curveOpacityMin = 0.4; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
 float   curveFadeOutSpeed;
@@ -182,7 +182,7 @@ void renderCurves(){
     noStroke();
     fill(r,g,b,a);
     translate(knots.get(i)[knots.get(i).length-1][0],knots.get(i)[knots.get(i).length-1][1], knots.get(i)[knots.get(i).length-1][2]);
-    ellipse(0,0,2,2);
+    ellipse(0,0,1,1);
     popMatrix();
    } 
 }
