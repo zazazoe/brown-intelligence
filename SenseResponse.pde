@@ -34,9 +34,9 @@ int     z5 = 4;
 int     zx = 10;
 
 
-float   idleTranslateX=480;
+float   idleTranslateX=691;
 float   idleTranslateY=612;
-float   idleTranslateZ=0;
+float   idleTranslateZ=-48;
 float   idleRotateX=0;
 float   idleRotateY=-0.35;
 float   idleRotateZ=0;
@@ -66,18 +66,18 @@ void setup(){
   fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //P3D OPENGL
   frameRate(60);  
   smooth(10);
-  blobDir = new PVector(0,0,0);
-  blobBack = new PVector(0,0,0);
-  blobFront = new PVector(0,0,0);
-  mode             = IDLE_MODE;
-  timerStart       = millis();
+  blobDir    = new PVector(0,0,0);
+  blobBack   = new PVector(0,0,0);
+  blobFront  = new PVector(0,0,0);
+  mode       = IDLE_MODE;
+  timerStart = millis();
   
   translateX = idleTranslateX;
   translateY = idleTranslateY;
   translateZ = idleTranslateZ;
-  rotateX = idleRotateX;
-  rotateY = idleRotateY;
-  rotateZ = idleRotateZ;
+  rotateX    = idleRotateX;
+  rotateY    = idleRotateY;
+  rotateZ    = idleRotateZ;
   
   loadImages();
   loadUIImages();
@@ -88,11 +88,11 @@ void setup(){
   
   fogLines = loadShader("fogLines.glsl");
   fogLines.set("fogNear", 0.0); 
-  fogLines.set("fogFar", 900.0); 
+  fogLines.set("fogFar", 800.0); 
   
   fogColor = loadShader("fogColor.glsl");
   fogColor.set("fogNear", 0.0); 
-  fogColor.set("fogFar", 1200.0);
+  fogColor.set("fogFar", 1000.0);
   
   hint(DISABLE_DEPTH_MASK);
 }
@@ -100,22 +100,32 @@ void setup(){
 
 void draw() {
   background(0);
-
+  
+  
+  
   switch(mode){
   case 0: /*IDLE MODE*/ 
     updateCurves();
     updateCurvePoints();
     updateParticlesIdle();
     
+        if(key == 'w'){
+      //ambientLight(200, 200, 200, width/2, height/2, 700);
+      //directionalLight(51, 102, 126, 0, -1, 0);
+      //pointLight(51, 102, 126, 35, 40, 36);
+      spotLight(51, 102, 126, 80, 20, 40, -1, 0, 0, PI/2, 2);
+    }
+    
     pushMatrix();
+    
     rotateX(rotateX);
     rotateY(rotateY);
     rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
 
-    //shader(fogLines, LINES);
+    shader(fogLines, LINES);
     renderCurves(); 
-    //shader(fogColor);
+    shader(fogColor);
     renderParticlesIdle(); 
     popMatrix();
     
@@ -133,7 +143,6 @@ void draw() {
     break;
  
   case 1: /*FADE OUT IDLE MODE*/ 
-    //resetShader();
     updateParticlesIdleFade();
     
     pushMatrix();
@@ -142,14 +151,13 @@ void draw() {
     rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
 
-    //translate(0,0,z1);
-      renderCurves();
-    //popMatrix();
-    //pushMatrix();
-    //translate(0,0,z2);
-    //translate(translateX,translateY,translateZ);
-      renderParticlesIdle();
+    shader(fogLines, LINES);
+    renderCurves();
+    shader(fogColor);
+    renderParticlesIdle();
     popMatrix();
+    
+    resetShader();
     
     if(millis()-timerStart>idleFadeTimer)
       transition(TRANSITION_GAMEMODE);

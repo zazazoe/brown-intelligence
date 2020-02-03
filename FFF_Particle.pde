@@ -41,7 +41,7 @@ class Particle{
     positions = new PVector[nrOfPoints]; //NOTE TO SELF: maybe simplify to single point... now have burst
     
     for(int i=0; i<nrOfPoints; i++){
-      tPosStep[i][0] = random(0.0, PI);
+      tPosStep[i][0] = random(0.0, 1.0);
       tPosStep[i][1] = _tStep * ((int)random(0,2)* 2 -1);
       positions[i] = new PVector(0,0,0);
     }
@@ -55,7 +55,7 @@ class Particle{
     burstPosStep = new ArrayList<Float[]>();
     burstPositions = new ArrayList<PVector>();
     
-    success = (int)random(0,successRate);
+    success = (int)random(1,successRate);
     transition = false;
   }
 
@@ -117,50 +117,56 @@ class Particle{
   
   void updateIdleParticles(int i){
     tPosStep[i][0] += tPosStep[i][1]; //add tstep to tpos
-    if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
+    if(tPosStep[i][0] >= 1.0 || tPosStep[i][0] <= 0){
       if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
-        if(success == 1){
+        if(success == 1 && tPosStep[i][0] <= 0){
+          curveOpacity.get(idNr)[0] = 1.0;
+        } else if(tPosStep[i][0] >= 1.0)
+        {
           curveOpacity.get(idNr)[0] = 1.0;
         }
       }
-      if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
+      if(tPosStep[i][0] > 1.0) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
-      success = (int)random(0,successRate);
+      success = (int)random(1,successRate);
     }
-    float tmp = cos(tPosStep[i][0]);
-    t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+    //float tmp = cos(tPosStep[i][0]);
+    t = tPosStep[i][0];//map(tmp, 1.0, -1.0, 0.0, 1.0);
   }
   
   void updateIdleParticles(int i, float _tStep){
     tPosStep[i][0] += _tStep; //add tstep to tpos
-    if(tPosStep[i][0] > PI || tPosStep[i][0] < 0){
+    if(tPosStep[i][0] >= 1.0 || tPosStep[i][0] <= 0){
       if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
-        if(success == 1){
+        if(success == 1 && tPosStep[i][0] <= 0){
+          curveOpacity.get(idNr)[0] = 1.0;
+        } else if(tPosStep[i][0] >= 1.0)
+        {
           curveOpacity.get(idNr)[0] = 1.0;
         }
       }
-      if(tPosStep[i][0] > PI) tPosStep[i][0] = 0.0;
+      if(tPosStep[i][0] > 1.0) tPosStep[i][0] = 0.0;
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
-      success = (int)random(0,successRate);
+      success = (int)random(1,successRate);
     }
-    float tmp = cos(tPosStep[i][0]);
-    t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+    //float tmp = cos(tPosStep[i][0]);
+    t = tPosStep[i][0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
   }
   
   void updateBurstParticles(int i){
     burstPosStep.get(i)[0] += burstPosStep.get(i)[1]; 
     if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
-      if (burstPosStep.get(i)[0] > PI-(0.02*PI) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*PI && side == MOTOR_SIDE){
+      if (burstPosStep.get(i)[0] > 1.0-(0.02*1.0) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*1.0 && side == MOTOR_SIDE){
         curveOpacity.get(idNr)[0] = 1.0;
       }
     }
-    float tmp = cos(burstPosStep.get(i)[0]);
-    t = map(tmp, 1.0, -1.0, 0.0, 1.0);
+    //float tmp = cos(burstPosStep.get(i)[0]);
+    t = burstPosStep.get(i)[0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
   }
   
   void removeFinishedBurstParticles(){
     for(int i=burstPositions.size()-1; i>=0; i--){
-      if (burstPosStep.get(i)[0] > PI || burstPosStep.get(i)[0] < 0){
+      if (burstPosStep.get(i)[0] > 1.0 || burstPosStep.get(i)[0] < 0){
          burstPosStep.remove(i);
          burstPositions.remove(i);
          break;
@@ -298,7 +304,7 @@ class Particle{
 
   void disperse(){
     for(int i=0; i<tPosStep.length; i++){
-      tPosStep[i][0] = random(0,PI); //set tPos
+      tPosStep[i][0] = random(0.0,1.0); //set tPos
       tPosStep[i][1] = tStep * ((int)random(0,2)* 2 -1); //set tStep
     }
   }
@@ -312,7 +318,7 @@ class Particle{
       }
       if(_side == MOTOR_SIDE){
         burstPosStep.add(new Float[2]);
-        burstPosStep.get(i)[0] = PI; //(i*0.02) //-(i*random(0.01,0.02))
+        burstPosStep.get(i)[0] = 1.0; //(i*0.02) //-(i*random(0.01,0.02))
         burstPosStep.get(i)[1] = tStep*-_speed; //NOTE TO SELF, make proper variable, dif for idle and game >speed
       }
       burstPositions.add(new PVector(0,0));

@@ -60,7 +60,7 @@ void initCP5(){
 //     .setColorLabel(labelColor)
 //     ;
      
-  //pushMatrix();
+  pushMatrix();
   //cp5.addSlider("rotateX")
   //   .setRange(0, 2*PI)
   //   .setValue(0)
@@ -85,6 +85,7 @@ void initCP5(){
   //   .setSize(100, 10)
   //   .setColorLabel(labelColor)
   //   ; 
+     
   //cp5.addSlider("particleSize")
   //   .setRange(1, 15)
   //   .setValue(5)

@@ -5,10 +5,10 @@ int     numGenerations = 5;
 int     minBranches = 3;
 int     maxBranches = 3;
 //float   segmentMinLength = 150;
-float   segmentMaxLength = 400;
+float   segmentMaxLength = 300;
 //int     segmentMinRot = -50;
 int     segmentMaxRot = 10;
-int     segmentMaxRotZ = 20;
+int     segmentMaxRotZ = 30;
 int     segmentMaxRotY = 10;
 
 int     generationLimit;
@@ -22,9 +22,9 @@ ArrayList<Particle> particles;
 ArrayList<CurvePoint[]> curvePoints;
 ArrayList<float[]> curveOpacity;
 
-int     curveRandX = 20;
-int     curveRandY = 15;
-int     curveRandZ = 20;
+int     curveRandX = 0; //15;
+int     curveRandY = 5; //15;
+int     curveRandZ = 5; //15;
 int     curveWeight = 3;
 Float[] curveOpacities;
 float   curveOpacityMin = 0.4; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
@@ -83,7 +83,7 @@ void generateCurveSet(float _startLength, float _startRotation, PVector _startPo
   }
   
   /*change inside*/
-  segment(_startLength, _startRotation, 30, _startPoint, 0);
+  segment(_startLength, _startRotation, segmentMaxRotZ, _startPoint, 0);
   
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
@@ -124,7 +124,7 @@ void regenerateCurveSet(float _startLength, float _startRotation, PVector _start
     points[i] = new ArrayList<Segment>();
   }
   
-  segment(_startLength, _startRotation, 0, _startPoint, 0);
+  segment(_startLength, _startRotation, segmentMaxRotZ, _startPoint, 0);
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
   addPointRandomization();
@@ -352,23 +352,29 @@ void prepNextTree(){
       int branches = floor(random(minBranches, maxBranches));
       for(int i=0; i<branches; i++){
         //segment(map(_generation, 0, generationLimit, segmentMaxLength, segmentMinLength), random(minBranches,maxBranches), point, _generation);
-        if(i==0){
-          if(_generation==generationLimit-1){
-            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ);
-            segment(_segmentLength*random(0.5, 0.7), _segmentRotation, _rotZ, point, _generation);
-          }else{
-            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ); //segmentMaxRotZ/2,segmentMaxRotZ);
-            segment(_segmentLength*random(0.8, 0.9), _segmentRotation, _rotZ, point, _generation);
+        
+        if(_generation==generationLimit-1){
+          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ);
+          segment(_segmentLength*random(0.3, 0.4), _segmentRotation, _rotZ, point, _generation);
+        } else {
+          if(i==0){
+            //if(_generation==generationLimit-1){
+            //  _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ);
+            //  segment(_segmentLength*random(0.2, 0.4), _segmentRotation, _rotZ, point, _generation);
+            //}else{
+              _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ); //segmentMaxRotZ/2,segmentMaxRotZ);
+              segment(_segmentLength*random(0.7, 0.9), _segmentRotation, _rotZ, point, _generation);
+            //}
+          } else if(i==1){
+            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+            segment(_segmentLength*random(0.5, 0.7), (_segmentRotation+random(segmentMaxRotY,segmentMaxRotY*2)), _rotZ, point, _generation);
+          } else if(i==2){
+            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+            segment(_segmentLength*random(0.5, 0.7), (_segmentRotation-random(segmentMaxRotY,segmentMaxRotY*2)), _rotZ, point, _generation);
+          } else if(i>2){
+            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+            segment(_segmentLength*random(0.5, 0.7), (_segmentRotation-random(-segmentMaxRotY,segmentMaxRotY*2)), _rotZ, point, _generation);
           }
-        } else if(i==1){
-          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
-          segment(_segmentLength*random(0.5, 0.7), _segmentRotation+random(segmentMaxRotY,segmentMaxRotY*2), _rotZ, point, _generation);
-        } else if(i==2){
-          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
-          segment(_segmentLength*random(0.5, 0.7), _segmentRotation-random(segmentMaxRotY,segmentMaxRotY*2), _rotZ, point, _generation);
-        } else if(i>2){
-          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
-          segment(_segmentLength*random(0.5, 0.7), _segmentRotation-random(-segmentMaxRotY,segmentMaxRotY), _rotZ, point, _generation);
         }
       }
     }   

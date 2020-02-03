@@ -1,11 +1,11 @@
 
-float   particleSpeed = 0.005;
-float   particleSize = 2;
+float   particleSpeed = 0.0015;
+float   particleSize = 1;
 int     particleTrailSize = 1; //NOTE TO SELF: may want to remove... now have burst
 boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
-float   particleDrawingSpeed = 0.01;
+float   particleDrawingSpeed = 0.001;
 float   particleTransitionSpeed = 0.93;
 float   particleTransitionSpeedIdle = 0.96;
 float   particleFadeSlowDown = 8;
