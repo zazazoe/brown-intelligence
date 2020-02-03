@@ -49,7 +49,7 @@ class Particle{
     burst = false;
     bursttPos = 0.0;
     bursttStep = burstSpeed;
-    burstPos = new PVector(0,0);
+    burstPos = new PVector(0,0,0);
     burstSize = particleBurstSize;
     
     burstPosStep = new ArrayList<Float[]>();
@@ -83,7 +83,7 @@ class Particle{
     for(int i=0; i<positions.length; i++){
       updateIdleParticles(i);
       pos = setBezierPos(curve, t);
-      positions[i] = new PVector(pos.x,pos.y);
+      positions[i] = new PVector(pos.x,pos.y, pos.z);
     }
     
     if(burstPositions.size() > 0){
@@ -102,7 +102,7 @@ class Particle{
       if(t>0.99){
         setTransition(false);
       }
-      positions[i] = new PVector(pos.x,pos.y);
+      positions[i] = new PVector(pos.x,pos.y, pos.z);
     }
   }
   
@@ -177,6 +177,7 @@ class Particle{
       for(int i=0; i<positions.length; i++){
         positions[i].x = _speed*positions[i].x + (1-_speed)*newStartPoint.x;
         positions[i].y = _speed*positions[i].y + (1-_speed)*newStartPoint.y;
+        positions[i].z = _speed*positions[i].z + (1-_speed)*newStartPoint.z;
         
         float d = positions[i].dist(newStartPoint);
         if(d<1){
@@ -227,13 +228,19 @@ class Particle{
     
     for(int i=0; i<positions.length; i++){
       fill(c);
+      pushMatrix();
+      translate(0,0,positions[i].z);
       ellipse(positions[i].x,positions[i].y,size,size);
+      popMatrix();
     }
     
     if(burstPositions.size() > 0){
       fill(_burstColor);
       for(int i=0; i<burstPositions.size(); i++){
+        pushMatrix();
+        translate(0,0,burstPositions.get(i).z);
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
+        popMatrix();
       }
     }
   }
@@ -247,6 +254,7 @@ class Particle{
 
     for(int i=0; i<positions.length; i++){
       canvas.fill(c);
+      canvas.translate(0,0,positions[i].z);
       canvas.ellipse(positions[i].x,positions[i].y,size,size);
     }
   }
@@ -315,6 +323,7 @@ class Particle{
     PVector p = new PVector();    
     p.x = bezier.getX(t);
     p.y = bezier.getY(t);
+    p.z = bezier.getZ(t);
     
     return(p);
   }
@@ -359,7 +368,7 @@ class Particle{
       println("no positions lenght");
     }
     for(int i=0; i<positions.length;  i++){
-      positions[i] = new PVector(random(0,width), random(0,height));
+      positions[i] = new PVector(random(0,width), random(0,height), random(0,translateZ));
     }
   }
   

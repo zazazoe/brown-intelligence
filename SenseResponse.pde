@@ -49,7 +49,6 @@ void setup(){
   fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //P3D OPENGL
   frameRate(60);  
   smooth(10);
-  //cam = new PeasyCam(this, 100);
   blobDir = new PVector(0,0,0);
   blobBack = new PVector(0,0,0);
   blobFront = new PVector(0,0,0);
@@ -89,9 +88,9 @@ void draw() {
     rotateY(rotateY);
     rotateZ(rotateZ);
     
-    shader(fogLines, LINES);
+    //shader(fogLines, LINES);
     renderCurves(); 
-    shader(fogColor);
+    //shader(fogColor);
     renderParticlesIdle(); 
     popMatrix();
     
@@ -105,29 +104,21 @@ void draw() {
     if(transitionToGame)
       transition(FADE_IDLEMODE);
     
-    translateZ+=0.1;
-
-    //stroke(255);
-    //strokeWeight(5);
-    //println("blobx" + blobx);
-    //println("bloby" + bloby);
-    //line(blobx, bloby, 0, cameraPos.x, cameraPos.y, cameraPos.z);
-    //fill(255);
-    //ellipse(width/2, height/2, 5,5);
-    
+    //translateZ+=0.1;
     break;
  
   case 1: /*FADE OUT IDLE MODE*/ 
+    //resetShader();
     updateParticlesIdleFade();
     
     pushMatrix();
-    //translate(0,0,z1);
     translate(translateX,translateY,translateZ);
+    //translate(0,0,z1);
       renderCurves();
     popMatrix();
     pushMatrix();
     //translate(0,0,z2);
-    translate(translateX,translateY,translateZ);
+    //translate(translateX,translateY,translateZ);
       renderParticlesIdle();
     popMatrix();
     
@@ -136,14 +127,17 @@ void draw() {
     break;
     
   case 2: /*TRANSITION TO GAME MODE*/ 
+    //resetShader();
     pushMatrix();
-    //translate(0,0,z1);
     translate(translateX,translateY,translateZ);
+    //translate(0,0,z1);
+    //translate(translateX,translateY,translateZ);
+    translate(0,0,0);
       transitionParticlesToNerveCurves();
     popMatrix();
     pushMatrix();
     //translate(0,0,z2);
-    translate(translateX,translateY,translateZ);
+    //translate(translateX,translateY,translateZ);
       renderCurves();
     popMatrix();
     if(transitionDone())
@@ -151,23 +145,27 @@ void draw() {
     break;
     
   case 3: /*DRAW GAME MODE*/ 
+    //resetShader();
     drawNerveCurves(particleDrawingSpeed);
     drawParticlesOnCanvas(nerveSkeleton, 0, particles.size()-inactiveCurves.length);
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
     
     pushMatrix();
     //translate(0,0,z1);
-    translate(translateX,translateY,translateZ);
+    //translate(translateX,translateY,translateZ);
+    translate(0,0,0);
       image(nerveSkeleton, 0,0);
     popMatrix();
     pushMatrix();
     //translate(0,0,z1);
-    translate(translateX,translateY,translateZ);
+    //translate(translateX,translateY,translateZ);
+    translate(0,0,0);
       image(blackOverlay, 0,0);
     popMatrix();
     pushMatrix();
     //translate(0,0,z3);
-    translate(translateX,translateY,translateZ);
+    //translate(translateX,translateY,translateZ);
+    translate(0,0,0);
       image(nerveSkeletonFG, 0,0);
     popMatrix();
     
@@ -400,7 +398,7 @@ void keyPressed(){
 
 void mousePressed(){
   if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
-    //transitionToGame = true;
+    transitionToGame = true;
   }
 }
 

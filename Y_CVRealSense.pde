@@ -12,12 +12,11 @@ PImage  contoursImage;
 int     threshold = 39;
 int     blobSizeThreshold = 28;
 boolean isBackgroundSave = false;
-boolean sensorConnected = true;
+boolean sensorConnected = false;
 
 float   blobx;
 float   bloby;
 PVector blobDir;
-//PVector blob;
 PVector blobBack;
 PVector blobFront;
 int     blobBackDist = -2000;
@@ -71,28 +70,23 @@ void calculateContourBoundingBoxes() {
     blobx = rx+(rwidth/2);
     bloby = ry+(rheight/2);
     
-    //blob = new PVector(blobx, bloby, 0);
     blobBack = new PVector(blobx, bloby, blobBackDist);
     blobFront = new PVector(blobx, bloby, blobFrontDist);
-    //noFill();
-    //stroke(255);
-    //line(blobBack.x, blobBack.y, blobBack.z, blobFront.x, blobFront.y, blobFront.z);
-    //blobDir = PVector.sub(cameraPos, blob);
     blobDir = PVector.sub(blobFront, blobBack);
     
     if(displayContours) displayCountours(rx, ry, rwidth, rheight);
     
     //send pulse on first blob appears on left or right
     if(blobCountPrev == 0 && blobCount == 0){
-      //if(blobx <= width/2){
-      //  for(int j=0; j<particles.size(); j++){
-      //    particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
-      //  }
-      //} else if(blobx > width/2) {
-      //  for(int j=0; j<particles.size(); j++){
-      //    particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
-      //  }
-      //}
+      if(blobx <= width/2){
+        for(int j=0; j<particles.size(); j++){
+          particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
+        }
+      } else if(blobx > width/2) {
+        for(int j=0; j<particles.size(); j++){
+          particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
+        }
+      }
     }
         
     updateCurvePoints();
