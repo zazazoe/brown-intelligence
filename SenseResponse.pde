@@ -50,9 +50,9 @@ void setup(){
   frameRate(60);  
   smooth(10);
   //cam = new PeasyCam(this, 100);
-  cameraPos = new PVector(width/2, height/2, 700);
-  blob = new PVector(0,0,0);
   blobDir = new PVector(0,0,0);
+  blobBack = new PVector(0,0,0);
+  blobFront = new PVector(0,0,0);
   
   mode             = IDLE_MODE;
   timerStart       = millis();
@@ -101,7 +101,7 @@ void draw() {
     //  transitionToNextTree();
     //  timerStart = millis();
     //}
-    //updateCurvePoints();
+
     if(transitionToGame)
       transition(FADE_IDLEMODE);
     
@@ -121,11 +121,13 @@ void draw() {
     updateParticlesIdleFade();
     
     pushMatrix();
-    translate(0,0,z1);
+    //translate(0,0,z1);
+    translate(translateX,translateY,translateZ);
       renderCurves();
     popMatrix();
     pushMatrix();
-    translate(0,0,z2);
+    //translate(0,0,z2);
+    translate(translateX,translateY,translateZ);
       renderParticlesIdle();
     popMatrix();
     
@@ -135,11 +137,13 @@ void draw() {
     
   case 2: /*TRANSITION TO GAME MODE*/ 
     pushMatrix();
-    translate(0,0,z1);
+    //translate(0,0,z1);
+    translate(translateX,translateY,translateZ);
       transitionParticlesToNerveCurves();
     popMatrix();
     pushMatrix();
-    translate(0,0,z2);
+    //translate(0,0,z2);
+    translate(translateX,translateY,translateZ);
       renderCurves();
     popMatrix();
     if(transitionDone())
@@ -152,15 +156,18 @@ void draw() {
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
     
     pushMatrix();
-    translate(0,0,z1);
+    //translate(0,0,z1);
+    translate(translateX,translateY,translateZ);
       image(nerveSkeleton, 0,0);
     popMatrix();
     pushMatrix();
-    translate(0,0,z1);
+    //translate(0,0,z1);
+    translate(translateX,translateY,translateZ);
       image(blackOverlay, 0,0);
     popMatrix();
     pushMatrix();
-    translate(0,0,z3);
+    //translate(0,0,z3);
+    translate(translateX,translateY,translateZ);
       image(nerveSkeletonFG, 0,0);
     popMatrix();
     

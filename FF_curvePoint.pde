@@ -14,7 +14,8 @@ class CurvePoint {
   void update(){
     
     if(move || !fixEndPoints){
-      //PVector mouse = new PVector(blobx, bloby, 0);
+      //PVector mouse = new PVector(mouseX, mouseY, 0);
+      //PVector mousedir = PVector.sub(cameraPos, mouse);
       
       PVector toOrigin = PVector.sub(origin,current);
       float distOrigin = PVector.dist(origin,current);
@@ -29,7 +30,14 @@ class CurvePoint {
       }
       //PVector awayMouse = PVector.sub(mouse, current);
       //float distMouse = PVector.dist(mouse,current);
-      PVector transformedBlob = NearestPointOnLine(blob, blobDir, current);
+      PVector transformedBlob = NearestPointOnLine(blobBack, blobDir, current);
+      //pushMatrix();
+      //  fill(255,0,0);
+      //  noStroke();
+      //  translate(transformedBlob.x, transformedBlob.y, transformedBlob.z);
+      //  sphere(5);
+      //popMatrix();
+      //PVector transformedBlob = NearestPointOnLine(mouse, mousedir, current);
       PVector awayBlob = PVector.sub(transformedBlob, current);
       float distBlob = PVector.dist(transformedBlob, current);
       
