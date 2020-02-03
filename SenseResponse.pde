@@ -33,12 +33,19 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-float   translateX;
-float   translateY;
-float   translateZ;
-float   rotateX;
-float   rotateY=-0.3;
-float   rotateZ;
+float   translateX=480;
+float   translateY=612;
+float   translateZ=0;
+float   rotateX=0;
+float   rotateY=0;//-0.35;
+float   rotateZ=0;
+
+float  xStep;
+float  yStep;
+float  zStep;
+float  xRotStep;
+float  yRotStep;
+float  zRotStep;
 
 PShader fogLines; 
 PShader fogColor; 
@@ -52,6 +59,15 @@ void setup(){
   blobDir = new PVector(0,0,0);
   blobBack = new PVector(0,0,0);
   blobFront = new PVector(0,0,0);
+  
+  float transitSpeed = 30.0;
+  
+  xStep = translateX/transitSpeed;
+  yStep = translateY/transitSpeed;
+  zStep = translateZ/transitSpeed;
+  xRotStep = rotateX/transitSpeed;
+  yRotStep = rotateY/transitSpeed;
+  zRotStep = rotateZ/transitSpeed;
   
   mode             = IDLE_MODE;
   timerStart       = millis();
@@ -83,11 +99,11 @@ void draw() {
     updateParticlesIdle();
     
     pushMatrix();
-    translate(translateX,translateY,translateZ);
     rotateX(rotateX);
     rotateY(rotateY);
     rotateZ(rotateZ);
-    
+    translate(translateX,translateY,translateZ);
+
     //shader(fogLines, LINES);
     renderCurves(); 
     //shader(fogColor);
@@ -112,11 +128,15 @@ void draw() {
     updateParticlesIdleFade();
     
     pushMatrix();
+    rotateX(rotateX);
+    rotateY(rotateY);
+    rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
+
     //translate(0,0,z1);
       renderCurves();
-    popMatrix();
-    pushMatrix();
+    //popMatrix();
+    //pushMatrix();
     //translate(0,0,z2);
     //translate(translateX,translateY,translateZ);
       renderParticlesIdle();
@@ -129,17 +149,66 @@ void draw() {
   case 2: /*TRANSITION TO GAME MODE*/ 
     //resetShader();
     pushMatrix();
+    rotateX(rotateX);
+    rotateY(rotateY);
+    rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
+
     //translate(0,0,z1);
     //translate(translateX,translateY,translateZ);
-    translate(0,0,0);
+    //translate(0,0,0);
       transitionParticlesToNerveCurves();
-    popMatrix();
-    pushMatrix();
+    //popMatrix();
+    //pushMatrix();
     //translate(0,0,z2);
     //translate(translateX,translateY,translateZ);
-      renderCurves();
+      renderCurves(); 
+      if(translateX>0){
+        translateX -= xStep;
+      } else {
+        translateX = 0;
+      }
+      if(translateY>0){
+        translateY -= yStep;
+      } else {
+        translateY = 0;
+      }
+      if(translateZ>0){
+        translateZ -= zStep;
+      } else {
+        translateZ = 0;
+      }
+      if(rotateY<=0){
+        rotateY += yRotStep;
+      } else {
+        rotateY = 0;
+      }
     popMatrix();
+    
+    
+    
+    
+    println("translateX: " + translateX + "translateY: " + translateY + "translateZ: " + translateZ);
+    //println("rotateX: " + rotateX + "rotateY: " + rotateY + "rotateZ: " + rotateZ);
+    
+    //if(rotateX<=0){
+    //  rotateX -= xRotStep;
+    //} else {
+    //  rotateX = 0;
+    //}
+    //if(rotateY<=0){
+    //  rotateY += yRotStep;
+    //} else {
+    //  rotateY = 0;
+    //}
+    //if(rotateZ<=0){
+    //  rotateZ -= zRotStep;
+    //} else {
+    //  rotateZ = 0;
+    //}
+    
+    
+    
     if(transitionDone())
       transition(DRAW_GAMEMODE);
     break;
@@ -280,17 +349,17 @@ void transition(int _toMode){
       mode = IDLE_MODE;
       println("change back to idle mode");
       break;
-    case 1:
+    case 1: //TO IDLE FADE MODE
       for(int i=0; i<curveOpacity.size(); i++){
-        curveOpacity.get(i)[1] = 1.0;
-        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), 1.5,0.5);
+        curveOpacity.get(i)[1] = 1.0; //NOTE TO CHANGE BACK TO 1.0
+        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), 1.0,0.5);
       }
       timerStart = millis();
       curveFadeOutSpeed = curveOpacityMin/(idleFadeTimer/60.0);
       mode = FADE_IDLEMODE;
       println("fade out idle mode");  
       break;
-    case 2:
+    case 2: //TO DRAW GAME MODE
       curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
       transitionParticlesToGameMode();
       clearDrawingCanvas(nerveSkeleton);
@@ -299,6 +368,7 @@ void transition(int _toMode){
       timerStart = millis();
       mode = TRANSITION_GAMEMODE; 
       transitionToGame = false;
+
       println("ready to move particles");
       break;
     case 3:

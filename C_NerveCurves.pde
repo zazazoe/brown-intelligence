@@ -26,10 +26,6 @@ int bladder  = 3;
 int inactive = 4;
 //etc.
 
-int   gameParticleSize = 4;
-int   gameParticleBurstSize = 3;
-color gameParticleBurstColor;
-
 
 void initNerveCurves(){
   curveIndex = new int[curveSets];
@@ -245,11 +241,12 @@ void fillKnots(float knots[][][]){
   
   for(int i=0; i<curveRef.getRowCount(); i++){
     int curveLength = curveRef.getInt(i,0);
-    knots[i] = new float[curveLength][2];
+    knots[i] = new float[curveLength][3];
     
     for(int j=0; j<curveLength; j++){
       knots[i][j][0] = curveData.getFloat(j+curveIndex,0);
       knots[i][j][1] = curveData.getFloat(j+curveIndex,1);
+      knots[i][j][2] = 0;
     } 
     curveIndex += curveLength;
   }
@@ -257,7 +254,7 @@ void fillKnots(float knots[][][]){
 
 void fillCurves(AUBezier[] curves, float knots[][][]){
   for(int i=0; i<curveRef.getRowCount(); i++){
-    curves[i] = new AUBezier(knots[i], 2, false);
+    curves[i] = new AUBezier(knots[i], 3, false);
   }
 }
 
@@ -266,13 +263,13 @@ void drawCurves(float knots[][][]){
     int curveLength = knots[i].length;
     
     beginShape(); 
-    vertex(knots[i][0][0], knots[i][0][1]);
+    vertex(knots[i][0][0], knots[i][0][1], knots[i][0][2]);
     
     for(int j=1; j<curveLength; j+=3){
       
-      bezierVertex(knots[i][j][0], knots[i][j][1],
-                   knots[i][j+1][0], knots[i][j+1][1],
-                   knots[i][j+2][0], knots[i][j+2][1]);
+      bezierVertex(knots[i][j][0],   knots[i][j][1],   knots[i][j][2],
+                   knots[i][j+1][0], knots[i][j+1][1], knots[i][j+1][2],
+                   knots[i][j+2][0], knots[i][j+2][1], knots[i][j+2][2]);
     }
     endShape();
   }

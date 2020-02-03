@@ -36,29 +36,29 @@ void initCP5(){
   //        .setLabel("particle color")
   //        ;
 
-  cp5.addSlider("translateX")
-     .setRange(0, width)
-     .setValue(480)
-     .setPosition(20, 205)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
+//  cp5.addSlider("translateX")
+//     .setRange(0, width)
+//     .setValue(480)
+//     .setPosition(20, 205)
+//     .setSize(100, 10)
+//     .setColorLabel(labelColor)
+//     ;
      
-  cp5.addSlider("translateY")
-     .setRange(0, height)
-     .setValue(612)
-     .setPosition(20, 220)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
+//  cp5.addSlider("translateY")
+//     .setRange(0, height)
+//     .setValue(612)
+//     .setPosition(20, 220)
+//     .setSize(100, 10)
+//     .setColorLabel(labelColor)
+//     ;
   
-  cp5.addSlider("translateZ")
-     .setRange(-height, height)
-     .setValue(0)
-     .setPosition(20, 235)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
+//  cp5.addSlider("translateZ")
+//     .setRange(-height, height)
+//     .setValue(0)
+//     .setPosition(20, 235)
+//     .setSize(100, 10)
+//     .setColorLabel(labelColor)
+//     ;
      
   //pushMatrix();
   //cp5.addSlider("rotateX")
