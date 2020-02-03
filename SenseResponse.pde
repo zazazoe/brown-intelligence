@@ -37,8 +37,10 @@ int     translateX;
 int     translateY;
 int     translateZ;
 float   rotateX;
-float   rotateY=0;
-float   rotateZ=-0.2;
+float   rotateY;
+float   rotateZ;
+
+PShader fogLines; 
 
 void setup(){
   fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //OPENGL
@@ -55,24 +57,16 @@ void setup(){
   initCurves();
   if(sensorConnected) initCV(); 
   
-  //translateX = width/2;
-  //translateY = height/2;
-  //translateZ = 0;
-  //rotateX = 0;
-  //rotateY = 0;
-  //rotateZ = 0;
+  fogLines = loadShader("fogLines.glsl");
+  fogLines.set("fogNear", 0.0); 
+  fogLines.set("fogFar", 500.0); 
 }
 
 
 void draw() {
+  shader(fogLines, LINES);
   background(0);
-  if(mousePressed){
-    //lights();
-    //directionalLight(255, 255, 255, 0, -1, 0);
-    //spotLight(255, 0, 0, width/2, height/2, 400, 0, 0, -1, PI/4, 2);
-    //pointLight(255, 0, 0, width/2, height/2, 400);
-  }
-  
+
   switch(mode){
   case 0: /*IDLE MODE*/ 
     updateCurves();
@@ -84,6 +78,7 @@ void draw() {
     rotateX(rotateX);
     rotateY(rotateY);
     rotateZ(rotateZ);
+    
     renderCurves(); 
     renderParticlesIdle(); 
     popMatrix();

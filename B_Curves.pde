@@ -165,7 +165,6 @@ void renderCurves(){
     strokeWeight(curveWeight);
     noFill();
 
-      //shader(lineShader3, LINES);
       beginShape();
       for (int j=0; j<knots.get(i).length; j++) {
         int x = j % knots.get(i).length;
