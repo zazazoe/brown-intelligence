@@ -218,6 +218,33 @@ class Particle{
     }
   }
   
+  void displayTransition(int _burstSize, color _burstColor) {
+    noStroke();
+    transitionColor(c, cGame, 0.97); //NOTE TO SELF REPLACE SPEED WITH PROPER VARIABLE
+    transitionSize(size, gameParticleSize, 0.99); //NOTE TO SELF REPLACE SPEED WITH PROPER VARIABLE
+    
+    nerveSkeleton.noStroke();
+    c = color(red(c),green(c),blue(c),255);
+    
+    for(int i=0; i<positions.length; i++){
+      fill(c);
+      pushMatrix();
+      translate(positions[i].x,positions[i].y, positions[i].z);
+      sphere(size);
+      popMatrix();
+    }
+    
+    if(burstPositions.size() > 0){
+      fill(_burstColor);
+      for(int i=0; i<burstPositions.size(); i++){
+        pushMatrix();
+        translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
+        sphere(_burstSize);
+        popMatrix();
+      }
+    }
+  }
+  
   void displayGame(int _burstSize, color _burstColor) {
     noStroke();
     transitionColor(c, cGame, 0.99);
@@ -229,11 +256,11 @@ class Particle{
     for(int i=0; i<positions.length; i++){
       fill(c);
       pushMatrix();
-      translate(positions[i].x,positions[i].y, positions[i].z);
+      //translate(positions[i].x,positions[i].y, positions[i].z);
       //fill(cIdle);
-      //translate(0,0,positions[i].z);
-      //ellipse(positions[i].x,positions[i].y,size,size);
-      sphere(size);
+      translate(0,0,positions[i].z);
+      ellipse(positions[i].x,positions[i].y,size,size);
+      //sphere(size);
       popMatrix();
     }
     
@@ -241,9 +268,10 @@ class Particle{
       fill(_burstColor);
       for(int i=0; i<burstPositions.size(); i++){
         pushMatrix();
-        translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
-        //ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
-        sphere(_burstSize);
+        //translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
+        translate(0, 0, burstPositions.get(i).z);
+        ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
+        //sphere(_burstSize);
         popMatrix();
       }
     }
