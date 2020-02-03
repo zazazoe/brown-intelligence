@@ -12,7 +12,7 @@ PImage  contoursImage;
 int     threshold = 39;
 int     blobSizeThreshold = 28;
 boolean isBackgroundSave = false;
-boolean sensorConnected = false;
+boolean sensorConnected = true;
 
 float   blobx;
 float   bloby;

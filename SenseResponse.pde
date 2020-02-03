@@ -395,11 +395,8 @@ void keyPressed(){
       break;
     case 'a':
       if(mode == IDLE_MODE){
-        if(camera.isCameraAvailable()){
-          opencv = new OpenCV(this, 480, 270);
-          opencv.loadImage(camera.getDepthImage());
-          background = opencv.getSnapshot();
-          println("background set");
+        for(int i=0; i<particles.size(); i++){
+          particles.get(i).particleBurst(SENSOR_SIDE, random(3.5,4.5));
         }
       }
       break;
@@ -410,24 +407,21 @@ void keyPressed(){
         }
       }
       break;
-    case 'f':
-      if(mode == GAME_MODE)
-        sendNerveBurst(leg, MOTOR_SIDE);
-        image(UIbrainLeg,0,0);
-      break;
     case 'g':
-      if(mode == GAME_MODE)
-        sendNerveBurst(arm, MOTOR_SIDE);
-        image(UIbrainArm,0,0);
+      if(isBackgroundSave){
+        background.save("BGcapture.jpg");
+      }
       break;
-    case 'h':
-      if(mode == GAME_MODE)
-        sendNerveBurst(bladder, MOTOR_SIDE);
-        image(UIbrainBladder,0,0);
-      break;
-    case 'j':
-      if(mode == GAME_MODE)
-        sendNerveBurst(arm, SENSOR_SIDE);
+    case 'b':
+      if(mode == IDLE_MODE){
+        if(camera.isCameraAvailable()){
+          opencv = new OpenCV(this, 480, 270);
+          opencv.loadImage(camera.getDepthImage());
+          background = opencv.getSnapshot();
+          isBackgroundSave = true;
+          println("background set");
+        }
+      }
       break;
     case '1':
       cp5.saveProperties(("parameters"));
