@@ -1,6 +1,6 @@
 
 float   particleSpeed = 0.005;
-float   particleSize = 2;
+float   particleSize = 1;
 int     particleTrailSize = 1; //NOTE TO SELF: may want to remove... now have burst
 boolean renderParticles = true;
 boolean syncParticles = false;

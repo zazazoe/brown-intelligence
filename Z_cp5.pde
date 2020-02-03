@@ -38,7 +38,7 @@ void initCP5(){
 
   cp5.addSlider("translateX")
      .setRange(0, width)
-     .setValue(326)
+     .setValue(480)
      .setPosition(20, 205)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -54,7 +54,7 @@ void initCP5(){
   
   cp5.addSlider("translateZ")
      .setRange(-height, height)
-     .setValue(48)
+     .setValue(0)
      .setPosition(20, 235)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -202,29 +202,29 @@ void initCP5(){
   //   .setColorLabel(labelColor)
   //   ;
   
-  //cp5.addSlider("attractionToOrigin")
-  //   .setRange(1, 60)
-  //   .setValue(15)
-  //   .setPosition(20, 475)
-  //   .setSize(100, 10)
-  //   .setColorLabel(labelColor)
-  //   ;
+  cp5.addSlider("attractionToOrigin")
+     .setRange(1, 60)
+     .setValue(15)
+     .setPosition(20, 475)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
   
-  // cp5.addSlider("repulseFromMouse")
-  //   .setRange(1, 60)
-  //   .setValue(25)
-  //   .setPosition(20, 490)
-  //   .setSize(100, 10)
-  //   .setColorLabel(labelColor)
-  //   ;
+   cp5.addSlider("repulseFromMouse")
+     .setRange(1, 60)
+     .setValue(25)
+     .setPosition(20, 490)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
     
-  // cp5.addSlider("mouseAffectRadius")
-  //   .setRange(1, 800)
-  //   .setValue(400)
-  //   .setPosition(20, 505)
-  //   .setSize(100, 10)
-  //   .setColorLabel(labelColor)
-  //   ;
+   cp5.addSlider("mouseAffectRadius")
+     .setRange(1, 800)
+     .setValue(400)
+     .setPosition(20, 505)
+     .setSize(100, 10)
+     .setColorLabel(labelColor)
+     ;
    
   // cp5.addToggle("fixEndPoints")
   //   .setPosition(20, 520)

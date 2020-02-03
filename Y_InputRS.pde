@@ -12,10 +12,12 @@ PImage  contoursImage;
 int     threshold = 39;
 int     blobSizeThreshold = 28;
 boolean isBackgroundSave = false;
-boolean sensorConnected = false;
+boolean sensorConnected = true;
 
 float   blobx;
 float   bloby;
+PVector blobDir;
+PVector blob;
 float   blobxPrev;
 float   blobyPrev;
 int     blobCount = 0;
@@ -64,6 +66,9 @@ void calculateContourBoundingBoxes() {
     
     blobx = rx+(rwidth/2);
     bloby = ry+(rheight/2);
+    
+    blob = new PVector(blobx, bloby, 0);
+    blobDir = PVector.sub(cameraPos, blob);
     
     if(displayContours) displayCountours(rx, ry, rwidth, rheight);
     

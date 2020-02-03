@@ -33,9 +33,9 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-int     translateX;
-int     translateY;
-int     translateZ;
+float   translateX;
+float   translateY;
+float   translateZ;
 float   rotateX;
 float   rotateY=-0.3;
 float   rotateZ;
@@ -43,10 +43,16 @@ float   rotateZ;
 PShader fogLines; 
 PShader fogColor; 
 
+PVector cameraPos;
+
 void setup(){
   fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //P3D OPENGL
   frameRate(60);  
+  smooth(10);
   //cam = new PeasyCam(this, 100);
+  cameraPos = new PVector(width/2, height/2, 700);
+  blob = new PVector(0,0,0);
+  blobDir = new PVector(0,0,0);
   
   mode             = IDLE_MODE;
   timerStart       = millis();
@@ -73,8 +79,8 @@ void draw() {
 
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    //updateCurves();
-    //updateCurvePoints();
+    updateCurves();
+    updateCurvePoints();
     updateParticlesIdle();
     
     pushMatrix();
@@ -91,12 +97,24 @@ void draw() {
     
     resetShader();
     
-    if(millis()-timerStart>curveTimer){
-      transitionToNextTree();
-      timerStart = millis();
-    }
+    //if(millis()-timerStart>curveTimer){
+    //  transitionToNextTree();
+    //  timerStart = millis();
+    //}
+    //updateCurvePoints();
     if(transitionToGame)
       transition(FADE_IDLEMODE);
+    
+    translateZ+=0.1;
+
+    //stroke(255);
+    //strokeWeight(5);
+    //println("blobx" + blobx);
+    //println("bloby" + bloby);
+    //line(blobx, bloby, 0, cameraPos.x, cameraPos.y, cameraPos.z);
+    //fill(255);
+    //ellipse(width/2, height/2, 5,5);
+    
     break;
  
   case 1: /*FADE OUT IDLE MODE*/ 
