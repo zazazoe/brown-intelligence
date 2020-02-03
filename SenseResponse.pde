@@ -20,7 +20,7 @@ boolean transitionToGame = false;
 boolean transitionToIdle = false;
 
 int     timerStart = 0;
-int     curveTimer = 1000;
+int     curveTimer = 5000;
 int     drawTimer  = 12000;
 int     fadeTimer  = 1000;
 int     idleFadeTimer = 1500; 
@@ -37,13 +37,14 @@ int     translateX;
 int     translateY;
 int     translateZ;
 float   rotateX;
-float   rotateY;
+float   rotateY=-0.3;
 float   rotateZ;
 
 PShader fogLines; 
+PShader fogColor; 
 
 void setup(){
-  fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //OPENGL
+  fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //P3D OPENGL
   frameRate(60);  
   //cam = new PeasyCam(this, 100);
   
@@ -59,18 +60,21 @@ void setup(){
   
   fogLines = loadShader("fogLines.glsl");
   fogLines.set("fogNear", 0.0); 
-  fogLines.set("fogFar", 500.0); 
+  fogLines.set("fogFar", 900.0); 
+  
+  fogColor = loadShader("fogColor.glsl");
+  fogColor.set("fogNear", 0.0); 
+  fogColor.set("fogFar", 1200.0);
 }
 
 
 void draw() {
-  shader(fogLines, LINES);
   background(0);
 
   switch(mode){
   case 0: /*IDLE MODE*/ 
-    updateCurves();
-    updateCurvePoints();
+    //updateCurves();
+    //updateCurvePoints();
     updateParticlesIdle();
     
     pushMatrix();
@@ -79,9 +83,13 @@ void draw() {
     rotateY(rotateY);
     rotateZ(rotateZ);
     
+    shader(fogLines, LINES);
     renderCurves(); 
+    shader(fogColor);
     renderParticlesIdle(); 
     popMatrix();
+    
+    resetShader();
     
     if(millis()-timerStart>curveTimer){
       transitionToNextTree();

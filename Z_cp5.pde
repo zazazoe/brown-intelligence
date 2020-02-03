@@ -38,7 +38,7 @@ void initCP5(){
 
   cp5.addSlider("translateX")
      .setRange(0, width)
-     .setValue(249)
+     .setValue(326)
      .setPosition(20, 205)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -46,7 +46,7 @@ void initCP5(){
      
   cp5.addSlider("translateY")
      .setRange(0, height)
-     .setValue(732)
+     .setValue(612)
      .setPosition(20, 220)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -54,37 +54,37 @@ void initCP5(){
   
   cp5.addSlider("translateZ")
      .setRange(-height, height)
-     .setValue(264)
+     .setValue(48)
      .setPosition(20, 235)
      .setSize(100, 10)
      .setColorLabel(labelColor)
      ;
      
-  pushMatrix();
-  cp5.addSlider("rotateX")
-     .setRange(0, 2*PI)
-     .setValue(0)
-     .setPosition(20, 250)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;   
-  popMatrix();
+  //pushMatrix();
+  //cp5.addSlider("rotateX")
+  //   .setRange(0, 2*PI)
+  //   .setValue(0)
+  //   .setPosition(20, 250)
+  //   .setSize(100, 10)
+  //   .setColorLabel(labelColor)
+  //   ;   
+  //popMatrix();
   
-  cp5.addSlider("rotateY")
-     .setRange(0, 2*PI)
-     .setValue(0)
-     .setPosition(20, 265)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;  
+  //cp5.addSlider("rotateY")
+  //   .setRange(0, 2*PI)
+  //   .setValue(0)
+  //   .setPosition(20, 265)
+  //   .setSize(100, 10)
+  //   .setColorLabel(labelColor)
+  //   ;  
   
-  cp5.addSlider("rotateZ")
-     .setRange(0, 2*PI)
-     .setValue(0)
-     .setPosition(20, 280)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ; 
+  //cp5.addSlider("rotateZ")
+  //   .setRange(0, 2*PI)
+  //   .setValue(0)
+  //   .setPosition(20, 280)
+  //   .setSize(100, 10)
+  //   .setColorLabel(labelColor)
+  //   ; 
   //cp5.addSlider("particleSize")
   //   .setRange(1, 15)
   //   .setValue(5)

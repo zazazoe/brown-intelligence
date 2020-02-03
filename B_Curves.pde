@@ -1,15 +1,15 @@
 
 float   curveSetRot = 0;
 PVector curveSetStartPoint;
-int     numGenerations = 4;
+int     numGenerations = 5;
 int     minBranches = 3;
-int     maxBranches = 4;
+int     maxBranches = 3;
 //float   segmentMinLength = 150;
 float   segmentMaxLength = 400;
 //int     segmentMinRot = -50;
 int     segmentMaxRot = 10;
-int     segmentMaxRotZ = 50;
-int     segmentMaxRotY = 20;
+int     segmentMaxRotZ = 20;
+int     segmentMaxRotY = 10;
 
 int     generationLimit;
 ArrayList<Segment>[] points;
@@ -27,7 +27,7 @@ int     curveRandY = 15;
 int     curveRandZ = 20;
 int     curveWeight = 3;
 Float[] curveOpacities;
-float   curveOpacityMin = 0.8; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
+float   curveOpacityMin = 0.4; //DOESN'T BEHAVE AS SHOULD, CHECK OUT
 float   curveFadeOutSpeed;
 
 float   attractionToOrigin = 15; 
@@ -83,7 +83,7 @@ void generateCurveSet(float _startLength, float _startRotation, PVector _startPo
   }
   
   /*change inside*/
-  segment(_startLength, _startRotation, 0, _startPoint, 0);
+  segment(_startLength, _startRotation, 30, _startPoint, 0);
   
   findLastSegment(points[0].get(0).p2, 1, 0);
   reversePointArray();
@@ -159,7 +159,7 @@ void renderCurves(){
         curveOpacity.get(i)[0] += curveFadeOutSpeed;
       }
     }
-    float a = 255*curveOpacity.get(i)[0];
+    float a = constrain(255*curveOpacity.get(i)[0], 0, 255);
     
     stroke(r,g,b,a);
     strokeWeight(curveWeight);
@@ -177,6 +177,13 @@ void renderCurves(){
         curveVertex(x1, y1, z1); 
       }
       endShape();
+    
+    pushMatrix();
+    noStroke();
+    fill(r,g,b,a);
+    translate(knots.get(i)[knots.get(i).length-1][0],knots.get(i)[knots.get(i).length-1][1], knots.get(i)[knots.get(i).length-1][2]);
+    ellipse(0,0,2,2);
+    popMatrix();
    } 
 }
 
@@ -347,20 +354,21 @@ void prepNextTree(){
         //segment(map(_generation, 0, generationLimit, segmentMaxLength, segmentMinLength), random(minBranches,maxBranches), point, _generation);
         if(i==0){
           if(_generation==generationLimit-1){
-            _rotZ += random(segmentMaxRotZ/2,segmentMaxRotZ);
+            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ);
             segment(_segmentLength*random(0.5, 0.7), _segmentRotation, _rotZ, point, _generation);
           }else{
-            _rotZ += random(segmentMaxRotZ/2,segmentMaxRotZ);
-            segment(_segmentLength*random(0.8, 1.0), _segmentRotation, _rotZ, point, _generation);
+            _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ); //segmentMaxRotZ/2,segmentMaxRotZ);
+            segment(_segmentLength*random(0.8, 0.9), _segmentRotation, _rotZ, point, _generation);
           }
-        }
-        if(i==1){
+        } else if(i==1){
           _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
           segment(_segmentLength*random(0.5, 0.7), _segmentRotation+random(segmentMaxRotY,segmentMaxRotY*2), _rotZ, point, _generation);
-        }
-        if(i==2){
+        } else if(i==2){
           _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
           segment(_segmentLength*random(0.5, 0.7), _segmentRotation-random(segmentMaxRotY,segmentMaxRotY*2), _rotZ, point, _generation);
+        } else if(i>2){
+          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);
+          segment(_segmentLength*random(0.5, 0.7), _segmentRotation-random(-segmentMaxRotY,segmentMaxRotY), _rotZ, point, _generation);
         }
       }
     }   
