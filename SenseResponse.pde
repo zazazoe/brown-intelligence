@@ -93,6 +93,8 @@ void setup(){
   fogColor = loadShader("fogColor.glsl");
   fogColor.set("fogNear", 0.0); 
   fogColor.set("fogFar", 1200.0);
+  
+  hint(DISABLE_DEPTH_MASK);
 }
 
 
