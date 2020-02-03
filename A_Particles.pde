@@ -1,6 +1,6 @@
 
 float   particleSpeed = 0.005;
-float   particleSize = 5;
+float   particleSize = 2;
 int     particleTrailSize = 1; //NOTE TO SELF: may want to remove... now have burst
 boolean renderParticles = true;
 boolean syncParticles = false;
@@ -12,7 +12,7 @@ float   particleFadeSlowDown = 8;
 int     particlesToMove = 0;
 int     successRate = 3;
 
-int   gameParticleSize = 5;
+int   gameParticleSize = 1;
 int   gameParticleBurstSize = 3;
 color gameParticleBurstColor;
 

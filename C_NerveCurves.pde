@@ -143,7 +143,7 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
   for(int j=0; j<_curveIndex; j++){
     i+=curveIndex[j];
   }
-  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>//
+  for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>// //<>//
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
       //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));

@@ -250,7 +250,7 @@ class Particle{
   }
   
   void displayDraw(PGraphics canvas) {
-    //transitionColor(c, cGame, 0.99);
+    transitionColor(c, cGame, 0.99);
     transitionSize(size, gameParticleSize, 0.90);
     
     canvas.noStroke();
