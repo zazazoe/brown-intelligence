@@ -217,6 +217,10 @@ int whichButton(PVector mouse){
     //exit
     if(mousePressed && millis()-timeOutStart>timeOut){
       timeOutStart = millis();
+      deviceRings  = false;
+      deviceDevice = false;
+      deviceButton = false;
+      brainButton  = false;
       button = 100;
     }
     println("exit button pressed");

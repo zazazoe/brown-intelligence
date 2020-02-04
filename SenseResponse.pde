@@ -33,13 +33,12 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-
-float   idleTranslateX=691;
-float   idleTranslateY=612;
-float   idleTranslateZ=-48;
-float   idleRotateX=0;
-float   idleRotateY=-0.35;
-float   idleRotateZ=0;
+float   idleTranslateX=425; //big display:691      //laptop:425
+float   idleTranslateY=450; //big display:612      //laptop:450
+float   idleTranslateZ=-100;//big display:-48      //laptop:-100
+float   idleRotateX=0;      //big display:0        //laptop:0
+float   idleRotateY=-0.35;  //big display:-0.35    //laptop:-0.35
+float   idleRotateZ=0;      //big display:0        //laptop:0
 
 float   gameTranslateX=0;
 float   gameTranslateY=0;
