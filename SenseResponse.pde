@@ -2,9 +2,9 @@ import AULib.*;
 import processing.video.*;
 import ch.bildspur.realsense.*;
 import controlP5.*;
-import peasy.*;
+//import peasy.*;
 
-PeasyCam cam;
+//PeasyCam cam;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -62,6 +62,8 @@ PShader fogColor;
 
 PVector cameraPos;
 
+PImage sphereImg;
+
 void setup(){
   fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //P3D OPENGL
   frameRate(60);  
@@ -71,6 +73,8 @@ void setup(){
   blobFront  = new PVector(0,0,0);
   mode       = IDLE_MODE;
   timerStart = millis();
+  
+  sphereImg = loadImage("sphere.png");
   
   translateX = idleTranslateX;
   translateY = idleTranslateY;
@@ -97,31 +101,21 @@ void setup(){
   hint(DISABLE_DEPTH_MASK);
   hint(DISABLE_OPENGL_ERRORS);
   hint(ENABLE_STROKE_PERSPECTIVE);
-  strokeCap(ROUND);
-  hint(DISABLE_DEPTH_TEST);
+  //strokeCap(ROUND);
+  //hint(DISABLE_DEPTH_TEST);
 }
 
 
 void draw() {
   background(0);
-  
-  
-  
+ 
   switch(mode){
   case 0: /*IDLE MODE*/ 
     updateCurves();
     updateCurvePoints();
     updateParticlesIdle();
-    
-        if(key == 'w'){
-      //ambientLight(200, 200, 200, width/2, height/2, 700);
-      //directionalLight(51, 102, 126, 0, -1, 0);
-      //pointLight(51, 102, 126, 35, 40, 36);
-      spotLight(51, 102, 126, 80, 20, 40, -1, 0, 0, PI/2, 2);
-    }
-    
+
     pushMatrix();
-    
     rotateX(rotateX);
     rotateY(rotateY);
     rotateZ(rotateZ);
@@ -190,20 +184,14 @@ void draw() {
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
     
     pushMatrix();
-    //translate(0,0,z1);
-    //translate(translateX,translateY,translateZ);
     translate(0,0,0);
       image(nerveSkeleton, 0,0);
     popMatrix();
     pushMatrix();
-    //translate(0,0,z1);
-    //translate(translateX,translateY,translateZ);
     translate(0,0,0);
       image(blackOverlay, 0,0);
     popMatrix();
     pushMatrix();
-    //translate(0,0,z3);
-    //translate(translateX,translateY,translateZ);
     translate(0,0,0);
       image(nerveSkeletonFG, 0,0);
     popMatrix();
@@ -283,15 +271,11 @@ void draw() {
     
   case 6: /*TRANSITION TO IDLE MODE*/ 
     pushMatrix();
-    //translate(0,0,z1);
     rotateX(rotateX);
     rotateY(rotateY);
     rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
       renderCurves();
-    //popMatrix();
-    //pushMatrix();
-    //translate(0,0,z2);
       transitionParticlesToIdleCurves();  
     popMatrix();
     
@@ -322,6 +306,7 @@ void transition(int _toMode){
   switch(_toMode){
     case 0: //TO IDLE MODE
       timerStart = millis() + curveTimer;
+      setParticlesForIdle();
       mode = IDLE_MODE;
       println("change back to idle mode");
       break;
@@ -335,7 +320,7 @@ void transition(int _toMode){
       mode = FADE_IDLEMODE;
       println("fade out idle mode");  
       break;
-    case 2: //TO DRAW GAME MODE
+    case 2: //TO TRANSITION GAME MODE
       curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
       transitionParticlesToGameMode();
       clearDrawingCanvas(nerveSkeleton);
@@ -347,7 +332,7 @@ void transition(int _toMode){
 
       println("ready to move particles");
       break;
-    case 3:
+    case 3: //TO DRAW GAME MODE
       for(int i=0; i<particles.size(); i++){
         particles.get(i).setTransition(true);
       }
@@ -355,20 +340,20 @@ void transition(int _toMode){
       mode = DRAW_GAMEMODE; 
       println("change game draw mode");
       break;
-    case 4:
+    case 4: //FADE IN GAME MODE
       timerStart = millis();
       imageAlphaStep = 255.0/(fadeTimer/60.0); //NOTE TO SELF: based on 60fps
       mode = FADE_GAMEMODE;
       println("change to game mode");
       break;
-    case 5:
+    case 5: //TO GAME MODE
       gameParticleSize = 3;
       setParticlesForGame();
       tint(255,255);
       mode = GAME_MODE;
       println("change to game mode");
       break;
-    case 6:
+    case 6: //TO TRANSITION TO IDLE MODE
       transitionParticlesToIdleMode();
       curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0); //NOTE TO SELF: update proper 
       switchToIdle = false;

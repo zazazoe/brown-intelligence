@@ -105,6 +105,13 @@ void setParticlesForGame(){
   }
 }
 
+void setParticlesForIdle(){
+  for(int i=0; i<particles.size(); i++){
+    particles.get(i).setSize(particleSize);
+    particles.get(i).disperse();
+  }
+}
+
 void updateParticleAmount(int amount) {
     if(particles.size() > amount){
       for(int i=particles.size()-1; i>amount-1; i--){

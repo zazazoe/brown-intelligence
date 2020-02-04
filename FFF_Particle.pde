@@ -207,8 +207,12 @@ class Particle{
       pushMatrix();
       translate(positions[i].x,positions[i].y, positions[i].z);
       fill(cIdle);
-      //ellipse(positions[i].x,positions[i].y,size,size);
-      sphere(size);
+      ellipse(0,0,size,size);
+      //sphere(size);
+      //imageMode(CENTER);
+      //tint(cIdle);      
+      //image(sphereImg, 0, 0, size,size);
+      
       popMatrix();
     }
     
@@ -217,8 +221,8 @@ class Particle{
       for(int i=0; i<burstPositions.size(); i++){
         pushMatrix();
         translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
-        //ellipse(burstPositions.get(i).x, burstPositions.get(i).y, burstSize, burstSize);
-        sphere(burstSize);
+        ellipse(0, 0, burstSize, burstSize);
+        //sphere(burstSize);
         popMatrix();
       }
     }
@@ -236,7 +240,8 @@ class Particle{
       fill(c);
       pushMatrix();
       translate(positions[i].x,positions[i].y, positions[i].z);
-      sphere(size);
+      ellipse(0,0,size,size);
+      //sphere(size);
       popMatrix();
     }
     
@@ -245,7 +250,8 @@ class Particle{
       for(int i=0; i<burstPositions.size(); i++){
         pushMatrix();
         translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
-        sphere(_burstSize);
+        ellipse(0, 0, burstSize, burstSize);
+        //sphere(_burstSize);
         popMatrix();
       }
     }
