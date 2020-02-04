@@ -26,11 +26,15 @@ float   blobyPrev;
 int     blobCount = 0;
 int     blobCountPrev = 0;
 
+int     blobTimer=0;
+int     giveHintTime = 2000;
+
 void initCV(){
   camera.start(480, 270, 30, true, false);
   opencv = new OpenCV(this, 480, 270);
   contours = new ArrayList<Contour>(); 
   background = loadImage("BGcapture.jpg");
+  blobTimer = millis();
 }
 
 void updateCV(){
@@ -91,6 +95,14 @@ void calculateContourBoundingBoxes() {
         
     updateCurvePoints();
     blobCount++;  
+  }
+  
+  //PLACE TO INSERT HINT TO TOUCH/INTERACT
+  if(blobCount > 0 && millis()-blobTimer>giveHintTime){
+    println("trigger hint");
+    blobTimer = millis();
+  } else if(blobCount == 0){
+    blobTimer = millis();
   }
 }
 
