@@ -48,17 +48,6 @@ PImage  UIdeviceDevice;
 PVector UIdevicedevicepos = new PVector(121, 424);
 
 
-//void drawButtons(){
-//  rectMode(CENTER);
-//  fill(200);
-//  rect(buttonX, height-buttonHeight1, buttonSize,buttonSize);
-//  rect(buttonX, height-buttonHeight2, buttonSize,buttonSize);
-//  rect(buttonX, height-buttonHeight3, buttonSize,buttonSize);
-//  rect(buttonX, height-buttonHeight4, buttonSize,buttonSize);
-  
-//  ellipse(width-exitX, exitY, buttonSize, buttonSize);
-//}
-
 void renderUI(){
   image(UI, 0,0);
   if(brainButton)  image(UIbrain, 0,0);
@@ -232,21 +221,5 @@ int whichButton(PVector mouse){
     }
     println("exit button pressed");
   }
-  
   return button;
-}
-
-void loadUIImages(){
-  UI              = loadImage("imageAssets/UI/UI.png");
-  UIleg           = loadImage("imageAssets/UI/leg.png");
-  UIarm           = loadImage("imageAssets/UI/arm.png");
-  UIheart         = loadImage("imageAssets/UI/heart.png");
-  UIbladder       = loadImage("imageAssets/UI/bladder.png");
-  UIbrain         = loadImage("imageAssets/UI/brain.png");
-  UIbrainBladder  = loadImage("imageAssets/UI/brain_bladder.png");
-  UIbrainArm      = loadImage("imageAssets/UI/brain_arm.png");
-  UIbrainLeg      = loadImage("imageAssets/UI/brain_leg.png");
-  UIdevice        = loadImage("imageAssets/UI/device.png");
-  UIdeviceRings   = loadImage("imageAssets/UI/device_ring.png");
-  UIdeviceDevice  = loadImage("imageAssets/UI/device_device.png");
 }

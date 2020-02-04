@@ -32,7 +32,8 @@ void initNerveCurves(){
   colorIndex = new color[curveSets];
 
   /*LEG.*/ 
-  initCurveSet("nerveData/legV4.csv", "nerveData/legRefV4.csv");
+  initCurveSet("nerveData/1440900/leg.csv", "nerveData/1440900/legRef.csv");
+  //initCurveSet("nerveData/19201080/leg.csv", "nerveData/19201080/legRef.csv");
   
   legKnots = new float[nrOfCurves][][];
   legCurves = new AUBezier[nrOfCurves];
@@ -42,7 +43,8 @@ void initNerveCurves(){
   curveIndex[leg] = legCurves.length;
   
   /*ARM.*/ 
-  initCurveSet("nerveData/armV4.csv", "nerveData/armRefV4.csv");
+  initCurveSet("nerveData/1440900/arm.csv", "nerveData/1440900/armRef.csv");
+  //initCurveSet("nerveData/19201080/arm.csv", "nerveData/19201080/armRef.csv");
   
   armKnots = new float[nrOfCurves][][];
   armCurves = new AUBezier[nrOfCurves];
@@ -52,7 +54,8 @@ void initNerveCurves(){
   curveIndex[arm] = armCurves.length;
   
   /*HEART.*/ 
-  initCurveSet("nerveData/heartV4.csv", "nerveData/heartRefV4.csv");
+  initCurveSet("nerveData/1440900/heart.csv", "nerveData/1440900/heartRef.csv");
+  //initCurveSet("nerveData/19201080/heart.csv", "nerveData/19201080/heartRef.csv");
   
   heartKnots = new float[nrOfCurves][][];
   heartCurves = new AUBezier[nrOfCurves];
@@ -62,7 +65,8 @@ void initNerveCurves(){
   curveIndex[heart] = heartCurves.length;
   
   /*BLADDER.*/ 
-  initCurveSet("nerveData/bladderV4.csv", "nerveData/bladderRefV4.csv");
+  initCurveSet("nerveData/1440900/bladder.csv", "nerveData/1440900/bladderRef.csv");
+  //initCurveSet("nerveData/19201080/bladder.csv", "nerveData/19201080/bladderRef.csv");
   
   bladderKnots = new float[nrOfCurves][][];
   bladderCurves = new AUBezier[nrOfCurves];
@@ -72,7 +76,8 @@ void initNerveCurves(){
   curveIndex[bladder] = bladderCurves.length;
  
   /*INACTIVE NERVES.*/
-  initCurveSet("nerveData/inactiveV7.csv", "nerveData/inactiveRefV7.csv");
+  initCurveSet("nerveData/1440900/inactive.csv", "nerveData/1440900/inactiveRef.csv");
+  //initCurveSet("nerveData/19201080/inactive.csv", "nerveData/19201080/inactiveRef.csv");
   
   inactiveKnots = new float[nrOfCurves][][];
   inactiveCurves = new AUBezier[nrOfCurves];
