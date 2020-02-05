@@ -362,7 +362,7 @@ void prepNextTree(){
             //  _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ);
             //  segment(_segmentLength*random(0.2, 0.4), _segmentRotation, _rotZ, point, _generation);
             //}else{
-              _rotZ += random(0,segmentMaxRotZ); //segmentMaxRotZ/2,segmentMaxRotZ);
+              _rotZ += random(-segmentMaxRotZ/4,segmentMaxRotZ); //segmentMaxRotZ/2,segmentMaxRotZ);
               segment(_segmentLength*random(0.7, 0.9), _segmentRotation, _rotZ, point, _generation);
             //}
           } else if(i==1){

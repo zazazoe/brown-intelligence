@@ -2,9 +2,6 @@ import AULib.*;
 import processing.video.*;
 import ch.bildspur.realsense.*;
 import controlP5.*;
-//import peasy.*;
-
-//PeasyCam cam;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -33,9 +30,9 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-float   idleTranslateX=425; //big display:691      //laptop:425
+float   idleTranslateX=410; //big display:691      //laptop:410
 float   idleTranslateY=450; //big display:612      //laptop:450
-float   idleTranslateZ=-100;//big display:-48      //laptop:-100
+float   idleTranslateZ=-110;//big display:-48      //laptop:-110
 float   idleRotateX=0;      //big display:0        //laptop:0
 float   idleRotateY=-0.35;  //big display:-0.35    //laptop:-0.35
 float   idleRotateZ=0;      //big display:0        //laptop:0
@@ -101,7 +98,7 @@ void setup(){
   //hint(DISABLE_OPENGL_ERRORS);
   hint(ENABLE_STROKE_PERSPECTIVE);
   //strokeCap(ROUND);
-  hint(DISABLE_DEPTH_TEST);
+  //hint(DISABLE_DEPTH_TEST);
 }
 
 
@@ -422,7 +419,9 @@ void keyPressed(){
 
 void mousePressed(){
   if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
-    transitionToGame = true;
+    if(mouseX > 200){
+      transitionToGame = true;
+    }
   }
 }
 
