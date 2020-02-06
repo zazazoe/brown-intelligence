@@ -199,7 +199,7 @@ class Particle{
 
   void displayIdle() {
     if(idNr < curveOpacity.size()){
-      if(curveOpacity.get(idNr)[1] != 1.0){
+      if(curveOpacity.get(idNr)[1] != 1.0){  //curve is about to fade out
         noStroke();
         transitionColor(c, cIdle, 0.99);
         transitionSize(size, sizeIdle, 0.99);
@@ -210,11 +210,6 @@ class Particle{
           translate(positions[i].x,positions[i].y, positions[i].z);
           fill(cIdle);
           ellipse(0,0,size,size);
-          //sphere(size);
-          //imageMode(CENTER);
-          //tint(cIdle);      
-          //image(sphereImg, 0, 0, size,size);
-          
           popMatrix();
         }
         
@@ -224,10 +219,35 @@ class Particle{
             pushMatrix();
             translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
             ellipse(0, 0, burstSize, burstSize);
-            //sphere(burstSize);
             popMatrix();
           }
         }
+      }
+    }
+  }
+  
+  void displayIdleFade() {
+    noStroke();
+    transitionColor(c, cIdle, 0.99);
+    transitionSize(size, sizeIdle, 0.99);
+    
+    
+    for(int i=0; i<positions.length; i++){
+      pushMatrix();
+      translate(positions[i].x,positions[i].y, positions[i].z);
+      fill(cIdle);
+      ellipse(0,0,size,size);
+      popMatrix();
+    }
+    
+    if(burstPositions.size() > 0){
+      fill(cBurst);
+      for(int i=0; i<burstPositions.size(); i++){
+        pushMatrix();
+        translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
+        ellipse(0, 0, burstSize, burstSize);
+        //sphere(burstSize);
+        popMatrix();
       }
     }
   }
@@ -245,7 +265,6 @@ class Particle{
       pushMatrix();
       translate(positions[i].x,positions[i].y, positions[i].z);
       ellipse(0,0,size,size);
-      //sphere(size);
       popMatrix();
     }
     
@@ -255,7 +274,6 @@ class Particle{
         pushMatrix();
         translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
         ellipse(0, 0, burstSize, burstSize);
-        //sphere(_burstSize);
         popMatrix();
       }
     }
@@ -302,7 +320,6 @@ class Particle{
 
     for(int i=0; i<positions.length; i++){
       canvas.fill(c);
-      canvas.translate(0,0,positions[i].z);
       canvas.ellipse(positions[i].x,positions[i].y,size,size);
     }
   }

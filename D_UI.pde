@@ -2,17 +2,17 @@
 int SENSOR_SIDE = 0;
 int MOTOR_SIDE  = 1;
 
-int nrOfButtons = 4;
-int buttonSize = 40;
+//int nrOfButtons = 4;
+//int buttonSize = 40;
 
-int buttonX = 50;
-int buttonHeight1 = 200;
-int buttonHeight2 = 150;
-int buttonHeight3 = 100;
-int buttonHeight4 = 50;
+//int buttonX = 50;
+//int buttonHeight1 = 200;
+//int buttonHeight2 = 150;
+//int buttonHeight3 = 100;
+//int buttonHeight4 = 50;
 
-int exitX = 50;
-int exitY = 50;
+//int exitX = 50;
+//int exitY = 50;
 
 boolean brainButton  = false;
 boolean deviceButton = false;
@@ -23,29 +23,29 @@ int timeOutStart=0;
 int timeOut=500;
 
 PImage  UI;
-PVector UIexitpos = new PVector(1364, 836);
-PImage  UIleg;
-PVector UIlegpos = new PVector(59, 825);
+PVector UIexitpos = new PVector(1364, 836);        //projector:1820, 995  //laptop:1364, 836
+PImage  UIleg;    
+PVector UIlegpos = new PVector(59, 825);           //projector:79, 980    //laptop:59, 825
 PImage  UIbladder;
-PVector UIbladderpos = new PVector(59, 745);
+PVector UIbladderpos = new PVector(59, 745);       //projector:79, 874    //laptop:59, 745
 PImage  UIarm;
-PVector UIarmpos = new PVector(59, 665);
+PVector UIarmpos = new PVector(59, 665);           //projector:79, 767    //laptop:59, 665
 PImage  UIheart;
-PVector UIheartpos = new PVector(59, 585);
+PVector UIheartpos = new PVector(59, 585);         //projector:79, 661    //laptop:59, 585
 PImage  UIbrain;
-PVector UIbrainpos = new PVector(59, 505);
+PVector UIbrainpos = new PVector(59, 505);         //projector:79, 555    //laptop:59, 505
 PImage  UIbrainBladder;
-PVector UIbrainbladderpos = new PVector(134, 505);
+PVector UIbrainbladderpos = new PVector(134, 505); //projector:178, 550   //laptop:134, 505
 PImage  UIbrainArm;
-PVector UIbrainarmpos = new PVector(116, 463);
+PVector UIbrainarmpos = new PVector(116, 463);     //projector:155, 498   //laptop:116, 463
 PImage  UIbrainLeg;
-PVector UIbrainlegpos = new PVector(116, 542);
+PVector UIbrainlegpos = new PVector(116, 542);     //projector:155, 603   //laptop:116, 542
 PImage  UIdevice;
-PVector UIdevicepos = new PVector(59, 405);
+PVector UIdevicepos = new PVector(59, 405);        //projector:79, 420    //laptop:59, 405
 PImage  UIdeviceRings;
-PVector UIdeviceringspos = new PVector(121, 382);
+PVector UIdeviceringspos = new PVector(121, 382);  //projector:161, 390   //laptop:121, 382
 PImage  UIdeviceDevice;
-PVector UIdevicedevicepos = new PVector(121, 424);
+PVector UIdevicedevicepos = new PVector(121, 424); //projector:161, 446   //laptop:121, 424
 
 
 void renderUI(){
@@ -54,8 +54,8 @@ void renderUI(){
   if(deviceButton) image(UIdevice, 0,0);
   if(deviceRings)  image(UIdeviceRings, 0,0);
   if(deviceDevice) image(UIdeviceDevice, 0,0);
-  if(deviceRings)  image(deviceRingsOverlay, 0,0); //NOTE TO SELF: FADE IN SUBTLE
-  if(deviceDevice) image(deviceDeviceOverlay, 0,0); //NOTE TO SELF: FADE IN SUBTLE
+  if(deviceRings)  image(deviceRingsOverlay, 0,0);
+  if(deviceDevice) image(deviceDeviceOverlay, 0,0);
 }
 
 void checkButtons(float mX, float mY){
@@ -123,8 +123,8 @@ void checkButtons(float mX, float mY){
 
 int whichButton(PVector mouse){
   int button=0;
-  int bigButton=32;
-  int smallButton=16;
+  int bigButton=32;      //projector: 42    //laptop:32
+  int smallButton=16;    //projector: 22    //laptop:16
   
   if(mouse.dist(UIlegpos)<=bigButton){
     //leg sensor

@@ -31,23 +31,21 @@ int     giveHintTime = 2000;
 
 void initCV(){
   camera.start(480, 270, 30, true, false);
-  opencv = new OpenCV(this, 480, 270);
-  contours = new ArrayList<Contour>(); 
+  opencv     = new OpenCV(this, 480, 270);
+  contours   = new ArrayList<Contour>(); 
   background = loadImage("BGcapture.jpg");
+  
   blobTimer = millis();
 }
 
 void updateCV(){
   if(frameCount%2==0) {
     camera.readFrames();
-    camera.createDepthImage(0, 2500);
+    camera.createDepthImage(0, 2000);
     
     opencv.loadImage(camera.getDepthImage());
     opencv.diff(background);
     opencv.threshold(threshold);
-    //opencv.dilate();
-    //opencv.erode();
-    //opencv.blur(blurSize);
     
     contours = opencv.findContours(true, true);  
   }
@@ -66,7 +64,7 @@ void calculateContourBoundingBoxes() {
     if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
       continue;
     
-    float rx = map(r.x, 0, 480, 0, width);
+    float rx = map(r.x, 0, 480, width, 0);
     float ry = map(r.y, 0, 270, 0, height);
     float rwidth = map(r.width, 0, 480, 0, width);
     float rheight = map(r.height, 0, 270, 0, height);
@@ -84,11 +82,19 @@ void calculateContourBoundingBoxes() {
     if(blobCountPrev == 0 && blobCount == 0){
       if(blobx <= width/2){
         for(int j=0; j<particles.size(); j++){
-          particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
+          for(int k=0;k<5; k++){
+            particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
+          }
+          //play sound
+          if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
         }
       } else if(blobx > width/2) {
         for(int j=0; j<particles.size(); j++){
-          particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
+          for(int k=0;k<5; k++){
+            particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
+          }
+          //playsound
+          if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
         }
       }
     }
@@ -103,15 +109,20 @@ void calculateContourBoundingBoxes() {
     blobTimer = millis();
   } else if(blobCount == 0){
     blobTimer = millis();
+    blobx = 0;
+    bloby = 0;
   }
 }
 
 void displayCountours(float rx,float ry,float rwidth,float rheight){
+  pushMatrix();
   stroke(255, 0, 0);
   fill(255, 0, 0, 150);
   strokeWeight(2);
   rect(rx, ry, rwidth, rheight);
   noStroke();
   fill(255, 255, 0);
-  ellipse(blobx, bloby, 10,10);
+  translate(blobx, bloby, 0);
+  ellipse(0, 0, 10,10);
+  popMatrix();
 }

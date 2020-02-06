@@ -13,29 +13,29 @@ void initCP5(){
 
   cp5.setColorBackground(color(150));
   
-  cp5.addSlider("translateX")
-     .setRange(0, width)
-     .setValue(410)
-     .setPosition(20, 10)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
+  //cp5.addSlider("translateX")
+  //   .setRange(0, width)
+  //   .setValue(410)
+  //   .setPosition(20, 10)
+  //   .setSize(100, 10)
+  //   .setColorLabel(labelColor)
+  //   ;
      
-  cp5.addSlider("translateY")
-     .setRange(0, height)
-     .setValue(450)
-     .setPosition(20, 25)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
+  //cp5.addSlider("translateY")
+  //   .setRange(0, height)
+  //   .setValue(450)
+  //   .setPosition(20, 25)
+  //   .setSize(100, 10)
+  //   .setColorLabel(labelColor)
+  //   ;
   
-  cp5.addSlider("translateZ")
-     .setRange(-height, height)
-     .setValue(-110)
-     .setPosition(20, 40)
-     .setSize(100, 10)
-     .setColorLabel(labelColor)
-     ;
+  //cp5.addSlider("translateZ")
+  //   .setRange(-height, height)
+  //   .setValue(-110)
+  //   .setPosition(20, 40)
+  //   .setSize(100, 10)
+  //   .setColorLabel(labelColor)
+  //   ;
 
   cp5.addSlider("particleSize")
      .setRange(1, 15)

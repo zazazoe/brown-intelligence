@@ -26,9 +26,9 @@ void loadImages(){
   //OVERLAYS FOR 1920 x 1080
   //blackOverlay        = loadImage("imageAssets/overlays19201080/blackOverlay.png");
   //deviceOverlay       = loadImage("imageAssets/overlays19201080/deviceOverlay.png");
-  //organUnderlay       = loadImage("imageAssets/overlays19201080/organUnderlay.png");
+  //organUnderlay       = loadImage("imageAssets/overlays19201080/organsUnderlay.png");
   //deviceDeviceOverlay = loadImage("imageAssets/overlays19201080/deviceDevice.png");
-  //deviceRingsOverlay  = loadImage("imageAssets/overlays19201080/deviceRings.png");
+  //deviceRingsOverlay  = loadImage("imageAssets/overlays19201080/deviceRing.png");
 }
 
 void loadUIImages(){  

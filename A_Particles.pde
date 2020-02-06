@@ -6,22 +6,25 @@ boolean renderParticles = true;
 boolean syncParticles = false;
 boolean disperseParticles = true;
 float   particleDrawingSpeed = 0.0025;
-float   particleTransitionSpeed = 0.93;
-float   particleTransitionSpeedIdle = 0.96;
+float   particleTransitionSpeed = 0.94;
+float   particleTransitionSpeedIdle = 0.93;
 float   particleFadeSlowDown = 8;
 int     particlesToMove = 0;
 int     successRate = 3;
 
-int   gameParticleSize = 1;
-int   gameParticleBurstSize = 3;
-color gameParticleBurstColor;
+float   gameParticleSize = 3;
+int     gameParticleBurstSize = 3;
+color   gameParticleBurstColor;
 
 color   burstColor = color(255);
 float   burstSpeed = 0.075;
 float   particleBurstSize = 2;
 
-color   gameColor = color(70,53,159);
+color   gameColor = color(89,120,195);
 
+//////////
+/*UPDATE*/
+//////////
 void updateParticlesIdle(){
   for(int i=0; i<particles.size(); i++){
     particles.get(i).updateIdle(curves.get(i));
@@ -35,6 +38,10 @@ void updateParticlesIdleFade(){
   }
 }
 
+
+///////////
+/*DISPLAY*/
+///////////
 void renderParticlesIdle(){
   if(renderParticles){
     for(int i=0; i<particles.size(); i++){
@@ -43,6 +50,18 @@ void renderParticlesIdle(){
       particles.get(i).setIdleSize(particleSize); //stupid to do every time (could be as move to mode and in setup?)
       particles.get(i).setBurstSize(particleBurstSize); //stupid to do every time (could be as move to mode and in setup?)
       particles.get(i).displayIdle();
+    }
+  }
+}
+
+void renderParticlesIdleFade(){
+  if(renderParticles){
+    for(int i=0; i<particles.size(); i++){
+      particles.get(i).setIdleColor(particleColor(i)); //actually changing
+      particles.get(i).setBurstColor(burstColor); //stupid to do every time (could be as move to mode and in setup?)
+      particles.get(i).setIdleSize(particleSize); //stupid to do every time (could be as move to mode and in setup?)
+      particles.get(i).setBurstSize(particleBurstSize); //stupid to do every time (could be as move to mode and in setup?)
+      particles.get(i).displayIdleFade();
     }
   }
 }
@@ -56,6 +75,10 @@ void drawParticlesOnCanvas(PGraphics canvas, int start, int end){
 }
 
 
+
+//////////////
+/*TRANSITION*/
+//////////////
 void transitionParticlesToGameMode(){
   if(particles.size() <= nrOfNerveCurves){
     particlesToMove = particles.size();

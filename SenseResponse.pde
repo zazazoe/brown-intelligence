@@ -2,6 +2,7 @@ import AULib.*;
 import processing.video.*;
 import ch.bildspur.realsense.*;
 import controlP5.*;
+import processing.sound.*;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -16,10 +17,10 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 boolean transitionToIdle = false;
 
-int     timerStart = 0;
-int     curveTimer = 5000;
-int     drawTimer  = 12000;
-int     fadeTimer  = 1000;
+int     timerStart    = 0;
+int     curveTimer    = 5000;
+int     drawTimer     = 12000;
+int     fadeTimer     = 1500;
 int     idleFadeTimer = 1500; 
 
 int     z0 = -1;
@@ -30,12 +31,12 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-float   idleTranslateX=410; //big display:691      //laptop:410
-float   idleTranslateY=450; //big display:612      //laptop:450
-float   idleTranslateZ=-110;//big display:-48      //laptop:-110
-float   idleRotateX=0;      //big display:0        //laptop:0
-float   idleRotateY=-0.35;  //big display:-0.35    //laptop:-0.35
-float   idleRotateZ=0;      //big display:0        //laptop:0
+float   idleTranslateX =410;  //big display:691      //laptop:410      //projector:575
+float   idleTranslateY =450;  //big display:612      //laptop:450      //projector:540
+float   idleTranslateZ =-110; //big display:-48      //laptop:-110     //projector:64
+float   idleRotateX    =0;    //big display:0        //laptop:0        //projector:0
+float   idleRotateY    =-0.35;//big display:-0.35    //laptop:-0.35    //projector:-0.25
+float   idleRotateZ    =0;    //big display:0        //laptop:0        //projector:0
 
 float   gameTranslateX=0;
 float   gameTranslateY=0;
@@ -58,19 +59,18 @@ PShader fogColor;
 
 PVector cameraPos;
 
-PImage sphereImg;
 
 void setup(){
-  fullScreen(P3D, 2); //NOTE TO SELF: change display back to 1 //P3D OPENGL
+  fullScreen(P3D, 1);
   frameRate(60);  
   smooth(10);
-  blobDir    = new PVector(0,0,0);
-  blobBack   = new PVector(0,0,0);
-  blobFront  = new PVector(0,0,0);
+  noCursor();
+  
   mode       = IDLE_MODE;
   timerStart = millis();
-  
-  sphereImg = loadImage("sphere.png");
+  blobDir   = new PVector(0,0,0);
+  blobBack  = new PVector(0,0,0);
+  blobFront = new PVector(0,0,0);
   
   translateX = idleTranslateX;
   translateY = idleTranslateY;
@@ -78,21 +78,24 @@ void setup(){
   rotateX    = idleRotateX;
   rotateY    = idleRotateY;
   rotateZ    = idleRotateZ;
-  
+
+  //sphereImg = loadImage("sphere.png");
+
   loadImages();
   loadUIImages();
   initNerveCurves();
   initCP5();
   initCurves();
+  initSound();
   if(sensorConnected) initCV(); 
   
   fogLines = loadShader("fogLines.glsl");
-  fogLines.set("fogNear", 0.0); 
-  fogLines.set("fogFar", 800.0); 
+  fogLines.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
+  fogLines.set("fogFar", 800.0);          //laptop:800.0    //projector:650.0
   
   fogColor = loadShader("fogColor.glsl");
-  fogColor.set("fogNear", 0.0); 
-  fogColor.set("fogFar", 1000.0);
+  fogColor.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
+  fogColor.set("fogFar", 1000.0);         //laptop:1000.0   //projector:1000.0
   
   hint(DISABLE_DEPTH_MASK);
   //hint(DISABLE_OPENGL_ERRORS);
@@ -104,7 +107,12 @@ void setup(){
 
 void draw() {
   background(0);
- 
+  pushMatrix();
+  noStroke();
+  fill(255,0,0);
+  ellipse(mouseX, mouseY, 3, 3);
+  popMatrix();
+  
   switch(mode){
   case 0: /*IDLE MODE*/ 
     updateCurves();
@@ -116,7 +124,6 @@ void draw() {
     rotateY(rotateY);
     rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
-
     shader(fogLines, LINES);
     renderCurves(); 
     shader(fogColor);
@@ -144,11 +151,10 @@ void draw() {
     rotateY(rotateY);
     rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
-
     shader(fogLines, LINES);
     renderCurves();
     shader(fogColor);
-    renderParticlesIdle();
+    renderParticlesIdleFade();
     popMatrix();
     
     resetShader();
@@ -174,21 +180,13 @@ void draw() {
     break;
     
   case 3: /*DRAW GAME MODE*/ 
-    //resetShader();
     drawNerveCurves(particleDrawingSpeed);
     drawParticlesOnCanvas(nerveSkeleton, 0, particles.size()-inactiveCurves.length);
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
     
     pushMatrix();
-    translate(0,0,0);
       image(nerveSkeleton, 0,0);
-    popMatrix();
-    pushMatrix();
-    translate(0,0,0);
       image(blackOverlay, 0,0);
-    popMatrix();
-    pushMatrix();
-    translate(0,0,0);
       image(nerveSkeletonFG, 0,0);
     popMatrix();
     
@@ -223,8 +221,7 @@ void draw() {
       image(deviceOverlay,0,0);
       image(UI, 0,0);
     popMatrix();
-    //NOTE TO SELF: also make particles fade in more subtle
-    
+
     if(imageAlpha<255)
       imageAlpha += imageAlphaStep;
     if(millis()-timerStart>fadeTimer)
@@ -282,10 +279,10 @@ void draw() {
     break;
   }
   
-  blobx = 0; //CHECK THIS OUT AND CLEAN UP
+  blobx = 0; //MOVED --> CHECK IF WORKS
   bloby = 0;
   
-  if(sensorConnected)
+  if(sensorConnected && mode == IDLE_MODE)
     updateCV(); 
   
   updateCurveColors(); //NOTE TO SELF: adjust speed of color change here
@@ -308,7 +305,7 @@ void transition(int _toMode){
       break;
     case 1: //TO IDLE FADE MODE
       for(int i=0; i<curveOpacity.size(); i++){
-        curveOpacity.get(i)[1] = 1.0; //NOTE TO CHANGE BACK TO 1.0
+        curveOpacity.get(i)[1] = 1.0;
         curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), 1.0,0.5);
       }
       timerStart = millis();
@@ -321,19 +318,24 @@ void transition(int _toMode){
       transitionParticlesToGameMode();
       clearDrawingCanvas(nerveSkeleton);
       clearDrawingCanvas(nerveSkeletonFG);
-      gameParticleSize = 1;
+      gameParticleSize = 5;
       timerStart = millis();
       mode = TRANSITION_GAMEMODE; 
       transitionToGame = false;
-
+      playSound(WOOSHGAMETRANS);
+      
       println("ready to move particles");
       break;
     case 3: //TO DRAW GAME MODE
+      gameParticleSize = 1.5;
       for(int i=0; i<particles.size(); i++){
         particles.get(i).setTransition(true);
+        particles.get(i).setSize(gameParticleSize);
       }
       timerStart = millis();
       mode = DRAW_GAMEMODE; 
+      playSound(WOOSHDRAW);
+      
       println("change game draw mode");
       break;
     case 4: //FADE IN GAME MODE
@@ -358,6 +360,8 @@ void transition(int _toMode){
         curveOpacity.get(i)[1] = 0.0;
         curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), -1.5,-0.5);
       }
+      playSound(WOOSHGAMETRANS);
+      
       println("enter idle mode");
       break;
   }
@@ -375,9 +379,9 @@ void keyPressed(){
     case 'c': //close cp5 control panel
       cp5.hide();
       break;
-    case 'r': //regenerate a tree
-      regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
-      break;
+    //case 'r': //regenerate a tree
+    //  regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
+    //  break;
     case 'a':
       if(mode == IDLE_MODE){
         for(int i=0; i<particles.size(); i++){
@@ -417,10 +421,62 @@ void keyPressed(){
   }
 }
 
-void mousePressed(){
+void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
   if(mode == IDLE_MODE && millis()-timeOutStart>timeOut){
     if(mouseX > 200){
       transitionToGame = true;
+    }
+  } else if (mode == GAME_MODE){
+    PVector mouse = new PVector(mouseX, mouseY);
+    int bigButton=32;    //projector:42    //laptop:32
+    int smallButton=16;  //projector:22    //laptop:16
+    
+    if(mouse.dist(UIlegpos)<=bigButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIarmpos)<=bigButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIheartpos)<=bigButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIbladderpos)<=bigButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIbrainpos)<=bigButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIdevicepos)<=bigButton){
+      playSound(BUTTONCLICK);
+    }
+    
+    if(mouse.dist(UIbrainarmpos)<=smallButton && brainButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIbrainlegpos)<=smallButton && brainButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    if(mouse.dist(UIbrainbladderpos)<=smallButton && brainButton){
+      playSound(BUTTONCLICK);
+      playSound(NERVETRIGGER);
+    }
+    
+    if(mouse.dist(UIdeviceringspos)<=smallButton && deviceButton){
+      playSound(BUTTONCLICK);
+    }
+    if(mouse.dist(UIdevicedevicepos)<=smallButton && deviceButton){
+      playSound(BUTTONCLICK);
+    }
+    
+    if(mouse.dist(UIexitpos)<=bigButton){
+      playSound(BUTTONCLICK);
     }
   }
 }
@@ -444,16 +500,16 @@ void translateIdleToGame(){
   translateX = transitSpeed*translateX + (1-transitSpeed)*gameTranslateX;
   translateY = transitSpeed*translateY + (1-transitSpeed)*gameTranslateY;
   translateZ = transitSpeed*translateZ + (1-transitSpeed)*gameTranslateZ;
-  rotateX = transitSpeed*rotateX + (1-transitSpeed)*gameRotateX;
-  rotateY = transitSpeed*rotateY + (1-transitSpeed)*gameRotateY;
-  rotateZ = transitSpeed*rotateZ + (1-transitSpeed)*gameRotateZ;
+  rotateX    = transitSpeed*rotateX + (1-transitSpeed)*gameRotateX;
+  rotateY    = transitSpeed*rotateY + (1-transitSpeed)*gameRotateY;
+  rotateZ    = transitSpeed*rotateZ + (1-transitSpeed)*gameRotateZ;
 }
 
 void translateIdleToIdle(){
   translateX = transitSpeed*translateX + (1-transitSpeed)*idleTranslateX;
   translateY = transitSpeed*translateY + (1-transitSpeed)*idleTranslateY;
   translateZ = transitSpeed*translateZ + (1-transitSpeed)*idleTranslateZ;
-  rotateX = transitSpeed*rotateX + (1-transitSpeed)*idleRotateX;
-  rotateY = transitSpeed*rotateY + (1-transitSpeed)*idleRotateY;
-  rotateZ = transitSpeed*rotateZ + (1-transitSpeed)*idleRotateZ;
+  rotateX    = transitSpeed*rotateX + (1-transitSpeed)*idleRotateX;
+  rotateY    = transitSpeed*rotateY + (1-transitSpeed)*idleRotateY;
+  rotateZ    = transitSpeed*rotateZ + (1-transitSpeed)*idleRotateZ;
 }
