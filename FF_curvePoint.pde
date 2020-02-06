@@ -1,37 +1,26 @@
-class CurvePoint {
 
+class CurvePoint {
   PVector origin;
   PVector current;
   boolean move;
-  
-  
+
   CurvePoint(PVector loc, boolean m){
     origin = new PVector(loc.x, loc.y, loc.z);
     current = new PVector(loc.x, loc.y, loc.z);
     move = m;
   }
   
-  void update(){
-    
+  void update(){ 
     if(move || !fixEndPoints){
       PVector toOrigin = PVector.sub(origin,current);
       float distOrigin = PVector.dist(origin,current);
-      if(distOrigin<2) //close enough, to avoid jitter
-      {
-      }
-      else
+      if(distOrigin>2) //close enough, to avoid jitter
       {
         toOrigin.normalize();
         toOrigin.mult(map(distOrigin,0,200,0,attractionToOrigin));
         current.add(toOrigin);
       }
-      PVector transformedBlob = NearestPointOnLine(blobBack, blobDir, current);
-      //pushMatrix();
-      //  fill(255,0,0);
-      //  noStroke();
-      //  translate(transformedBlob.x, transformedBlob.y, transformedBlob.z);
-      //  sphere(5);
-      //popMatrix();
+      PVector transformedBlob = NearestPointOnLine(blobBackModel, blobDir, current);
       PVector awayBlob = PVector.sub(transformedBlob, current);
       float distBlob = PVector.dist(transformedBlob, current);
       
@@ -52,5 +41,4 @@ class CurvePoint {
       float d = PVector.dot(v,lineDir);
       return PVector.add(linePnt, PVector.mult(lineDir,d));
     }
-
 }

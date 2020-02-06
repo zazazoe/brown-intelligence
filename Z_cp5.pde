@@ -55,7 +55,7 @@ void initCP5(){
   
   cp5.addSlider("attractionToOrigin")
      .setRange(1, 60)
-     .setValue(15)
+     .setValue(1.5)
      .setPosition(20, 85)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -63,7 +63,7 @@ void initCP5(){
   
    cp5.addSlider("repulseFromMouse")
      .setRange(1, 60)
-     .setValue(25)
+     .setValue(2.5)
      .setPosition(20, 100)
      .setSize(100, 10)
      .setColorLabel(labelColor)
@@ -71,7 +71,7 @@ void initCP5(){
     
    cp5.addSlider("mouseAffectRadius")
      .setRange(1, 800)
-     .setValue(400)
+     .setValue(150  )
      .setPosition(20, 115)
      .setSize(100, 10)
      .setColorLabel(labelColor)

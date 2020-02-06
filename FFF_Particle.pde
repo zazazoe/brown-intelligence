@@ -164,6 +164,22 @@ class Particle{
     t = burstPosStep.get(i)[0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
   }
   
+  //void updateBurstParticles(AUCurve curve, int i){
+  //  burstPosStep.get(i)[0] += burstPosStep.get(i)[1]; 
+  //  if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
+  //    if (burstPosStep.get(i)[0] > 1.0-(0.02*1.0) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*1.0 && side == MOTOR_SIDE){
+  //      curveOpacity.get(idNr)[0] = 1.0;
+  //      //pushMatrix();
+  //      //fill(255);
+  //      //translate(setCurvePos(curve, 0.0).x, setCurvePos(curve, 0.0).y, setCurvePos(curve, 0.0).z);
+  //      //ellipse(0,0,burstSize,burstSize);
+  //      //popMatrix();
+  //    }
+  //  }
+  //  //float tmp = cos(burstPosStep.get(i)[0]);
+  //  t = burstPosStep.get(i)[0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
+  //}
+  
   void removeFinishedBurstParticles(){
     for(int i=burstPositions.size()-1; i>=0; i--){
       if (burstPosStep.get(i)[0] > 1.0 || burstPosStep.get(i)[0] < 0){
@@ -221,6 +237,15 @@ class Particle{
             ellipse(0, 0, burstSize, burstSize);
             popMatrix();
           }
+        }
+        
+        if(curveOpacity.get(idNr)[0] == 1.0){
+          println("sparkle");
+          fill(cBurst);
+          pushMatrix();
+          translate(setCurvePos(curves.get(idNr), 1.0).x, setCurvePos(curves.get(idNr), 1.0).y, setCurvePos(curves.get(idNr), 1.0).z);
+          ellipse(0, 0, 1, 1);
+          popMatrix();
         }
       }
     }

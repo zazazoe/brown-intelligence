@@ -22,6 +22,7 @@ int     curveTimer    = 5000;
 int     drawTimer     = 12000;
 int     fadeTimer     = 1500;
 int     idleFadeTimer = 1500; 
+int     gameTimer     = 60000;
 
 int     z0 = -1;
 int     z1 = 0;
@@ -31,11 +32,11 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-float   idleTranslateX =410;  //big display:691      //laptop:410      //projector:575
-float   idleTranslateY =450;  //big display:612      //laptop:450      //projector:540
-float   idleTranslateZ =-110; //big display:-48      //laptop:-110     //projector:64
+float   idleTranslateX =575;  //big display:691      //laptop:410      //projector:575
+float   idleTranslateY =540;  //big display:612      //laptop:450      //projector:540
+float   idleTranslateZ =64;   //big display:-48      //laptop:-110     //projector:64
 float   idleRotateX    =0;    //big display:0        //laptop:0        //projector:0
-float   idleRotateY    =-0.35;//big display:-0.35    //laptop:-0.35    //projector:-0.25
+float   idleRotateY    =-0.25;//big display:-0.35    //laptop:-0.35    //projector:-0.25
 float   idleRotateZ    =0;    //big display:0        //laptop:0        //projector:0
 
 float   gameTranslateX=0;
@@ -59,6 +60,7 @@ PShader fogColor;
 
 PVector cameraPos;
 
+boolean firstCycle = true;
 
 void setup(){
   fullScreen(P3D, 1);
@@ -71,6 +73,9 @@ void setup(){
   blobDir   = new PVector(0,0,0);
   blobBack  = new PVector(0,0,0);
   blobFront = new PVector(0,0,0);
+  blobBackModel  = new PVector(0,0,0);
+  blobFrontModel =  new PVector(0,0,0);
+  blobDirModel   = new PVector(0,0,0);
   
   translateX = idleTranslateX;
   translateY = idleTranslateY;
@@ -78,8 +83,6 @@ void setup(){
   rotateX    = idleRotateX;
   rotateY    = idleRotateY;
   rotateZ    = idleRotateZ;
-
-  //sphereImg = loadImage("sphere.png");
 
   loadImages();
   loadUIImages();
@@ -91,11 +94,11 @@ void setup(){
   
   fogLines = loadShader("fogLines.glsl");
   fogLines.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
-  fogLines.set("fogFar", 800.0);          //laptop:800.0    //projector:650.0
+  fogLines.set("fogFar", 650.0);          //laptop:800.0    //projector:650.0
   
   fogColor = loadShader("fogColor.glsl");
   fogColor.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
-  fogColor.set("fogFar", 1000.0);         //laptop:1000.0   //projector:1000.0
+  fogColor.set("fogFar", 750.0);         //laptop:1000.0   //projector:750.0
   
   hint(DISABLE_DEPTH_MASK);
   //hint(DISABLE_OPENGL_ERRORS);
@@ -106,7 +109,11 @@ void setup(){
 
 
 void draw() {
+  //if(firstCycle) cacheImages();
+  
   background(0);
+  
+  //SMALL CURSOR FOR DEBUG
   pushMatrix();
   noStroke();
   fill(255,0,0);
@@ -117,7 +124,6 @@ void draw() {
   case 0: /*IDLE MODE*/ 
     updateCurves();
     updateCurvePoints();
-    updateParticlesIdle();
 
     pushMatrix();
     rotateX(rotateX);
@@ -127,6 +133,7 @@ void draw() {
     shader(fogLines, LINES);
     renderCurves(); 
     shader(fogColor);
+    updateParticlesIdle();
     renderParticlesIdle(); 
     popMatrix();
     
@@ -183,14 +190,14 @@ void draw() {
     drawNerveCurves(particleDrawingSpeed);
     drawParticlesOnCanvas(nerveSkeleton, 0, particles.size()-inactiveCurves.length);
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
-    
-    pushMatrix();
+
+    pushMatrix();    
       image(nerveSkeleton, 0,0);
       image(blackOverlay, 0,0);
       image(nerveSkeletonFG, 0,0);
     popMatrix();
-    
-    if(transitionDone())//millis()-timerStart>drawTimer)
+
+    if(transitionDone())
       transition(FADE_GAMEMODE);
     break;
     
@@ -221,7 +228,7 @@ void draw() {
       image(deviceOverlay,0,0);
       image(UI, 0,0);
     popMatrix();
-
+    
     if(imageAlpha<255)
       imageAlpha += imageAlphaStep;
     if(millis()-timerStart>fadeTimer)
@@ -257,8 +264,8 @@ void draw() {
       checkButtons(mouseX, mouseY);
       renderUI();
     popMatrix();
-   
-    if(switchToIdle)
+
+    if(switchToIdle || millis()-timerStart>gameTimer)
       transition(TRANSITION_IDLEMODE);
     break;  
     
@@ -279,8 +286,8 @@ void draw() {
     break;
   }
   
-  blobx = 0; //MOVED --> CHECK IF WORKS
-  bloby = 0;
+  blobx = -width; //MOVED --> CHECK IF WORKS
+  bloby = -height;
   
   if(sensorConnected && mode == IDLE_MODE)
     updateCV(); 
@@ -345,6 +352,7 @@ void transition(int _toMode){
       println("change to game mode");
       break;
     case 5: //TO GAME MODE
+      timerStart = millis();
       gameParticleSize = 3;
       setParticlesForGame();
       tint(255,255);
@@ -379,9 +387,6 @@ void keyPressed(){
     case 'c': //close cp5 control panel
       cp5.hide();
       break;
-    //case 'r': //regenerate a tree
-    //  regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);
-    //  break;
     case 'a':
       if(mode == IDLE_MODE){
         for(int i=0; i<particles.size(); i++){
@@ -428,9 +433,7 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
     }
   } else if (mode == GAME_MODE){
     PVector mouse = new PVector(mouseX, mouseY);
-    int bigButton=32;    //projector:42    //laptop:32
-    int smallButton=16;  //projector:22    //laptop:16
-    
+
     if(mouse.dist(UIlegpos)<=bigButton){
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);

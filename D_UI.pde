@@ -2,6 +2,9 @@
 int SENSOR_SIDE = 0;
 int MOTOR_SIDE  = 1;
 
+int bigButton   =42;   //projector:42   //laptop:32
+int smallButton =22;  //projector:22    //laptop:16
+    
 //int nrOfButtons = 4;
 //int buttonSize = 40;
 
@@ -23,29 +26,29 @@ int timeOutStart=0;
 int timeOut=500;
 
 PImage  UI;
-PVector UIexitpos = new PVector(1364, 836);        //projector:1820, 995  //laptop:1364, 836
+PVector UIexitpos = new PVector(1820, 995);        //projector:1820, 995  //laptop:1364, 836
 PImage  UIleg;    
-PVector UIlegpos = new PVector(59, 825);           //projector:79, 980    //laptop:59, 825
+PVector UIlegpos = new PVector(79, 980);           //projector:79, 980    //laptop:59, 825
 PImage  UIbladder;
-PVector UIbladderpos = new PVector(59, 745);       //projector:79, 874    //laptop:59, 745
+PVector UIbladderpos = new PVector(79, 874);       //projector:79, 874    //laptop:59, 745
 PImage  UIarm;
-PVector UIarmpos = new PVector(59, 665);           //projector:79, 767    //laptop:59, 665
+PVector UIarmpos = new PVector(79, 767);           //projector:79, 767    //laptop:59, 665
 PImage  UIheart;
-PVector UIheartpos = new PVector(59, 585);         //projector:79, 661    //laptop:59, 585
+PVector UIheartpos = new PVector(79, 661);         //projector:79, 661    //laptop:59, 585
 PImage  UIbrain;
-PVector UIbrainpos = new PVector(59, 505);         //projector:79, 555    //laptop:59, 505
+PVector UIbrainpos = new PVector(79, 555);         //projector:79, 555    //laptop:59, 505
 PImage  UIbrainBladder;
-PVector UIbrainbladderpos = new PVector(134, 505); //projector:178, 550   //laptop:134, 505
+PVector UIbrainbladderpos = new PVector(178, 550); //projector:178, 550   //laptop:134, 505
 PImage  UIbrainArm;
-PVector UIbrainarmpos = new PVector(116, 463);     //projector:155, 498   //laptop:116, 463
+PVector UIbrainarmpos = new PVector(155, 498);     //projector:155, 498   //laptop:116, 463
 PImage  UIbrainLeg;
-PVector UIbrainlegpos = new PVector(116, 542);     //projector:155, 603   //laptop:116, 542
+PVector UIbrainlegpos = new PVector(155, 603);     //projector:155, 603   //laptop:116, 542
 PImage  UIdevice;
-PVector UIdevicepos = new PVector(59, 405);        //projector:79, 420    //laptop:59, 405
+PVector UIdevicepos = new PVector(79, 420);        //projector:79, 420    //laptop:59, 405
 PImage  UIdeviceRings;
-PVector UIdeviceringspos = new PVector(121, 382);  //projector:161, 390   //laptop:121, 382
+PVector UIdeviceringspos = new PVector(161, 390);  //projector:161, 390   //laptop:121, 382
 PImage  UIdeviceDevice;
-PVector UIdevicedevicepos = new PVector(121, 424); //projector:161, 446   //laptop:121, 424
+PVector UIdevicedevicepos = new PVector(161, 446); //projector:161, 446   //laptop:121, 424
 
 
 void renderUI(){
@@ -123,24 +126,26 @@ void checkButtons(float mX, float mY){
 
 int whichButton(PVector mouse){
   int button=0;
-  int bigButton=32;      //projector: 42    //laptop:32
-  int smallButton=16;    //projector: 22    //laptop:16
-  
+
   if(mouse.dist(UIlegpos)<=bigButton){
     //leg sensor
     button = 1;
+    timerStart = millis();
   }
   if(mouse.dist(UIarmpos)<=bigButton){
     //arm sensor
     button = 2;
+    timerStart = millis();
   }
   if(mouse.dist(UIheartpos)<=bigButton){
     //heart sensor
     button = 3;
+    timerStart = millis();
   }
   if(mouse.dist(UIbladderpos)<=bigButton){
     //bladder sensor
     button = 4;
+    timerStart = millis();
   }
   if(mouse.dist(UIbrainpos)<=bigButton){
     //brain --> unfold menu
@@ -156,6 +161,7 @@ int whichButton(PVector mouse){
       }
     }
     button = 5;
+    timerStart = millis();
   }
   if(mouse.dist(UIdevicepos)<=bigButton){
     //device --> unfold menu
@@ -171,19 +177,23 @@ int whichButton(PVector mouse){
       }
     }
     button = 6;
+    timerStart = millis();
   }
   
   if(mouse.dist(UIbrainarmpos)<=smallButton && brainButton){
     //arm motor
     button = 7;
+    timerStart = millis();
   }
   if(mouse.dist(UIbrainlegpos)<=smallButton && brainButton){
     //leg motor
     button = 8;
+    timerStart = millis();
   }
   if(mouse.dist(UIbrainbladderpos)<=smallButton && brainButton){
     //bladder motor
     button = 9;
+    timerStart = millis();
   }
   
   if(mouse.dist(UIdeviceringspos)<=smallButton && deviceButton){
@@ -198,6 +208,7 @@ int whichButton(PVector mouse){
       }
     }
     button = 10;
+    timerStart = millis();
   }
   if(mouse.dist(UIdevicedevicepos)<=smallButton && deviceButton){
     //show device explanation
@@ -211,6 +222,7 @@ int whichButton(PVector mouse){
       }
     }
     button = 11;
+    timerStart = millis();
   }
   
   if(mouse.dist(UIexitpos)<=bigButton){
@@ -222,6 +234,7 @@ int whichButton(PVector mouse){
       deviceButton = false;
       brainButton  = false;
       button = 100;
+      timerStart = millis();
     }
     println("exit button pressed");
   }
