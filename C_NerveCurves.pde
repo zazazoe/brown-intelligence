@@ -1,4 +1,4 @@
- //<>//
+ //<>// //<>//
 Table curveData;
 Table curveRef;
 int   nrOfCurves;
@@ -86,14 +86,7 @@ void initNerveCurves(){
   
   curveIndex[inactive] = inactiveCurves.length;
   
-  /*DEFINE COLORS FOR EACH SET.*/
-  colorIndex[leg]      = color(153,51,255,255);
-  colorIndex[arm]      = color(153,51,255,255);
-  colorIndex[heart]    = color(153,51,255,255);
-  colorIndex[bladder]  = color(153,51,255,255);
-  colorIndex[inactive] = color(153,51,255,255); //curveOpacityMin*255
-  
-  gameParticleBurstColor = color(225,225,225);
+  //gameParticleBurstColor = color(225,225,225);
   
   for(int i=0; i<curveIndex.length; i++){
     nrOfNerveCurves += curveIndex[i];
@@ -151,8 +144,6 @@ void renderParticles(int _curveIndex, AUBezier[] curveSet){
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){ //<>// //<>// //<>// //<>//
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
-      //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      //particles.get(j).setGameColor(particleColor(j));
       particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayGame(gameParticleBurstSize, gameParticleBurstColor);
@@ -168,8 +159,6 @@ void updateParticles(int _curveIndex, AUBezier[] curveSet){
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
       particles.get(j).updateGame(curveSet[j-i]);
-      //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      //particles.get(j).setGameColor(particleColor(j));
       particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
     } 
@@ -184,8 +173,6 @@ void drawParticles(int _curveIndex, AUBezier[] curveSet, float _tStep){
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
       particles.get(j).updateGameDraw(curveSet[j-i], _tStep);
-      //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      //particles.get(j).setGameColor(particleColor(j));
       particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
     } 
@@ -200,8 +187,6 @@ void transitionParticles(int _curveIndex, AUBezier[] curveSet){
   for(int j=i; j<i+curveIndex[_curveIndex]; j++){
     if(j < particles.size()){
       particles.get(j).transition(particleTransitionSpeed);
-      //particles.get(j).setGameColor(color(red(colorIndex[_curveIndex]), green(colorIndex[_curveIndex]), blue(colorIndex[_curveIndex]), alpha(colorIndex[_curveIndex])));
-      //particles.get(j).setGameColor(particleColor(j));
       particles.get(j).setGameColor(gameColor);
       particles.get(j).setGameSize(gameParticleSize);
       particles.get(j).displayTransition(gameParticleBurstSize, gameParticleBurstColor);

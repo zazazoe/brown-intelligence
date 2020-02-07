@@ -120,10 +120,10 @@ class Particle{
     if(tPosStep[i][0] >= 1.0 || tPosStep[i][0] <= 0){
       if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
         if(success == 1 && tPosStep[i][0] <= 0){
-          curveOpacity.get(idNr)[0] = 1.0;
+          curveOpacity.get(idNr)[0] = curveOpacityMax;
         } else if(tPosStep[i][0] >= 1.0)
         {
-          curveOpacity.get(idNr)[0] = 1.0;
+          curveOpacity.get(idNr)[0] = curveOpacityMax;
         }
       }
       if(tPosStep[i][0] > 1.0) tPosStep[i][0] = 0.0;
@@ -139,10 +139,10 @@ class Particle{
     if(tPosStep[i][0] >= 1.0 || tPosStep[i][0] <= 0){
       if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
         if(success == 1 && tPosStep[i][0] <= 0){
-          curveOpacity.get(idNr)[0] = 1.0;
+          curveOpacity.get(idNr)[0] = curveOpacityMax;
         } else if(tPosStep[i][0] >= 1.0)
         {
-          curveOpacity.get(idNr)[0] = 1.0;
+          curveOpacity.get(idNr)[0] = curveOpacityMax;
         }
       }
       if(tPosStep[i][0] > 1.0) tPosStep[i][0] = 0.0;
@@ -157,7 +157,7 @@ class Particle{
     burstPosStep.get(i)[0] += burstPosStep.get(i)[1]; 
     if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
       if (burstPosStep.get(i)[0] > 1.0-(0.02*1.0) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*1.0 && side == MOTOR_SIDE){
-        curveOpacity.get(idNr)[0] = 1.0;
+        curveOpacity.get(idNr)[0] = curveOpacityMax;
       }
     }
     //float tmp = cos(burstPosStep.get(i)[0]);
@@ -239,12 +239,12 @@ class Particle{
           }
         }
         
-        if(curveOpacity.get(idNr)[0] == 1.0){
-          println("sparkle");
+        if(curveOpacity.get(idNr)[0] == curveOpacityMax){
+          //sparkle
           fill(cBurst);
           pushMatrix();
           translate(setCurvePos(curves.get(idNr), 1.0).x, setCurvePos(curves.get(idNr), 1.0).y, setCurvePos(curves.get(idNr), 1.0).z);
-          ellipse(0, 0, 1, 1);
+          ellipse(0, 0, 1.5, 1.5);
           popMatrix();
         }
       }

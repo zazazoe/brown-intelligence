@@ -5,7 +5,7 @@ RealSenseCamera camera = new RealSenseCamera(this);
 
 ArrayList<Contour> contours;
 OpenCV  opencv;
-boolean displayContours = true;
+boolean displayContours = false;
 PImage  background;
 PImage  contoursImage;
 
@@ -45,6 +45,7 @@ void initCV(){
   background = loadImage("BGcapture.jpg");
   
   blobTimer = millis();
+  
 }
 
 void updateCV(){
@@ -90,27 +91,6 @@ void calculateContourBoundingBoxes() {
     blobDir = PVector.sub(blobFront, blobBack);
     
     if(displayContours) displayCountours(rx, ry, rwidth, rheight);
-    
-    //send pulse on first blob appears on left or right
-    //if(blobCountPrev == 0 && blobCount == 0){
-    //  if(blobx <= width/2){
-    //    for(int j=0; j<particles.size(); j++){
-    //      for(int k=0;k<5; k++){
-    //        particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
-    //      }
-    //      //play sound
-    //      if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
-    //    }
-    //  } else if(blobx > width/2) {
-    //    for(int j=0; j<particles.size(); j++){
-    //      for(int k=0;k<5; k++){
-    //        particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
-    //      }
-    //      //playsound
-    //      if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
-    //    }
-    //  }
-    //}
     
     if(blobx <= width/2-bufferSpace){
       if(blobCountLeftPrev == 0 && blobCountLeft == 0){ //first on left

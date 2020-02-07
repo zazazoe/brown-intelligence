@@ -53,6 +53,7 @@ float   rotateX;
 float   rotateY;
 float   rotateZ;
 
+float   zStep = 0.01;
 float   transitSpeed = 0.95;
 
 PShader fogLines; 
@@ -63,7 +64,8 @@ PVector cameraPos;
 boolean firstCycle = true;
 
 void setup(){
-  fullScreen(P3D, 1);
+  //fullScreen(P3D, 1);
+  size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
   noCursor();
@@ -109,7 +111,7 @@ void setup(){
 
 
 void draw() {
-  //if(firstCycle) cacheImages();
+  if(firstCycle) cacheImages();
   
   background(0);
   
@@ -147,6 +149,12 @@ void draw() {
     if(transitionToGame)
       transition(FADE_IDLEMODE);
     
+    //translateZ+=zStep;
+    //translateX+=zStep;
+    //rotateY-=(zStep/8000);
+    //if(translateZ>idleTranslateZ*3 || translateZ<idleTranslateZ-idleTranslateZ){
+    //  zStep*=-1;
+    //}
     //translateZ+=0.1;
     break;
  
@@ -191,9 +199,12 @@ void draw() {
     drawParticlesOnCanvas(nerveSkeleton, 0, particles.size()-inactiveCurves.length);
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
 
-    pushMatrix();    
+    pushMatrix();  
+      tint(255, 200);
       image(nerveSkeleton, 0,0);
+      tint(255, 255);
       image(blackOverlay, 0,0);
+      tint(255, 200);
       image(nerveSkeletonFG, 0,0);
     popMatrix();
 
@@ -211,7 +222,8 @@ void draw() {
     tint(255, 255);
     pushMatrix();
     translate(0,0,z2);
-      image(nerveSkeleton, 0,0);
+    tint(255, 200);
+      image(nerveSkeletonPR, 0,0);
     popMatrix();
     pushMatrix();
     translate(0,0,z3);
@@ -219,7 +231,8 @@ void draw() {
     popMatrix();
     pushMatrix();
     translate(0,0,z4);
-      image(nerveSkeletonFG, 0,0);
+    tint(255, 200);
+      image(nerveSkeletonFGPR, 0,0);
     popMatrix();
     
     tint(255, imageAlpha);
@@ -242,7 +255,8 @@ void draw() {
     popMatrix();
     pushMatrix();
     translate(0,0,z1);
-      image(nerveSkeleton,0,0);
+    tint(255, 200);
+      image(nerveSkeletonPR,0,0);
     popMatrix();
     pushMatrix();
     translate(0,0,z2);
@@ -250,7 +264,8 @@ void draw() {
     popMatrix();
     pushMatrix();
     translate(0,0,z3);
-      image(nerveSkeletonFG, 0,0);
+    tint(255, 200);
+      image(nerveSkeletonFGPR, 0,0);
     popMatrix();
     pushMatrix();
       translate(0,0,z4);
@@ -261,7 +276,7 @@ void draw() {
     pushMatrix();
     translate(0,0,zx);
       image(deviceOverlay,0,0);
-      checkButtons(mouseX, mouseY);
+      updateUI(mouseX, mouseY);
       renderUI();
     popMatrix();
 
@@ -288,6 +303,9 @@ void draw() {
   
   blobx = -width; //MOVED --> CHECK IF WORKS
   bloby = -height;
+  blobDir   = new PVector(0,0,0);
+  blobBack  = new PVector(0,0,0);
+  blobFront = new PVector(0,0,0);
   
   if(sensorConnected && mode == IDLE_MODE)
     updateCV(); 
@@ -313,7 +331,7 @@ void transition(int _toMode){
     case 1: //TO IDLE FADE MODE
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
-        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), 1.0,0.5);
+        curveOpacity.get(i)[0] = map(i, 0,curveOpacity.size(), curveOpacityMax,0.5);
       }
       timerStart = millis();
       curveFadeOutSpeed = curveOpacityMin/(idleFadeTimer/60.0);
@@ -345,10 +363,12 @@ void transition(int _toMode){
       
       println("change game draw mode");
       break;
-    case 4: //FADE IN GAME MODE
+    case 4: //TO FADE IN GAME MODE
       timerStart = millis();
       imageAlphaStep = 255.0/(fadeTimer/60.0); //NOTE TO SELF: based on 60fps
       mode = FADE_GAMEMODE;
+      //nerveSkeleton.save("nerveSkeleton.png");
+      //nerveSkeletonFG.save("nerveSkeletonFG.png");
       println("change to game mode");
       break;
     case 5: //TO GAME MODE
@@ -362,6 +382,7 @@ void transition(int _toMode){
     case 6: //TO TRANSITION TO IDLE MODE
       transitionParticlesToIdleMode();
       curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0); //NOTE TO SELF: update proper 
+      activatedButton=0;
       switchToIdle = false;
       mode = TRANSITION_IDLEMODE;
       for(int i=0; i<curveOpacity.size(); i++){
@@ -433,52 +454,117 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
     }
   } else if (mode == GAME_MODE){
     PVector mouse = new PVector(mouseX, mouseY);
-
+      
     if(mouse.dist(UIlegpos)<=bigButton){
+      legButton = checkButton(legButton);
+      updateActivatedButton(legButton, 1);
+      brainButton=false;
+      
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIarmpos)<=bigButton){
+      armButton = checkButton(armButton);
+      updateActivatedButton(armButton, 2);
+      brainButton=false;
+      
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIheartpos)<=bigButton){
+      heartButton = checkButton(heartButton);
+      updateActivatedButton(heartButton, 3);
+      brainButton=false;
+    
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbladderpos)<=bigButton){
+      bladderButton = checkButton(bladderButton);
+      updateActivatedButton(bladderButton, 4);
+      brainButton=false;
+      
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
-    if(mouse.dist(UIbrainpos)<=bigButton){
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
-    }
-    if(mouse.dist(UIdevicepos)<=bigButton){
-      playSound(BUTTONCLICK);
-    }
-    
     if(mouse.dist(UIbrainarmpos)<=smallButton && brainButton){
+      brainArmButton = checkButton(brainArmButton);
+      updateActivatedButton(brainArmButton, 7);
+    
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbrainlegpos)<=smallButton && brainButton){
+      brainLegButton = checkButton(brainLegButton);
+      updateActivatedButton(brainLegButton, 8);
+    
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbrainbladderpos)<=smallButton && brainButton){
+      brainBladderButton = checkButton(brainBladderButton);
+      updateActivatedButton(brainBladderButton, 9);
+    
       playSound(BUTTONCLICK);
       playSound(NERVETRIGGER);
     }
     
+    if(mouse.dist(UIbrainpos)<=bigButton){
+      if(!brainButton){
+        brainButton = true;
+        deviceButton = false;
+        deviceDevice = false;
+        deviceRings = false;
+        activatedButton = 0;
+      } else {
+        brainButton = false;
+      }
+      
+      playSound(BUTTONCLICK);
+    }
+    if(mouse.dist(UIdevicepos)<=bigButton){
+      if(!deviceButton){
+        deviceButton = true;
+        brainButton = false;
+      } else {
+        deviceButton = false;
+        deviceDevice = false;
+        deviceRings = false;
+      }
+      
+      playSound(BUTTONCLICK);
+    }
+    
     if(mouse.dist(UIdeviceringspos)<=smallButton && deviceButton){
+      if(!deviceRings){
+        deviceRings = true;
+        deviceDevice = false;
+      } else {
+        deviceRings = false;
+      }
+      
       playSound(BUTTONCLICK);
     }
     if(mouse.dist(UIdevicedevicepos)<=smallButton && deviceButton){
+      if(!deviceDevice){
+        deviceDevice = true;
+        deviceRings = false;
+      } else {
+        deviceDevice = false;
+      }
+      
       playSound(BUTTONCLICK);
     }
     
     if(mouse.dist(UIexitpos)<=bigButton){
+      deviceRings  = false;
+      deviceDevice = false;
+      deviceButton = false;
+      brainButton  = false; 
+      timerStart   = millis();
+      
+      switchToIdle = true;
+      
       playSound(BUTTONCLICK);
     }
   }

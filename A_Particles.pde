@@ -14,7 +14,7 @@ int     successRate = 3;
 
 float   gameParticleSize = 3;
 int     gameParticleBurstSize = 3;
-color   gameParticleBurstColor;
+color   gameParticleBurstColor = color(255);
 
 color   burstColor = color(255);
 float   burstSpeed = 0.075;

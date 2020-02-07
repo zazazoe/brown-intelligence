@@ -18,12 +18,20 @@ int smallButton =22;  //projector:22    //laptop:16
 //int exitY = 50;
 
 boolean brainButton  = false;
+boolean brainArmButton     = false;
+boolean brainBladderButton = false;
+boolean brainLegButton     = false;
 boolean deviceButton = false;
 boolean deviceRings  = false;
 boolean deviceDevice = false;
+boolean armButton    = false;
+boolean bladderButton = false;
+boolean legButton    = false;
+boolean heartButton  = false;
 
 int timeOutStart=0;
-int timeOut=500;
+int timeOut=100;
+int particleFrequency = 30;
 
 PImage  UI;
 PVector UIexitpos = new PVector(1820, 995);        //projector:1820, 995  //laptop:1364, 836
@@ -51,6 +59,8 @@ PImage  UIdeviceDevice;
 PVector UIdevicedevicepos = new PVector(161, 446); //projector:161, 446   //laptop:121, 424
 
 
+int activatedButton=0;
+
 void renderUI(){
   image(UI, 0,0);
   if(brainButton)  image(UIbrain, 0,0);
@@ -59,184 +69,205 @@ void renderUI(){
   if(deviceDevice) image(UIdeviceDevice, 0,0);
   if(deviceRings)  image(deviceRingsOverlay, 0,0);
   if(deviceDevice) image(deviceDeviceOverlay, 0,0);
+  
+  //if(legButton)  image(UIleg, 0,0);
+  //if(armButton)  image(UIarm, 0,0);
 }
 
-void checkButtons(float mX, float mY){
-  int button = whichButton(new PVector(mX, mY));
-
-  if(button>0){
-    switch(button){
+void updateUI(float mX, float mY){
+  //if(mousePressed) checkButtons(new PVector(mX, mY));
+  
+  if(activatedButton>0){
+    switch(activatedButton){
       case 1:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(leg, SENSOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(leg, SENSOR_SIDE);
         image(UIleg,0,0);
         println("leg nerves");
         break;
       case 2:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(arm, SENSOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(arm, SENSOR_SIDE);
         image(UIarm,0,0);
         println("arm nerves");
         break;
       case 3:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(heart, SENSOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(heart, SENSOR_SIDE);
         image(UIheart,0,0);
         println("heart nerves");
         break;
       case 4:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(bladder, SENSOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(bladder, SENSOR_SIDE);
         image(UIbladder,0,0);
         println("bladder nerves");
         break;
-      case 5:
-        image(UIbrain,0,0);
-        println("brain button opens");
-        break;
-      case 6:
-        image(UIdevice,0,0);
-        println("device button opens");
-        break;
+      //case 5:
+      //  image(UIbrain,0,0);
+      //  println("brain button opens");
+      //  break;
+      //case 6:
+      //  image(UIdevice,0,0);
+      //  println("device button opens");
+      //  break;
       case 7:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(arm, MOTOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(arm, MOTOR_SIDE);
         image(UIbrainArm,0,0);
         println("arm motor");
         break;
       case 8:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(leg, MOTOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(leg, MOTOR_SIDE);
         image(UIbrainLeg,0,0);
         println("leg motor");
         break;
       case 9:
-        if(mousePressed && frameCount%4 == 0) sendNerveBurst(bladder, MOTOR_SIDE);
+        if(frameCount%particleFrequency == 0) sendNerveBurst(bladder, MOTOR_SIDE);
         image(UIbrainBladder,0,0);
         println("bladder motor");
         break;
-      case 10:
-        image(UIdeviceRings,0,0);
-        println("device ring explanation");
-        break;
-      case 11:
-        image(UIdeviceDevice,0,0);
-        println("device explanation");
-        break;
-      case 100: //exit
-        if(mousePressed) switchToIdle=true;    
-        break;
+      //case 10:
+      //  image(UIdeviceRings,0,0);
+      //  println("device ring explanation");
+      //  break;
+      //case 11:
+      //  image(UIdeviceDevice,0,0);
+      //  println("device explanation");
+      //  break;
+      //case 100: //exit
+      //  if(mousePressed) switchToIdle=true;    
+      //  break;
     }
   }
 }
 
-int whichButton(PVector mouse){
-  int button=0;
+void checkButtons(PVector mouse){
+  //if(mouse.dist(UIlegpos)<=bigButton){
+  //  //leg sensor
+  //  legButton = checkButton(legButton);
+  //  updateActivatedButton(legButton, 1);
+  //  brainButton=false;
+  //}
+  //if(mouse.dist(UIarmpos)<=bigButton){
+  //  //arm sensor
+  //  armButton = checkButton(armButton);
+  //  updateActivatedButton(armButton, 2);
+  //  brainButton=false;
+  //}
+  //if(mouse.dist(UIheartpos)<=bigButton){
+  //  //heart sensor
+  //  heartButton = checkButton(heartButton);
+  //  updateActivatedButton(heartButton, 3);
+  //  brainButton=false;
+  //}
+  //if(mouse.dist(UIbladderpos)<=bigButton){
+  //  //bladder sensor
+  //  bladderButton = checkButton(bladderButton);
+  //  updateActivatedButton(bladderButton, 4);
+  //  brainButton=false;
+  //}
+  //if(mouse.dist(UIbrainarmpos)<=smallButton && brainButton){
+  //  //arm motor (brain)
+  //  brainArmButton = checkButton(brainArmButton);
+  //  updateActivatedButton(brainArmButton, 7);
+  //}
+  //if(mouse.dist(UIbrainlegpos)<=smallButton && brainButton){
+  //  //leg motor (brain)
+  //  brainLegButton = checkButton(brainLegButton);
+  //  updateActivatedButton(brainLegButton, 8);
+  //}
+  //if(mouse.dist(UIbrainbladderpos)<=smallButton && brainButton){
+  //  //bladder motor (brain)
+  //  brainBladderButton = checkButton(brainBladderButton);
+  //  updateActivatedButton(brainBladderButton, 9);
+  //}
+  
+  //if(mouse.dist(UIbrainpos)<=bigButton){
+  //  //brain --> unfold menu
+  //  if(millis()-timeOutStart>timeOut){
+  //    timeOutStart = millis(); 
+  //    if(!brainButton){
+  //      brainButton = true;
+  //      deviceButton = false;
+  //      deviceDevice = false;
+  //      deviceRings = false;
+  //    } else {
+  //      brainButton = false;
+  //    }
+  //  }
+  //  timerStart = millis();
+  //}
+  //if(mouse.dist(UIdevicepos)<=bigButton){
+  //  //device --> unfold menu
+  //  if(millis()-timeOutStart>timeOut){
+  //    timeOutStart = millis();
+  //    if(!deviceButton){
+  //      deviceButton = true;
+  //      brainButton = false;
+  //    } else {
+  //      deviceButton = false;
+  //      deviceDevice = false;
+  //      deviceRings = false;
+  //    }
+  //  }
+  //  timerStart = millis();
+  //}
+  //if(mouse.dist(UIdeviceringspos)<=smallButton && deviceButton){
+  //  //show device rings explanation
+  //  if(millis()-timeOutStart>timeOut){
+  //    timeOutStart = millis();
+  //    if(!deviceRings){
+  //      deviceRings = true;
+  //      deviceDevice = false;
+  //    } else {
+  //      deviceRings = false;
+  //    }
+  //  }
+  //  timerStart = millis();
+  //}
+  //if(mouse.dist(UIdevicedevicepos)<=smallButton && deviceButton){
+  //  //show device explanation
+  //  if(millis()-timeOutStart>timeOut){
+  //    timeOutStart = millis();
+  //    if(!deviceDevice){
+  //      deviceDevice = true;
+  //      deviceRings = false;
+  //    } else {
+  //      deviceDevice = false;
+  //    }
+  //  }
+  //  timerStart = millis();
+  //}
+  
+  //if(mouse.dist(UIexitpos)<=bigButton){
+  //  //exit
+  //  if(millis()-timeOutStart>timeOut){
+  //    timeOutStart = millis();
+  //    deviceRings  = false;
+  //    deviceDevice = false;
+  //    deviceButton = false;
+  //    brainButton  = false; 
+  //    timerStart   = millis();
+      
+  //    switchToIdle = true;
+  //  }
+  //  println("exit button pressed");
+  //}
+}
 
-  if(mouse.dist(UIlegpos)<=bigButton){
-    //leg sensor
-    button = 1;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIarmpos)<=bigButton){
-    //arm sensor
-    button = 2;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIheartpos)<=bigButton){
-    //heart sensor
-    button = 3;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIbladderpos)<=bigButton){
-    //bladder sensor
-    button = 4;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIbrainpos)<=bigButton){
-    //brain --> unfold menu
-    if(mousePressed && millis()-timeOutStart>timeOut){
+boolean checkButton(boolean buttonActive){
+  if(millis()-timeOutStart>timeOut){
       timeOutStart = millis(); 
-      if(!brainButton){
-        brainButton = true;
-        deviceButton = false;
-        deviceDevice = false;
-        deviceRings = false;
+      if(buttonActive == false){
+        buttonActive = true;
       } else {
-        brainButton = false;
+        buttonActive = false;
       }
     }
-    button = 5;
-    timerStart = millis();
+  return buttonActive;
+}
+
+void updateActivatedButton(boolean buttonActive, int i){
+  if(buttonActive){
+    activatedButton = i;
+  } else {
+    activatedButton = 0;
   }
-  if(mouse.dist(UIdevicepos)<=bigButton){
-    //device --> unfold menu
-    if(mousePressed && millis()-timeOutStart>timeOut){
-      timeOutStart = millis();
-      if(!deviceButton){
-        deviceButton = true;
-        brainButton = false;
-      } else {
-        deviceButton = false;
-        deviceDevice = false;
-        deviceRings = false;
-      }
-    }
-    button = 6;
-    timerStart = millis();
-  }
-  
-  if(mouse.dist(UIbrainarmpos)<=smallButton && brainButton){
-    //arm motor
-    button = 7;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIbrainlegpos)<=smallButton && brainButton){
-    //leg motor
-    button = 8;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIbrainbladderpos)<=smallButton && brainButton){
-    //bladder motor
-    button = 9;
-    timerStart = millis();
-  }
-  
-  if(mouse.dist(UIdeviceringspos)<=smallButton && deviceButton){
-    //show device rings explanation
-    if(mousePressed && millis()-timeOutStart>timeOut){
-      timeOutStart = millis();
-      if(!deviceRings){
-        deviceRings = true;
-        deviceDevice = false;
-      } else {
-        deviceRings = false;
-      }
-    }
-    button = 10;
-    timerStart = millis();
-  }
-  if(mouse.dist(UIdevicedevicepos)<=smallButton && deviceButton){
-    //show device explanation
-    if(mousePressed && millis()-timeOutStart>timeOut){
-      timeOutStart = millis();
-      if(!deviceDevice){
-        deviceDevice = true;
-        deviceRings = false;
-      } else {
-        deviceDevice = false;
-      }
-    }
-    button = 11;
-    timerStart = millis();
-  }
-  
-  if(mouse.dist(UIexitpos)<=bigButton){
-    //exit
-    if(mousePressed && millis()-timeOutStart>timeOut){
-      timeOutStart = millis();
-      deviceRings  = false;
-      deviceDevice = false;
-      deviceButton = false;
-      brainButton  = false;
-      button = 100;
-      timerStart = millis();
-    }
-    println("exit button pressed");
-  }
-  return button;
+  timerStart = millis();
 }

@@ -26,6 +26,7 @@ int     curveRandZ = 5; //15;
 int     curveWeight = 1;
 Float[] curveOpacities;
 float   curveOpacityMin = 0.4;
+float   curveOpacityMax = 0.95;
 float   curveFadeOutSpeed;
 
 float   attractionToOrigin = 15; 
@@ -38,10 +39,29 @@ int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
 
-color  clrA = color(212,  20,  90); //NOTE TO SELF: ARBITRARY, DO WITH LAILA
-color  clrB = color(252, 238,  33);
-color  clrC = color( 41, 171, 226);
-color  clrD = color( 75, 181,  74);
+//ORIGINAL VERSION
+//color  clrA = color(212,  20,  90); //NOTE TO SELF: ARBITRARY, DO WITH LAILA
+//color  clrB = color(252, 238,  33);
+//color  clrC = color( 41, 171, 226);
+//color  clrD = color( 75, 181,  74);
+
+////OPTION 1
+//color  clrA = color(0,  255,  255);
+//color  clrB = color(49, 49,  146);
+//color  clrC = color(140, 198, 63);
+//color  clrD = color(158, 0,  93);
+
+////OPTION 2
+//color  clrA = color(255,  148,  0);
+//color  clrB = color(211, 31,  71);
+//color  clrC = color(41, 171, 226);
+//color  clrD = color(75, 181,  74);
+
+//OPTION 3
+color  clrA = color(252,  238,  33);
+color  clrB = color(0, 255,  255);
+color  clrC = color(102, 45, 145);
+color  clrD = color(140, 198,  63);
 
 color  curveClr1;
 color  curveClr2;
