@@ -37,11 +37,11 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-float   idleTranslateX =575;  //big display:691      //laptop:410      //projector:575
-float   idleTranslateY =540;  //big display:612      //laptop:450      //projector:540
-float   idleTranslateZ =64;   //big display:-48      //laptop:-110     //projector:64
+float   idleTranslateX =410;  //big display:410      //laptop:410      //projector:575
+float   idleTranslateY =540;  //big display:540      //laptop:450      //projector:540
+float   idleTranslateZ =300;   //big display:300      //laptop:-110     //projector:64
 float   idleRotateX    =0;    //big display:0        //laptop:0        //projector:0
-float   idleRotateY    =-0.25;//big display:-0.35    //laptop:-0.35    //projector:-0.25
+float   idleRotateY    =-0.31;//big display:-0.31    //laptop:-0.35    //projector:-0.25
 float   idleRotateZ    =0;    //big display:0        //laptop:0        //projector:0
 
 float   gameTranslateX=0;
@@ -69,8 +69,7 @@ PVector cameraPos;
 boolean firstCycle = true;
 
 void setup(){
-  //fullScreen(P3D, 1);
-  fullScreen(P3D);
+  fullScreen(P3D, 1);
   //size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
@@ -102,11 +101,11 @@ void setup(){
   
   fogLines = loadShader("fogLines.glsl");
   fogLines.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
-  fogLines.set("fogFar", 650.0);          //laptop:800.0    //projector:650.0
+  fogLines.set("fogFar", 750.0);          //laptop:750.0    //projector:650.0
   
   fogColor = loadShader("fogColor.glsl");
   fogColor.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
-  fogColor.set("fogFar", 750.0);         //laptop:1000.0   //projector:750.0
+  fogColor.set("fogFar", 1000.0);         //laptop:1000.0   //projector:750.0
   
   hint(DISABLE_DEPTH_MASK);
   //hint(DISABLE_OPENGL_ERRORS);
@@ -136,9 +135,9 @@ void draw() {
     updateCurvePoints();
 
     pushMatrix();
-    rotateX(rotateX);
-    rotateY(rotateY);
-    rotateZ(rotateZ);
+    //rotateX(rotateX);
+    //rotateY(rotateY);
+    //rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
     shader(fogLines, LINES);
     renderCurves(); 

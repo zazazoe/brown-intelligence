@@ -10,7 +10,7 @@ PImage  contoursImage;
 int     threshold = 39;
 int     blobSizeThreshold = 28;
 boolean isBackgroundSave = false;
-boolean sensorConnected = false;
+boolean sensorConnected = true;
 
 float   blobx;
 float   bloby;
@@ -46,8 +46,7 @@ void initCV(){
   
 }
 
-void updateCV(){
-  
+void updateCV(){ 
   if(sensorConnected){
     if(frameCount%2==0) {
       camera.readFrames();
