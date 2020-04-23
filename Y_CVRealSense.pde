@@ -47,17 +47,21 @@ void initCV(){
 }
 
 void updateCV(){
-  if(frameCount%2==0) {
-    camera.readFrames();
-    camera.createDepthImage(0, 2000);
-    
-    opencv.loadImage(camera.getDepthImage());
-    opencv.diff(background);
-    opencv.threshold(threshold);
-    
-    contours = opencv.findContours(true, true);  
+  
+  if(sensorConnected){
+    if(frameCount%2==0) {
+      camera.readFrames();
+      camera.createDepthImage(0, 2000);
+      
+      opencv.loadImage(camera.getDepthImage());
+      opencv.diff(background);
+      opencv.threshold(threshold);
+      
+      contours = opencv.findContours(true, true);  
+    }
   }
-    calculateContourBoundingBoxes();
+  
+  calculateContourBoundingBoxes();
 }
 
 void calculateContourBoundingBoxes() {  
@@ -68,55 +72,68 @@ void calculateContourBoundingBoxes() {
   blobCountLeft=0;
   blobCountRight=0;
   
-  for (int i=0; i<contours.size(); i++) {
-    
-    Contour contour = contours.get(i);
-    Rectangle r = contour.getBoundingBox();
-    
-    if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
-      continue;
-    
-    float rx = map(r.x, 0, 480, width, 0);
-    float ry = map(r.y, 0, 270, 0, height);
-    float rwidth = map(r.width, 0, 480, 0, width);
-    float rheight = map(r.height, 0, 270, 0, height);
-    
-    blobx = rx+(rwidth/2);
-    bloby = translateY; //bloby = ry+(rheight/2);
+  if(DEBUG){
+    blobx = mouseX;
+    bloby = translateY;
     
     blobBack = new PVector(blobx, bloby, blobBackDist);
     blobFront = new PVector(blobx, bloby, blobFrontDist);
     blobDir = PVector.sub(blobFront, blobBack);
-    
-    if(displayContours) displayCountours(rx, ry, rwidth, rheight);
-    
-    if(blobx <= width/2-bufferSpace){
-      if(blobCountLeftPrev == 0 && blobCountLeft == 0){ //first on left
-        for(int j=0; j<particles.size(); j++){
-          for(int k=0;k<5; k++){
-            particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
-          }
-          //play sound
-          if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
-        }
-      }
-      blobCountLeft +=1;
-    } else if(blobx >= width/2+bufferSpace){
-      if(blobCountRightPrev == 0 && blobCountRight == 0){ //first on right
-        for(int j=0; j<particles.size(); j++){
-          for(int k=0;k<5; k++){
-            particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
-          }
-          //play sound
-          if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
-        }
-      }
-      blobCountRight +=1;
-    }
-    
     saveModelCoordinates();   
     updateCurvePoints();
-    blobCount++;  
+    blobCount++; 
+  } else {
+  
+    for (int i=0; i<contours.size(); i++) {
+      
+      Contour contour = contours.get(i);
+      Rectangle r = contour.getBoundingBox();
+      
+      if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
+        continue;
+      
+      float rx = map(r.x, 0, 480, width, 0);
+      float ry = map(r.y, 0, 270, 0, height);
+      float rwidth = map(r.width, 0, 480, 0, width);
+      float rheight = map(r.height, 0, 270, 0, height);
+      
+      blobx = rx+(rwidth/2);
+      bloby = translateY; //bloby = ry+(rheight/2); //should be blob y + translate???
+      
+      blobBack = new PVector(blobx, bloby, blobBackDist);
+      blobFront = new PVector(blobx, bloby, blobFrontDist);
+      blobDir = PVector.sub(blobFront, blobBack);
+      
+      if(displayContours) displayCountours(rx, ry, rwidth, rheight);
+      
+      if(blobx <= width/2-bufferSpace){
+        if(blobCountLeftPrev == 0 && blobCountLeft == 0){ //first on left
+          for(int j=0; j<particles.size(); j++){
+            for(int k=0;k<5; k++){
+              particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
+            }
+            //play sound
+            if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
+          }
+        }
+        blobCountLeft +=1;
+      } else if(blobx >= width/2+bufferSpace){
+        if(blobCountRightPrev == 0 && blobCountRight == 0){ //first on right
+          for(int j=0; j<particles.size(); j++){
+            for(int k=0;k<5; k++){
+              particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
+            }
+            //play sound
+            if(!nerveTrigger.isPlaying()) playSound(NERVETRIGGER);
+          }
+        }
+        blobCountRight +=1;
+      }
+      
+      saveModelCoordinates();   
+      updateCurvePoints();
+      blobCount++;  
+    }
   }
   
   //PLACE TO INSERT HINT TO TOUCH/INTERACT

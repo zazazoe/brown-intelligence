@@ -307,19 +307,19 @@ void draw() {
   blobBack  = new PVector(0,0,0);
   blobFront = new PVector(0,0,0);
   
-  if(sensorConnected && mode == IDLE_MODE)
+  if(mode == IDLE_MODE)
     updateCV(); 
   
   updateCurveColors();
   
   //DISPLAY FRAMERATE//
-  if(DEBUG){
-    pushMatrix();
-    translate(0,0,zx);
-    fill(255);
-    text(frameRate, 20, height-20);
-    popMatrix();
-  }
+  //if(DEBUG){
+  //  pushMatrix();
+  //  translate(0,0,zx);
+  //  fill(255);
+  //  text(frameRate, 20, height-20);
+  //  popMatrix();
+  //}
   ////////////////////
 }
 
