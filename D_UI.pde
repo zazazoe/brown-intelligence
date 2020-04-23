@@ -30,7 +30,7 @@ boolean legButton    = false;
 boolean heartButton  = false;
 
 int timeOutStart=0;
-int timeOut=100;
+int timeOut=50;
 int particleFrequency = 30;
 
 PImage  UI;

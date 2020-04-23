@@ -199,12 +199,14 @@ void updateCurveColors(){
   float g;
   float b;
   
-  if(second()<30){
-    f1 = map(second(), 0, 29, 0, 1);
-    f2 = map(second(), 0, 29, 1, 0);
+  //map real world time to changing colors
+  //currently mapping days of the month 1-15 color change one direction, 16-31 color changes other direction
+  if(day()<16){
+    f1 = map(day(), 1, 15, 0.0, 1.0);
+    f2 = map(day(), 1, 15, 1.0, 0.0);
   } else {
-    f1 = map(second(), 30, 60, 1, 0);
-    f2 = map(second(), 30, 60, 0, 1);
+    f1 = map(day(), 16, 31, 1.0, 0.0);
+    f2 = map(day(), 16, 31, 0.0, 1.0);
   }
     
   r = f1*red(clrA) + f2*red(clrC);

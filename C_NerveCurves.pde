@@ -1,4 +1,4 @@
- //<>// //<>//
+ //<>// //<>// //<>// //<>//
 Table curveData;
 Table curveRef;
 int   nrOfCurves;

@@ -1,5 +1,3 @@
-import gab.opencv.*;
-import java.awt.Rectangle;
 
 RealSenseCamera camera = new RealSenseCamera(this);
 

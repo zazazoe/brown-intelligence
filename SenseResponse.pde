@@ -3,6 +3,11 @@ import processing.video.*;
 import ch.bildspur.realsense.*;
 import controlP5.*;
 import processing.sound.*;
+import gab.opencv.*;
+import java.awt.Rectangle;
+
+
+boolean DEBUG = true;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -65,16 +70,17 @@ boolean firstCycle = true;
 
 void setup(){
   //fullScreen(P3D, 1);
-  size(1920,1080,P3D);
+  fullScreen(P3D);
+  //size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
   noCursor();
   
   mode       = IDLE_MODE;
   timerStart = millis();
-  blobDir   = new PVector(0,0,0);
-  blobBack  = new PVector(0,0,0);
-  blobFront = new PVector(0,0,0);
+  blobDir    = new PVector(0,0,0);
+  blobBack   = new PVector(0,0,0);
+  blobFront  = new PVector(0,0,0);
   blobBackModel  = new PVector(0,0,0);
   blobFrontModel =  new PVector(0,0,0);
   blobDirModel   = new PVector(0,0,0);
@@ -112,15 +118,17 @@ void setup(){
 
 void draw() {
   if(firstCycle) cacheImages();
-  
   background(0);
   
-  //SMALL CURSOR FOR DEBUG
-  pushMatrix();
-  noStroke();
-  fill(255,0,0);
-  ellipse(mouseX, mouseY, 3, 3);
-  popMatrix();
+  //SMALL CURSOR FOR DEBUG/////
+  if(DEBUG){
+    pushMatrix();
+    noStroke();
+    fill(255,0,0);
+    ellipse(mouseX, mouseY, 6, 6);
+    popMatrix();
+  }
+  /////////////////////////////
   
   switch(mode){
   case 0: /*IDLE MODE*/ 
@@ -147,15 +155,7 @@ void draw() {
     }
 
     if(transitionToGame)
-      transition(FADE_IDLEMODE);
-    
-    //translateZ+=zStep;
-    //translateX+=zStep;
-    //rotateY-=(zStep/8000);
-    //if(translateZ>idleTranslateZ*3 || translateZ<idleTranslateZ-idleTranslateZ){
-    //  zStep*=-1;
-    //}
-    //translateZ+=0.1;
+      transition(FADE_IDLEMODE); 
     break;
  
   case 1: /*FADE OUT IDLE MODE*/ 
@@ -200,12 +200,12 @@ void draw() {
     drawParticlesOnCanvas(nerveSkeletonFG, particles.size()-inactiveCurves.length, particles.size());
 
     pushMatrix();  
-      tint(255, 200);
-      image(nerveSkeleton, 0,0);
-      tint(255, 255);
-      image(blackOverlay, 0,0);
-      tint(255, 200);
-      image(nerveSkeletonFG, 0,0);
+    tint(255, 200);
+    image(nerveSkeleton, 0,0);
+    tint(255, 255);
+    image(blackOverlay, 0,0);
+    tint(255, 200);
+    image(nerveSkeletonFG, 0,0);
     popMatrix();
 
     if(transitionDone())
@@ -270,7 +270,7 @@ void draw() {
     pushMatrix();
       translate(0,0,z4);
       if(renderParticles){
-        renderParticlesOnNerveCurves(); //NOTE TO SELF: can particles be layered, so all bursts on top and all idle on bottom? Split in two functions...
+        renderParticlesOnNerveCurves();
       }
     popMatrix();
     pushMatrix();
@@ -310,13 +310,17 @@ void draw() {
   if(sensorConnected && mode == IDLE_MODE)
     updateCV(); 
   
-  updateCurveColors(); //NOTE TO SELF: adjust speed of color change here
+  updateCurveColors();
   
-  pushMatrix();
-  translate(0,0,zx);
-  fill(255);
-  text(frameRate, 20, height-20);
-  popMatrix();
+  //DISPLAY FRAMERATE//
+  if(DEBUG){
+    pushMatrix();
+    translate(0,0,zx);
+    fill(255);
+    text(frameRate, 20, height-20);
+    popMatrix();
+  }
+  ////////////////////
 }
 
 
@@ -328,6 +332,7 @@ void transition(int _toMode){
       mode = IDLE_MODE;
       println("change back to idle mode");
       break;
+      
     case 1: //TO IDLE FADE MODE
       for(int i=0; i<curveOpacity.size(); i++){
         curveOpacity.get(i)[1] = 1.0;
@@ -338,6 +343,7 @@ void transition(int _toMode){
       mode = FADE_IDLEMODE;
       println("fade out idle mode");  
       break;
+      
     case 2: //TO TRANSITION GAME MODE
       curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0);
       transitionParticlesToGameMode();
@@ -351,6 +357,7 @@ void transition(int _toMode){
       
       println("ready to move particles");
       break;
+      
     case 3: //TO DRAW GAME MODE
       gameParticleSize = 1.5;
       for(int i=0; i<particles.size(); i++){
@@ -363,6 +370,7 @@ void transition(int _toMode){
       
       println("change game draw mode");
       break;
+      
     case 4: //TO FADE IN GAME MODE
       timerStart = millis();
       imageAlphaStep = 255.0/(fadeTimer/60.0); //NOTE TO SELF: based on 60fps
@@ -371,6 +379,7 @@ void transition(int _toMode){
       //nerveSkeletonFG.save("nerveSkeletonFG.png");
       println("change to game mode");
       break;
+      
     case 5: //TO GAME MODE
       timerStart = millis();
       gameParticleSize = 3;
@@ -379,6 +388,7 @@ void transition(int _toMode){
       mode = GAME_MODE;
       println("change to game mode");
       break;
+      
     case 6: //TO TRANSITION TO IDLE MODE
       transitionParticlesToIdleMode();
       curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0); //NOTE TO SELF: update proper 
@@ -452,7 +462,8 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
     if(mouseX > 200){
       transitionToGame = true;
     }
-  } else if (mode == GAME_MODE){
+  } 
+  else if (mode == GAME_MODE){
     PVector mouse = new PVector(mouseX, mouseY);
       
     if(mouse.dist(UIlegpos)<=bigButton){
@@ -512,12 +523,13 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
     if(mouse.dist(UIbrainpos)<=bigButton){
       if(!brainButton){
         brainButton = true;
-        deviceButton = false;
-        deviceDevice = false;
-        deviceRings = false;
+        //deviceButton = false;
+        //deviceDevice = false;
+        //deviceRings = false;
         activatedButton = 0;
       } else {
         brainButton = false;
+        updateActivatedButton(brainBladderButton, 0);
       }
       
       playSound(BUTTONCLICK);
@@ -525,7 +537,7 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
     if(mouse.dist(UIdevicepos)<=bigButton){
       if(!deviceButton){
         deviceButton = true;
-        brainButton = false;
+        //brainButton = false;
       } else {
         deviceButton = false;
         deviceDevice = false;
