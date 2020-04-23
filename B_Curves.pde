@@ -3,7 +3,7 @@ float   curveSetRot = 0;
 PVector curveSetStartPoint;
 int     numGenerations = 5;
 int     minBranches = 3;
-int     maxBranches = 3;
+int     maxBranches = 6;
 float   segmentMaxLength = 300;
 int     segmentMaxRot = 10;
 int     segmentMaxRotZ = 28;
@@ -31,9 +31,8 @@ float   curveFadeOutSpeed;
 
 float   attractionToOrigin = 15; 
 float   repulseFromMouse   = 25;
-float   mouseAffectRadius  = 200;
-float   mouseAffectRadiusStore = 400;
-boolean fixEndPoints = true;
+float   mouseAffectRadius  = 300;
+boolean fixEndPoints = false;
 
 int     curveTransitionIndex = 0;
 int     newTreeLength;

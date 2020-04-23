@@ -20,8 +20,8 @@ PVector blobBack;
 PVector blobBackModel;
 PVector blobFront;
 PVector blobFrontModel;
-int     blobBackDist = -200;
-int     blobFrontDist = 200;
+int     blobBackDist = -2000;
+int     blobFrontDist = 2000;
 float   blobxPrev;
 float   blobyPrev;
 int     blobCount = 0;
@@ -72,8 +72,11 @@ void calculateContourBoundingBoxes() {
   blobCountRight=0;
   
   if(DEBUG){
-    blobx = mouseX;
-    bloby = translateY;
+    
+    float tmp = map(mouseY, 0, height, -0.2*height, 0.2*height);
+    float tmp2 = map(mouseX, 0, width, 3,0);
+    blobx = mouseX+tmp2*translateX; // //NOTE TO SELF: implement in sensor too
+    bloby = translateY+tmp; //tmp+
     
     blobBack = new PVector(blobx, bloby, blobBackDist);
     blobFront = new PVector(blobx, bloby, blobFrontDist);
