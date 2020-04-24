@@ -41,7 +41,7 @@ float   idleTranslateX =410;  //big display:410      //laptop:410      //project
 float   idleTranslateY =540;  //big display:540      //laptop:450      //projector:540
 float   idleTranslateZ =300;   //big display:300      //laptop:-110     //projector:64
 float   idleRotateX    =0;    //big display:0        //laptop:0        //projector:0
-float   idleRotateY    =-0.31;//big display:-0.31    //laptop:-0.35    //projector:-0.25
+float   idleRotateY    =0;//big display:-0.31    //laptop:-0.35    //projector:-0.25
 float   idleRotateZ    =0;    //big display:0        //laptop:0        //projector:0
 
 float   gameTranslateX=0;
@@ -135,9 +135,9 @@ void draw() {
     updateCurvePoints();
 
     pushMatrix();
-    //rotateX(rotateX);
-    //rotateY(rotateY);
-    //rotateZ(rotateZ);
+    rotateX(rotateX);
+    rotateY(rotateY);
+    rotateZ(rotateZ);
     translate(translateX,translateY,translateZ);
     shader(fogLines, LINES);
     renderCurves(); 
