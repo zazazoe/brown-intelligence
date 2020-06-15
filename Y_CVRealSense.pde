@@ -3,14 +3,14 @@ RealSenseCamera camera = new RealSenseCamera(this);
 
 ArrayList<Contour> contours;
 OpenCV  opencv;
-boolean displayContours = true;
+boolean displayContours = false;
 PImage  background;
 PImage  contoursImage;
 
 int     threshold = 72;
 int     blobSizeThreshold = 48;
 boolean isBackgroundSave = false;
-boolean sensorConnected = true;
+boolean sensorConnected = false;
 
 float   blobx;
 float   bloby;

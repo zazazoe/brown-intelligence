@@ -7,7 +7,7 @@ import gab.opencv.*;
 import java.awt.Rectangle;
 
 
-boolean DEBUG = false;
+boolean DEBUG = true;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -69,8 +69,8 @@ PVector cameraPos;
 boolean firstCycle = true;
 
 void setup(){
-  //fullScreen(P3D, 1);
-  size(1920,1080,P3D);
+  fullScreen(P3D, 1);
+  //size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
   noCursor();
