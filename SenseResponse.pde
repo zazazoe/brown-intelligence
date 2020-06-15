@@ -37,11 +37,11 @@ int     z4 = 3;
 int     z5 = 4;
 int     zx = 10;
 
-float   idleTranslateX =410;  //big display:410      //laptop:410      //projector:575
+float   idleTranslateX =600;  //big display:410      //laptop:410      //projector:575
 float   idleTranslateY =540;  //big display:540      //laptop:450      //projector:540
-float   idleTranslateZ =300;   //big display:300      //laptop:-110     //projector:64
+float   idleTranslateZ =250;   //big display:300      //laptop:-110     //projector:64
 float   idleRotateX    =0;    //big display:0        //laptop:0        //projector:0
-float   idleRotateY    =0;//big display:-0.31    //laptop:-0.35    //projector:-0.25
+float   idleRotateY    =-0.24;    //big display:-0.31    //laptop:-0.35    //projector:-0.25
 float   idleRotateZ    =0;    //big display:0        //laptop:0        //projector:0
 
 float   gameTranslateX=0;
@@ -59,7 +59,7 @@ float   rotateY;
 float   rotateZ;
 
 float   zStep = 0.01;
-float   transitSpeed = 0.95;
+float   transitSpeed = 0.93;
 
 PShader fogLines; 
 PShader fogColor; 
@@ -69,8 +69,8 @@ PVector cameraPos;
 boolean firstCycle = true;
 
 void setup(){
-  fullScreen(P3D, 1);
-  //size(1920,1080,P3D);
+  //fullScreen(P3D, 1);
+  size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
   noCursor();
@@ -100,8 +100,8 @@ void setup(){
   if(sensorConnected) initCV(); 
   
   fogLines = loadShader("fogLines.glsl");
-  fogLines.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
-  fogLines.set("fogFar", 750.0);          //laptop:750.0    //projector:650.0
+  fogLines.set("fogNear", 200.0);           //laptop:0.0      //projector:0.0
+  fogLines.set("fogFar", 500.0);          //laptop:750.0    //projector:650.0
   
   fogColor = loadShader("fogColor.glsl");
   fogColor.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
@@ -131,8 +131,8 @@ void draw() {
   
   switch(mode){
   case 0: /*IDLE MODE*/ 
+    updateCV(); 
     updateCurves();
-    updateCurvePoints();
 
     pushMatrix();
     rotateX(rotateX);
@@ -300,25 +300,16 @@ void draw() {
     break;
   }
   
-  blobx = -width; //MOVED --> CHECK IF WORKS
-  bloby = -height;
-  blobDir   = new PVector(0,0,0);
-  blobBack  = new PVector(0,0,0);
-  blobFront = new PVector(0,0,0);
-  
-  if(mode == IDLE_MODE)
-    updateCV(); 
-  
   updateCurveColors();
   
   //DISPLAY FRAMERATE//
-  //if(DEBUG){
-  //  pushMatrix();
-  //  translate(0,0,zx);
-  //  fill(255);
-  //  text(frameRate, 20, height-20);
-  //  popMatrix();
-  //}
+  if(DEBUG){
+    pushMatrix();
+    translate(0,0,zx);
+    fill(255);
+    text(frameRate, 20, height-20);
+    popMatrix();
+  }
   ////////////////////
 }
 

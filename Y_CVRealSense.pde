@@ -10,7 +10,7 @@ PImage  contoursImage;
 int     threshold = 39;
 int     blobSizeThreshold = 28;
 boolean isBackgroundSave = false;
-boolean sensorConnected = true;
+boolean sensorConnected = false;
 
 float   blobx;
 float   bloby;
@@ -47,6 +47,12 @@ void initCV(){
 }
 
 void updateCV(){ 
+  blobx = -width; //MOVED --> CHECK IF WORKS
+  bloby = -height;
+  blobDir   = new PVector(0,0,0);
+  blobBack  = new PVector(0,0,0);
+  blobFront = new PVector(0,0,0);
+  
   if(sensorConnected){
     if(frameCount%2==0) {
       camera.readFrames();
@@ -72,11 +78,10 @@ void calculateContourBoundingBoxes() {
   blobCountRight=0;
   
   if(DEBUG){
-    
     float tmp = map(mouseY, 0, height, -0.2*height, 0.2*height);
-    float tmp2 = map(mouseX, 0, width, 3,0);
-    blobx = mouseX+tmp2*translateX; // //NOTE TO SELF: implement in sensor too
-    bloby = translateY+tmp; //tmp+
+    float tmp2 = map(mouseX, 0, width, 2,0);
+    blobx = mouseX+tmp2*translateX; 
+    bloby = translateY+tmp; 
     
     blobBack = new PVector(blobx, bloby, blobBackDist);
     blobFront = new PVector(blobx, bloby, blobFrontDist);
@@ -94,13 +99,18 @@ void calculateContourBoundingBoxes() {
       if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
         continue;
       
-      float rx = map(r.x, 0, 480, width, 0);
+      float rx = map(r.x, 0, 480, 0, width);
       float ry = map(r.y, 0, 270, 0, height);
       float rwidth = map(r.width, 0, 480, 0, width);
       float rheight = map(r.height, 0, 270, 0, height);
+      rx = rx + (rwidth/2);
+      ry = ry + (rheight/2);
       
-      blobx = rx+(rwidth/2);
-      bloby = translateY; //bloby = ry+(rheight/2); //should be blob y + translate???
+      float transformY = map(ry, 0, height, -0.2*height, 0.2*height);
+      float transformX = map(rx, 0, width, 2,0);
+      
+      blobx = rx+transformX*translateX;
+      bloby = translateY+transformY; 
       
       blobBack = new PVector(blobx, bloby, blobBackDist);
       blobFront = new PVector(blobx, bloby, blobFrontDist);
@@ -153,7 +163,7 @@ void displayCountours(float rx,float ry,float rwidth,float rheight){
   stroke(255, 0, 0);
   fill(255, 0, 0, 150);
   strokeWeight(2);
-  rect(rx, ry, rwidth, rheight);
+  rect(rx-(rwidth/2), ry-(rheight/2), rwidth, rheight);
   noStroke();
   fill(255, 255, 0);
   ellipse(blobx, bloby, 10,10);

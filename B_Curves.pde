@@ -3,11 +3,11 @@ float   curveSetRot = 0;
 PVector curveSetStartPoint;
 int     numGenerations = 5;
 int     minBranches = 3;
-int     maxBranches = 6;
-float   segmentMaxLength = 300;
+int     maxBranches = 4;
+float   segmentMaxLength = 275;
 int     segmentMaxRot = 10;
-int     segmentMaxRotZ = 28;
-int     segmentMaxRotY = 10;
+int     segmentMaxRotZ = 18;
+int     segmentMaxRotY = 17;
 
 int     generationLimit;
 ArrayList<Segment>[] points;
@@ -29,9 +29,9 @@ float   curveOpacityMin = 0.4;
 float   curveOpacityMax = 0.95;
 float   curveFadeOutSpeed;
 
-float   attractionToOrigin = 15; 
-float   repulseFromMouse   = 25;
-float   mouseAffectRadius  = 300;
+float   attractionToOrigin = 25; 
+float   repulseFromMouse   = 10;
+float   mouseAffectRadius  = 5;
 boolean fixEndPoints = false;
 
 int     curveTransitionIndex = 0;
@@ -351,7 +351,7 @@ void prepNextTree(){
       for(int i=0; i<branches; i++){
 
         if(_generation==generationLimit-1){
-          _rotZ += random(-segmentMaxRotZ,segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ);
+          _rotZ += random(0.0*segmentMaxRotZ, segmentMaxRotZ);//segmentMaxRotZ/2,segmentMaxRotZ); //-segmentMaxRotZ,segmentMaxRotZ
           segment(_segmentLength*random(0.3, 0.4), _segmentRotation, _rotZ, point, _generation);
         } else {
           if(i==0){
