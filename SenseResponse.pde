@@ -7,7 +7,7 @@ import gab.opencv.*;
 import java.awt.Rectangle;
 
 
-boolean DEBUG = true;
+boolean DEBUG = false;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -133,6 +133,7 @@ void draw() {
   case 0: /*IDLE MODE*/ 
     updateCV(); 
     updateCurves();
+    updateCurvePoints();
 
     pushMatrix();
     rotateX(rotateX);

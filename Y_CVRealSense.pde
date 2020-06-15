@@ -3,14 +3,14 @@ RealSenseCamera camera = new RealSenseCamera(this);
 
 ArrayList<Contour> contours;
 OpenCV  opencv;
-boolean displayContours = false;
+boolean displayContours = true;
 PImage  background;
 PImage  contoursImage;
 
-int     threshold = 39;
-int     blobSizeThreshold = 28;
+int     threshold = 72;
+int     blobSizeThreshold = 48;
 boolean isBackgroundSave = false;
-boolean sensorConnected = false;
+boolean sensorConnected = true;
 
 float   blobx;
 float   bloby;
@@ -31,6 +31,8 @@ int     blobCountLeft  = 0;
 int     blobCountRight = 0;
 int     blobCountLeftPrev  = 0;
 int     blobCountRightPrev = 0;
+int     blobCountBuffer = 0;
+int     blobCountBufferPrev = 0;
 
 int     bufferSpace = 400;
 int     blobTimer=0;
@@ -43,7 +45,6 @@ void initCV(){
   background = loadImage("BGcapture.jpg");
   
   blobTimer = millis();
-  
 }
 
 void updateCV(){ 
@@ -73,9 +74,11 @@ void calculateContourBoundingBoxes() {
   blobCountPrev=blobCount;
   blobCountLeftPrev=blobCountLeft;
   blobCountRightPrev=blobCountRight;
+  blobCountBufferPrev=blobCountBuffer;
   blobCount=0;
   blobCountLeft=0;
   blobCountRight=0;
+  blobCountBuffer=0;
   
   if(DEBUG){
     float tmp = map(mouseY, 0, height, -0.2*height, 0.2*height);
@@ -118,8 +121,8 @@ void calculateContourBoundingBoxes() {
       
       if(displayContours) displayCountours(rx, ry, rwidth, rheight);
       
-      if(blobx <= width/2-bufferSpace){
-        if(blobCountLeftPrev == 0 && blobCountLeft == 0){ //first on left
+      if(rx <= width/2-bufferSpace){
+        if(blobCountLeftPrev==0 && blobCountLeft==0 && blobCountBufferPrev==0){ //first on left
           for(int j=0; j<particles.size(); j++){
             for(int k=0;k<5; k++){
               particles.get(j).particleBurst(SENSOR_SIDE, random(3.5,4.5));
@@ -129,8 +132,8 @@ void calculateContourBoundingBoxes() {
           }
         }
         blobCountLeft +=1;
-      } else if(blobx >= width/2+bufferSpace){
-        if(blobCountRightPrev == 0 && blobCountRight == 0){ //first on right
+      } else if(rx >= width/2+bufferSpace){
+        if(blobCountRightPrev == 0 && blobCountRight == 0 && blobCountBufferPrev==0){ //first on right
           for(int j=0; j<particles.size(); j++){
             for(int k=0;k<5; k++){
               particles.get(j).particleBurst(MOTOR_SIDE, random(3.5,4.5));
@@ -140,17 +143,19 @@ void calculateContourBoundingBoxes() {
           }
         }
         blobCountRight +=1;
+      } else if(rx >= width/2-bufferSpace && rx <= width/2+bufferSpace){
+        blobCountBuffer += 1;
       }
       
       saveModelCoordinates();   
       updateCurvePoints();
       blobCount++;  
-    }
+    } 
   }
   
   //PLACE TO INSERT HINT TO TOUCH/INTERACT
   if(blobCount > 0 && millis()-blobTimer>giveHintTime){
-    println("trigger hint");
+    //println("trigger hint");
     blobTimer = millis();
   } else if(blobCount == 0){
     blobTimer = millis();
@@ -166,7 +171,7 @@ void displayCountours(float rx,float ry,float rwidth,float rheight){
   rect(rx-(rwidth/2), ry-(rheight/2), rwidth, rheight);
   noStroke();
   fill(255, 255, 0);
-  ellipse(blobx, bloby, 10,10);
+  ellipse(rx, ry, 10,10);
   strokeWeight(20); 
 }
 
