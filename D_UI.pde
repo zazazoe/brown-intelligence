@@ -17,19 +17,19 @@ int smallButton =22;  //projector:22    //laptop:16
 //int exitX = 50;
 //int exitY = 50;
 
-boolean brainButton  = false;
+boolean brainButton        = false;
 boolean brainArmButton     = false;
 boolean brainBladderButton = false;
 boolean brainLegButton     = false;
-boolean deviceButton = false;
-boolean deviceRings  = false;
-boolean deviceDevice = false;
-boolean armButton    = false;
-boolean bladderButton = false;
-boolean legButton    = false;
-boolean heartButton  = false;
+boolean deviceButton       = false;
+boolean deviceRings        = false;
+boolean deviceDevice       = false;
+boolean armButton          = false;
+boolean bladderButton      = false;
+boolean legButton          = false;
+boolean heartButton        = false;
 
-int timeOutStart=0;
+long timeOutStart=0;
 int timeOut=50;
 int particleFrequency = 30;
 
@@ -57,7 +57,7 @@ PImage  UIdeviceRings;
 PVector UIdeviceringspos = new PVector(161, 390);  //projector:161, 390   //laptop:121, 382
 PImage  UIdeviceDevice;
 PVector UIdevicedevicepos = new PVector(161, 446); //projector:161, 446   //laptop:121, 424
-
+PImage  UIhint;
 
 int activatedButton=0;
 

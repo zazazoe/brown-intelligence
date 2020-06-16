@@ -35,8 +35,13 @@ int     blobCountBuffer = 0;
 int     blobCountBufferPrev = 0;
 
 int     bufferSpace = 400;
-int     blobTimer=0;
-int     giveHintTime = 2000;
+long    blobTimer=0;
+int     giveHintTime = 10000;
+long    hintTimer = 0;
+int     hintTime = 7000;
+
+boolean displayHint = false;
+boolean hintShown = false;
 
 void initCV(){
   camera.start(480, 270, 30, true, false);
@@ -153,14 +158,22 @@ void calculateContourBoundingBoxes() {
     } 
   }
   
-  //PLACE TO INSERT HINT TO TOUCH/INTERACT
-  if(blobCount > 0 && millis()-blobTimer>giveHintTime){
-    //println("trigger hint");
+  //HINT TO TOUCH/INTERACT
+  if(blobCount > 0 && millis()-blobTimer>giveHintTime && !hintShown){
+    displayHint = true;
     blobTimer = millis();
+    hintTimer = millis();
+    hintShown = true;
+    println("trigger hint");
   } else if(blobCount == 0){
     blobTimer = millis();
     blobx = -width;
     bloby = -height;
+    hintShown = false;
+  }
+  
+  if(millis()-hintTimer>hintTime && displayHint==true){
+    displayHint = false;
   }
 }
 

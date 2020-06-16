@@ -65,6 +65,7 @@ void loadUIImages(){
   UIdevice        = requestImage("imageAssets/UI19201080/device.png");
   UIdeviceRings   = requestImage("imageAssets/UI19201080/device_ring.png");
   UIdeviceDevice  = requestImage("imageAssets/UI19201080/device_device.png");
+  UIhint          = requestImage("imageAssets/UI19201080/hint.png");
 }
 
 void cacheImages(){

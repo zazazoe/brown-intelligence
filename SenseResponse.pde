@@ -22,7 +22,7 @@ boolean switchToIdle = false;
 boolean transitionToGame = false;
 boolean transitionToIdle = false;
 
-int     timerStart    = 0;
+long    timerStart    = 0;
 int     curveTimer    = 5000;
 int     drawTimer     = 12000;
 int     fadeTimer     = 1500;
@@ -67,19 +67,22 @@ PShader fogColor;
 PVector cameraPos;
 
 boolean firstCycle = true;
+float   fade = 0;
+float   fadeStep;
+float   fadeFraction = 0.125;
 
 void setup(){
-  fullScreen(P3D, 1);
-  //size(1920,1080,P3D);
+  //fullScreen(P3D, 1);
+  size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
   noCursor();
   
-  mode       = IDLE_MODE;
-  timerStart = millis();
-  blobDir    = new PVector(0,0,0);
-  blobBack   = new PVector(0,0,0);
-  blobFront  = new PVector(0,0,0);
+  mode           = IDLE_MODE;
+  timerStart     = millis();
+  blobDir        = new PVector(0,0,0);
+  blobBack       = new PVector(0,0,0);
+  blobFront      = new PVector(0,0,0);
   blobBackModel  = new PVector(0,0,0);
   blobFrontModel =  new PVector(0,0,0);
   blobDirModel   = new PVector(0,0,0);
@@ -106,6 +109,8 @@ void setup(){
   fogColor = loadShader("fogColor.glsl");
   fogColor.set("fogNear", 0.0);           //laptop:0.0      //projector:0.0
   fogColor.set("fogFar", 1000.0);         //laptop:1000.0   //projector:750.0
+  
+  fadeStep = 255/(((hintTime*fadeFraction)/1000)*60);
   
   hint(DISABLE_DEPTH_MASK);
   //hint(DISABLE_OPENGL_ERRORS);
@@ -149,6 +154,23 @@ void draw() {
     
     resetShader();
     
+    if(displayHint){        
+      if(millis()-hintTimer < fadeFraction*hintTime){
+        fade += fadeStep;
+      } else if(millis()-hintTimer > hintTime - (fadeFraction*hintTime)){
+        fade -= fadeStep;
+      }
+ 
+      pushMatrix();
+      tint(255, fade);
+      rotateX(gameRotateX);
+      rotateY(gameRotateY);
+      rotateZ(gameRotateZ);
+      translate(gameTranslateX,gameTranslateY,gameTranslateZ);
+      image(UIhint,0,0);
+      popMatrix();
+    }
+    
     if(millis()-timerStart>curveTimer){
       transitionToNextTree();
       timerStart = millis();
@@ -173,7 +195,7 @@ void draw() {
     popMatrix();
     
     resetShader();
-    
+
     if(millis()-timerStart>idleFadeTimer)
       transition(TRANSITION_GAMEMODE);
     break;
