@@ -10,7 +10,7 @@ PImage  contoursImage;
 int     threshold = 72;
 int     blobSizeThreshold = 48;
 boolean isBackgroundSave = false;
-boolean sensorConnected = false;
+boolean sensorConnected = true;
 
 float   blobx;
 float   bloby;
@@ -44,8 +44,8 @@ boolean displayHint = false;
 boolean hintShown = false;
 
 void initCV(){
-  camera.start(480, 270, 30, true, false);
-  opencv     = new OpenCV(this, 480, 270);
+  camera.start(640, 480, 30, true, false);
+  opencv     = new OpenCV(this, 640, 480);
   contours   = new ArrayList<Contour>(); 
   background = loadImage("BGcapture.jpg");
   
@@ -53,16 +53,16 @@ void initCV(){
 }
 
 void updateCV(){ 
-  blobx = -width; //MOVED --> CHECK IF WORKS
+  blobx = -width;
   bloby = -height;
   blobDir   = new PVector(0,0,0);
   blobBack  = new PVector(0,0,0);
   blobFront = new PVector(0,0,0);
   
-  if(sensorConnected){
+  if(sensorConnected && camera.isCameraAvailable()){
     if(frameCount%2==0) {
       camera.readFrames();
-      camera.createDepthImage(0, 2000);
+      camera.createDepthImage(0, 3000);
       
       opencv.loadImage(camera.getDepthImage());
       opencv.diff(background);
@@ -107,11 +107,12 @@ void calculateContourBoundingBoxes() {
       if ((r.width < blobSizeThreshold || r.height < blobSizeThreshold))
         continue;
       
-      float rx = map(r.x, 0, 480, 0, width);
-      float ry = map(r.y, 0, 270, 0, height);
-      float rwidth = map(r.width, 0, 480, 0, width);
-      float rheight = map(r.height, 0, 270, 0, height);
+      float rx = map(r.x, 0, 640, 0, width);
+      float ry = map(r.y, 0, 480, 0, height);
+      float rwidth = map(r.width, 0, 640, 0, width);
+      float rheight = map(r.height, 0, 480, 0, height);
       rx = rx + (rwidth/2);
+      rx = map(rx, 0, width, width, 0);
       ry = ry + (rheight/2);
       
       float transformY = map(ry, 0, height, -0.2*height, 0.2*height);

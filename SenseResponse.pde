@@ -7,7 +7,7 @@ import gab.opencv.*;
 import java.awt.Rectangle;
 
 
-boolean DEBUG = true;
+boolean DEBUG = false;
 
 int     mode;
 int     IDLE_MODE = 0;
@@ -72,8 +72,8 @@ float   fadeStep;
 float   fadeFraction = 0.125;
 
 void setup(){
-  //fullScreen(P3D, 1);
-  size(1920,1080,P3D);
+  fullScreen(P3D, 1);
+  //size(1920,1080,P3D);
   frameRate(60);  
   smooth(10);
   noCursor();
@@ -261,7 +261,7 @@ void draw() {
     pushMatrix();
     translate(0,0,zx);
       image(deviceOverlay,0,0);
-      image(UI, 0,0);
+      image(UI, 0+xOffset,0);
     popMatrix();
     
     if(imageAlpha<255)
@@ -322,6 +322,12 @@ void draw() {
       transition(IDLE_MODE);
     break;
   }
+  
+  pushMatrix();
+  translate(0,0,0);
+  tint(255,255);
+  image(mask,0,0);
+  popMatrix();
   
   updateCurveColors();
   
@@ -404,7 +410,8 @@ void transition(int _toMode){
       
     case 6: //TO TRANSITION TO IDLE MODE
       transitionParticlesToIdleMode();
-      curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0); //NOTE TO SELF: update proper 
+      curveFadeOutSpeed = curveOpacityMin/(curveTimer/60.0); //NOTE TO SELF: update proper
+      resetValue(activatedButton);
       activatedButton=0;
       switchToIdle = false;
       mode = TRANSITION_IDLEMODE;
@@ -425,26 +432,26 @@ void transition(int _toMode){
 
 void keyPressed(){
   switch(key){
-    case 'o': //open cp5 control panel
-      cp5.show();
-      break;
-    case 'c': //close cp5 control panel
-      cp5.hide();
-      break;
-    case 'a':
-      if(mode == IDLE_MODE){
-        for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(SENSOR_SIDE, random(3.5,4.5));
-        }
-      }
-      break;
-    case 's':
-      if(mode == IDLE_MODE){
-        for(int i=0; i<particles.size(); i++){
-          particles.get(i).particleBurst(MOTOR_SIDE, random(3.5,4.5));
-        }
-      }
-      break;
+    //case 'o': //open cp5 control panel
+    //  cp5.show();
+    //  break;
+    //case 'c': //close cp5 control panel
+    //  cp5.hide();
+    //  break;
+    //case 'a':
+    //  if(mode == IDLE_MODE){
+    //    for(int i=0; i<particles.size(); i++){
+    //      particles.get(i).particleBurst(SENSOR_SIDE, random(3.5,4.5));
+    //    }
+    //  }
+    //  break;
+    //case 's':
+    //  if(mode == IDLE_MODE){
+    //    for(int i=0; i<particles.size(); i++){
+    //      particles.get(i).particleBurst(MOTOR_SIDE, random(3.5,4.5));
+    //    }
+    //  }
+    //  break;
     case 'g':
       if(isBackgroundSave){
         background.save("BGcapture.jpg");
@@ -453,7 +460,7 @@ void keyPressed(){
     case 'b':
       if(mode == IDLE_MODE){
         if(camera.isCameraAvailable()){
-          opencv = new OpenCV(this, 480, 270);
+          opencv = new OpenCV(this, 640, 480);
           opencv.loadImage(camera.getDepthImage());
           background = opencv.getSnapshot();
           isBackgroundSave = true;
@@ -461,12 +468,12 @@ void keyPressed(){
         }
       }
       break;
-    case '1':
-      cp5.saveProperties(("parameters"));
-      break;
-    case '2':
-      cp5.loadProperties(("parameters.ser"));
-      break;  
+    //case '1':
+    //  cp5.saveProperties(("parameters"));
+    //  break;
+    //case '2':
+    //  cp5.loadProperties(("parameters.ser"));
+    //  break;  
   }
 }
 
@@ -483,54 +490,33 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
       legButton = checkButton(legButton);
       updateActivatedButton(legButton, 1);
       brainButton=false;
-      
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIarmpos)<=bigButton){
       armButton = checkButton(armButton);
       updateActivatedButton(armButton, 2);
       brainButton=false;
-      
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIheartpos)<=bigButton){
       heartButton = checkButton(heartButton);
       updateActivatedButton(heartButton, 3);
       brainButton=false;
-    
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbladderpos)<=bigButton){
       bladderButton = checkButton(bladderButton);
       updateActivatedButton(bladderButton, 4);
       brainButton=false;
-      
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbrainarmpos)<=smallButton && brainButton){
       brainArmButton = checkButton(brainArmButton);
       updateActivatedButton(brainArmButton, 7);
-    
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbrainlegpos)<=smallButton && brainButton){
       brainLegButton = checkButton(brainLegButton);
       updateActivatedButton(brainLegButton, 8);
-    
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     if(mouse.dist(UIbrainbladderpos)<=smallButton && brainButton){
       brainBladderButton = checkButton(brainBladderButton);
       updateActivatedButton(brainBladderButton, 9);
-    
-      playSound(BUTTONCLICK);
-      playSound(NERVETRIGGER);
     }
     
     if(mouse.dist(UIbrainpos)<=bigButton){
@@ -539,10 +525,11 @@ void mousePressed(){ //NOTE TO SELF: UPDATE ALL OF THIS WITH SENSOR
         //deviceButton = false;
         //deviceDevice = false;
         //deviceRings = false;
+        resetValue(activatedButton);
         activatedButton = 0;
       } else {
         brainButton = false;
-        updateActivatedButton(brainBladderButton, 0);
+        //updateActivatedButton(brainBladderButton, 0);
       }
       
       playSound(BUTTONCLICK);

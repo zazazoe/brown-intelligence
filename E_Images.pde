@@ -2,6 +2,7 @@
 PGraphics nerveSkeleton;
 PGraphics nerveSkeletonFG;
 
+
 PImage    blackOverlay;
 PImage    deviceOverlay;
 PImage    organUnderlay;
@@ -9,6 +10,8 @@ PImage    deviceDeviceOverlay;
 PImage    deviceRingsOverlay;
 PImage    nerveSkeletonPR;
 PImage    nerveSkeletonFGPR;
+
+PImage    mask;
 
 float     imageAlpha = 0.0;
 float     imageAlphaStep = 0.0; //will be set based on fade timer
@@ -34,7 +37,10 @@ void loadImages(){
   nerveSkeletonPR     = loadImage("imageAssets/overlays19201080/nerveSkeleton.png");
   nerveSkeletonFGPR   = loadImage("imageAssets/overlays19201080/nerveSkeletonFG.png");
   
+  mask                = loadImage("imageAssets/mask.png");
+  
   deviceOverlay.resize(1920,1080);
+  mask.resize(1920,1080);
 }
 
 void loadUIImages(){  
