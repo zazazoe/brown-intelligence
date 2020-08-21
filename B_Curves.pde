@@ -38,25 +38,7 @@ int     curveTransitionIndex = 0;
 int     newTreeLength;
 int     oldTreeLength;
 
-//ORIGINAL VERSION
-//color  clrA = color(212,  20,  90); //NOTE TO SELF: ARBITRARY, DO WITH LAILA
-//color  clrB = color(252, 238,  33);
-//color  clrC = color( 41, 171, 226);
-//color  clrD = color( 75, 181,  74);
-
-////OPTION 1
-//color  clrA = color(0,  255,  255);
-//color  clrB = color(49, 49,  146);
-//color  clrC = color(140, 198, 63);
-//color  clrD = color(158, 0,  93);
-
-////OPTION 2
-//color  clrA = color(255,  148,  0);
-//color  clrB = color(211, 31,  71);
-//color  clrC = color(41, 171, 226);
-//color  clrD = color(75, 181,  74);
-
-//OPTION 3
+//COLOR MATRIX
 color  clrA = color(252,  238,  33);
 color  clrB = color(0, 255,  255);
 color  clrC = color(102, 45, 145);
@@ -312,14 +294,8 @@ void removeExcessCurve(){
 }
 
 void prepNextTree(){
-  curveSetStartPoint = new PVector(0, 0, 0); //NOTE TO SELF: make more generic variables, also expand capability to start drawing from other edges.
-  //segmentMinRot = -50;
-  //segmentMaxRot = 50;
+  curveSetStartPoint = new PVector(0, 0, 0);
   curveSetRot = 0;
-  
-  //segmentMinRot = (int)map(curveSetStartPoint.y, height, 0, -80.0, 20.0); //NOTE TO SELF: make more generic variables
-  //segmentMaxRot = (int)map(curveSetStartPoint.y, height, 0, -20.0, 80.0); //NOTE TO SELF: make more generic variables
-  //curveSetRot = (int)map(curveSetStartPoint.y, height, 0, -50, 50);
   
   regenerateCurveSet(segmentMaxLength, curveSetRot, curveSetStartPoint, numGenerations);  
   newTreeLength = curvesToSave.size();

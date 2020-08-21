@@ -37,8 +37,8 @@ class Particle{
     tStep = _tStep;
     nrOfPoints = _nrOfPoints;
     pos = new PVector(0,0);
-    tPosStep = new Float[nrOfPoints][2]; //0 is tPos, 1 is tStep //NOTE TO SELF: maybe simplify to single point... now have burst
-    positions = new PVector[nrOfPoints]; //NOTE TO SELF: maybe simplify to single point... now have burst
+    tPosStep = new Float[nrOfPoints][2];
+    positions = new PVector[nrOfPoints];
     
     for(int i=0; i<nrOfPoints; i++){
       tPosStep[i][0] = random(0.0, 1.0);
@@ -130,8 +130,7 @@ class Particle{
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
       success = (int)random(1,successRate);
     }
-    //float tmp = cos(tPosStep[i][0]);
-    t = tPosStep[i][0];//map(tmp, 1.0, -1.0, 0.0, 1.0);
+    t = tPosStep[i][0];
   }
   
   void updateIdleParticles(int i, float _tStep){
@@ -149,8 +148,7 @@ class Particle{
       if(tPosStep[i][0] < 0)  tPosStep[i][0] = 1.0;  
       success = (int)random(1,successRate);
     }
-    //float tmp = cos(tPosStep[i][0]);
-    t = tPosStep[i][0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
+    t = tPosStep[i][0];
   }
   
   void updateBurstParticles(int i){
@@ -160,25 +158,8 @@ class Particle{
         curveOpacity.get(idNr)[0] = curveOpacityMax;
       }
     }
-    //float tmp = cos(burstPosStep.get(i)[0]);
-    t = burstPosStep.get(i)[0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
+    t = burstPosStep.get(i)[0];
   }
-  
-  //void updateBurstParticles(AUCurve curve, int i){
-  //  burstPosStep.get(i)[0] += burstPosStep.get(i)[1]; 
-  //  if(idNr<curveOpacity.size() && curveOpacity.get(idNr)[0]>curveOpacityMin){
-  //    if (burstPosStep.get(i)[0] > 1.0-(0.02*1.0) && side == SENSOR_SIDE || burstPosStep.get(i)[0] < 0.02*1.0 && side == MOTOR_SIDE){
-  //      curveOpacity.get(idNr)[0] = 1.0;
-  //      //pushMatrix();
-  //      //fill(255);
-  //      //translate(setCurvePos(curve, 0.0).x, setCurvePos(curve, 0.0).y, setCurvePos(curve, 0.0).z);
-  //      //ellipse(0,0,burstSize,burstSize);
-  //      //popMatrix();
-  //    }
-  //  }
-  //  //float tmp = cos(burstPosStep.get(i)[0]);
-  //  t = burstPosStep.get(i)[0]; //map(tmp, 1.0, -1.0, 0.0, 1.0);
-  //}
   
   void removeFinishedBurstParticles(){
     for(int i=burstPositions.size()-1; i>=0; i--){
@@ -271,7 +252,6 @@ class Particle{
         pushMatrix();
         translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
         ellipse(0, 0, burstSize, burstSize);
-        //sphere(burstSize);
         popMatrix();
       }
     }
@@ -307,7 +287,6 @@ class Particle{
   void displayGame(int _burstSize, color _burstColor) {
     noStroke();
     transitionColor(c, cGame, 0.99);
-    //transitionSize(size, gameParticleSize, 0.99);
     
     nerveSkeleton.noStroke();
     c = color(red(c),green(c),blue(c),255);
@@ -315,11 +294,8 @@ class Particle{
     for(int i=0; i<positions.length; i++){
       fill(c);
       pushMatrix();
-      //translate(positions[i].x,positions[i].y, positions[i].z);
-      //fill(cIdle);
       translate(0,0,positions[i].z);
       ellipse(positions[i].x,positions[i].y,size,size);
-      //sphere(size);
       popMatrix();
     }
     
@@ -327,10 +303,8 @@ class Particle{
       fill(_burstColor);
       for(int i=0; i<burstPositions.size(); i++){
         pushMatrix();
-        //translate(burstPositions.get(i).x, burstPositions.get(i).y, burstPositions.get(i).z);
         translate(0, 0, burstPositions.get(i).z);
         ellipse(burstPositions.get(i).x, burstPositions.get(i).y, _burstSize, _burstSize);
-        //sphere(_burstSize);
         popMatrix();
       }
     }
@@ -365,13 +339,13 @@ class Particle{
     int i = burstPosStep.size();
       if(_side == SENSOR_SIDE){ //left is 0, right is 1
         burstPosStep.add(new Float[2]);
-        burstPosStep.get(i)[0] = 0.0; //+(i*0.02) //+(i*random(0.01,0.02))
-        burstPosStep.get(i)[1] = tStep*_speed; //NOTE TO SELF, make proper variable, dif for idle and game >speed
+        burstPosStep.get(i)[0] = 0.0;
+        burstPosStep.get(i)[1] = tStep*_speed;
       }
       if(_side == MOTOR_SIDE){
         burstPosStep.add(new Float[2]);
-        burstPosStep.get(i)[0] = 1.0; //(i*0.02) //-(i*random(0.01,0.02))
-        burstPosStep.get(i)[1] = tStep*-_speed; //NOTE TO SELF, make proper variable, dif for idle and game >speed
+        burstPosStep.get(i)[0] = 1.0;
+        burstPosStep.get(i)[1] = tStep*-_speed;
       }
       burstPositions.add(new PVector(0,0));
       side = _side;

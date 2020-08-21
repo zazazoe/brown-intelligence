@@ -113,10 +113,7 @@ void setup(){
   fadeStep = 255/(((hintTime*fadeFraction)/1000)*60);
   
   hint(DISABLE_DEPTH_MASK);
-  //hint(DISABLE_OPENGL_ERRORS);
   hint(ENABLE_STROKE_PERSPECTIVE);
-  //strokeCap(ROUND);
-  //hint(DISABLE_DEPTH_TEST);
 }
 
 
@@ -432,26 +429,6 @@ void transition(int _toMode){
 
 void keyPressed(){
   switch(key){
-    //case 'o': //open cp5 control panel
-    //  cp5.show();
-    //  break;
-    //case 'c': //close cp5 control panel
-    //  cp5.hide();
-    //  break;
-    //case 'a':
-    //  if(mode == IDLE_MODE){
-    //    for(int i=0; i<particles.size(); i++){
-    //      particles.get(i).particleBurst(SENSOR_SIDE, random(3.5,4.5));
-    //    }
-    //  }
-    //  break;
-    //case 's':
-    //  if(mode == IDLE_MODE){
-    //    for(int i=0; i<particles.size(); i++){
-    //      particles.get(i).particleBurst(MOTOR_SIDE, random(3.5,4.5));
-    //    }
-    //  }
-    //  break;
     case 'g':
       if(isBackgroundSave){
         background.save("BGcapture.jpg");
@@ -467,13 +444,7 @@ void keyPressed(){
           println("background set");
         }
       }
-      break;
-    //case '1':
-    //  cp5.saveProperties(("parameters"));
-    //  break;
-    //case '2':
-    //  cp5.loadProperties(("parameters.ser"));
-    //  break;  
+      break; 
   }
 }
 
